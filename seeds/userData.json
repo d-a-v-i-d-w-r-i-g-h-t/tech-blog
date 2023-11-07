@@ -1,51 +1,51 @@
 [
   {
-    "name": "TechEnthusiast",
+    "username": "TechEnthusiast",
     "email": "techenthusiast@gmail.com",
     "password": "securepassword123"
   },
   {
-    "name": "DataNinja",
+    "username": "DataNinja",
     "email": "dataninja@hotmail.com",
     "password": "strongpassword789"
   },
   {
-    "name": "WebDevPro",
+    "username": "WebDevPro",
     "email": "webdevpro@yahoo.com",
     "password": "webdevpass123"
   },
   {
-    "name": "CodeExplorer",
+    "username": "CodeExplorer",
     "email": "codeexplorer@mail.com",
     "password": "explorecode456"
   },
   {
-    "name": "SkyDiver",
+    "username": "SkyDiver",
     "email": "skydiver@gmail.com",
     "password": "adventurous123"
   },
   {
-    "name": "StarGazer",
+    "username": "StarGazer",
     "email": "stargazer@aol.com",
     "password": "starrynight789"
   },
   {
-    "name": "ArtisticSoul",
+    "username": "ArtisticSoul",
     "email": "artisticsoul@yahoo.com",
     "password": "paintingart456"
   },
   {
-    "name": "ScienceWhiz",
+    "username": "ScienceWhiz",
     "email": "sciencewhiz@mail.com",
     "password": "sciencelover789"
   },
   {
-    "name": "Bookworm123",
+    "username": "Bookworm123",
     "email": "bookworm123@gmail.com",
     "password": "readingpass456"
   },
   {
-    "name": "TravelExplorer",
+    "username": "TravelExplorer",
     "email": "travelexplorer@hotmail.com",
     "password": "worldtraveler789"
   }
