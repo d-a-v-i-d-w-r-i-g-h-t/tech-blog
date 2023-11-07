@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE TECH BLOG</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body>
+<header>THE TECH BLOG</header>
+<nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    {{#if req.session.logged_in}}
+      <a href="/logout">Logout</a>
+    {{else}}
+      <a href="/login">Login</a>
+    {{/if}}
+</nav>
+    {{{body}}}
+</body>
+
+</html>
