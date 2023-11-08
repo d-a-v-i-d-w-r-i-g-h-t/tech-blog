@@ -1,23 +1,37 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../models');
 
-// route to get all posts
+
+
+// GET ALL POSTS
+
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
-      attributes: { exclude: ['id', 'content', 'date_created', 'user_id'] },
+      attributes: { exclude: ['content', 'date_created', 'user_id'] },
       order: [['date_created', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
+      ],
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
 
-    res.status(200).render('homepage', { posts });
+    res.status(200).json(posts);
+    // res.status(200).render('homepage', { posts });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// route to get all posts from one username
+
+
+// GET ALL POSTS BY USERNAME
+
 router.get('/posts/:username', async (req, res) => {
   try {
     const userData = await User.findOne({
@@ -30,8 +44,10 @@ router.get('/posts/:username', async (req, res) => {
       return;
     }
 
+    const user = userData.get({ plain: true });
+
     const postData = await Post.findAll({
-      where: { user_id: userData.id },
+      where: { user_id: user.id },
       attributes: { exclude: ['user_id'] },
       include: [
         {
@@ -41,11 +57,12 @@ router.get('/posts/:username', async (req, res) => {
         },
         {
           model: Comment,
-          attributes: ['text'],
+          attributes: ['id', 'text'],
           include: [
             {
               model: User,
               attributes: ['username'],
+              as: 'author',
             },
           ],
         },
@@ -54,14 +71,17 @@ router.get('/posts/:username', async (req, res) => {
 
     const posts = postData.map((post) => post.get({ plain: true }));
 
-    res.status(200).render('posts', { posts });
+    res.status(200).json(posts);
+    // res.status(200).render('posts', { posts });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
 
-// route to get one post by ID
+
+// GET ONE POST BY POST ID
+
 router.get('/post/:id', async (req, res) => {
   try{ 
       const postData = await Post.findByPk(req.params.id, {
@@ -78,7 +98,8 @@ router.get('/post/:id', async (req, res) => {
             include: [
               {
                 model: User,
-                attributes: ['username'] 
+                attributes: ['username'],
+                as: 'author',
               }
             ]
           }
@@ -92,13 +113,17 @@ router.get('/post/:id', async (req, res) => {
 
       const post = postData.get({ plain: true });
 
-      res.status(200).render('post', { post });
+      res.status(200).json(post);
+      // res.status(200).render('post', { post });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     };     
 });
 
-// route to get all comments from one username
+
+
+// GET ALL COMMENTS BY USERNAME
+
 router.get('/comments/:username', async (req, res) => {
   try {
     const userData = await User.findOne({
@@ -113,9 +138,8 @@ router.get('/comments/:username', async (req, res) => {
 
     const commentsData = await Comment.findAll({
       where: { user_id: userData.id },
-      attributes: { exclude: ['id', 'user_id', 'post_id'] },
+      attributes: { exclude: ['user_id', 'post_id'] },
       include: [
-        { model: User, attributes: ['username'] },
         {
           model: Post,
           attributes: ['id', 'title'],
@@ -132,20 +156,27 @@ router.get('/comments/:username', async (req, res) => {
 
     const comments = commentsData.map((comment) => comment.get({ plain: true }));
 
-    res.status(200).render('comments', { comments });
+    res.status(200).json(comments);
+    // res.status(200).render('comments', { comments });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
 
-// route to get one comment by ID
+
+// GET ONE COMMENT BY COMMENT ID
+
 router.get('/comment/:id', async (req, res) => {
   try{ 
       const commentData = await Comment.findByPk(req.params.id, {
         attributes: { exclude: ['id', 'user_id', 'post_id'] },
         include: [ 
-          { model: User, attributes: ['username'] },
+          {
+            model: User,
+            attributes: ['username'],
+            as: 'author',
+          },
           { 
             model: Post,
             attributes: ['title', 'content'],
@@ -167,7 +198,8 @@ router.get('/comment/:id', async (req, res) => {
 
       const comment = commentData.get({ plain: true });
 
-      res.status(200).render('comment', comment);
+      res.status(200).json(comment);
+      // res.status(200).render('comment', comment);
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     };     

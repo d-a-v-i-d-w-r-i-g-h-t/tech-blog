@@ -11,7 +11,8 @@ User.hasMany(Post, {
 });
 
 Post.belongsTo(User, {
-  foreignKey: 'user_id'
+  foreignKey: 'user_id',
+  as: 'author'
 });
 
 // user & comment: one to many
@@ -22,6 +23,7 @@ User.hasMany(Comment, {
 
 Comment.belongsTo(User, {
   foreignKey: 'user_id',
+  as: 'author'
 });
 
 // post & comment: one to many
