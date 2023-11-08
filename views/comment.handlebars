@@ -1,0 +1,13 @@
+<div class="eachPost">
+  <p>
+    <a href="/post/{{ comment.post.id }}">{{ comment.post.title }}</a>, by 
+    <a href="/posts/{{ post.author.username }}">{{ comment.post.author.username }}</a>
+  </p>
+  <p>{{ comment.post.content }}</p>
+</div>
+<div>
+  <h3>Comment ID: {{comment_id}}</h3>
+    <div>
+      <p>{{ comment.text }} ~<a href="/comments/{{ comment.author.username }}">{{ comment.author.username }}</a></p>
+    </div>
+</div>

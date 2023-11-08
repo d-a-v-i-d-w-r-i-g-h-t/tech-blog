@@ -20,9 +20,10 @@ router.get('/', async (req, res) => {
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
+    console.log(posts);
 
-    res.status(200).json(posts);
-    // res.status(200).render('homepage', { posts });
+    // res.status(200).json(posts);
+    res.status(200).render('homepage', { posts });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -70,9 +71,10 @@ router.get('/posts/:username', async (req, res) => {
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
+    console.log(posts);
 
-    res.status(200).json(posts);
-    // res.status(200).render('posts', { posts });
+    // res.status(200).json(posts);
+    res.status(200).render('posts', { posts, username: req.params.username });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -84,40 +86,41 @@ router.get('/posts/:username', async (req, res) => {
 
 router.get('/post/:id', async (req, res) => {
   try{ 
-      const postData = await Post.findByPk(req.params.id, {
-        attributes: { exclude: ['id', 'user_id'] },
-        include: [ 
-          { 
-            model: User,
-            attributes: ['username'],
-            as: 'author'
-          },
-          { 
-            model: Comment,
-            attributes: ['text'],
-            include: [
-              {
-                model: User,
-                attributes: ['username'],
-                as: 'author',
-              }
-            ]
-          }
-        ],
-      });
+    const postData = await Post.findByPk(req.params.id, {
+      attributes: { exclude: ['user_id'] },
+      include: [ 
+        { 
+          model: User,
+          attributes: ['username'],
+          as: 'author'
+        },
+        { 
+          model: Comment,
+          attributes: ['text'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author',
+            }
+          ]
+        }
+      ],
+    });
 
-      if(!postData) {
-          res.status(404).json({ success: false, message: 'No post with this id!' });
-          return;
-      }
+    if(!postData) {
+        res.status(404).json({ success: false, message: 'No post with this id!' });
+        return;
+    }
 
-      const post = postData.get({ plain: true });
+    const post = postData.get({ plain: true });
+    console.log(post);
 
-      res.status(200).json(post);
-      // res.status(200).render('post', { post });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    };     
+    // res.status(200).json(post);
+    res.status(200).render('post', { post, post_id: req.params.id });
+  } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+  };     
 });
 
 
@@ -155,9 +158,10 @@ router.get('/comments/:username', async (req, res) => {
     });
 
     const comments = commentsData.map((comment) => comment.get({ plain: true }));
+    console.log(comments);
 
-    res.status(200).json(comments);
-    // res.status(200).render('comments', { comments });
+    // res.status(200).json(comments);
+    res.status(200).render('comments', { comments, username: req.params.username });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -169,40 +173,41 @@ router.get('/comments/:username', async (req, res) => {
 
 router.get('/comment/:id', async (req, res) => {
   try{ 
-      const commentData = await Comment.findByPk(req.params.id, {
-        attributes: { exclude: ['id', 'user_id', 'post_id'] },
-        include: [ 
-          {
-            model: User,
-            attributes: ['username'],
-            as: 'author',
-          },
-          { 
-            model: Post,
-            attributes: ['title', 'content'],
-            include: [
-              {
-                model: User,
-                attributes: ['username'],
-                as: 'author'
-              }
-            ]
-          },
-        ],
-      });
+    const commentData = await Comment.findByPk(req.params.id, {
+      attributes: { exclude: ['id', 'user_id', 'post_id'] },
+      include: [ 
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
+        { 
+          model: Post,
+          attributes: ['id', 'title', 'content'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author'
+            }
+          ]
+        },
+      ],
+    });
 
-      if(!commentData) {
-          res.status(404).json({message: 'No comment with this id!'});
-          return;
-      }
+    if(!commentData) {
+        res.status(404).json({message: 'No comment with this id!'});
+        return;
+    }
 
-      const comment = commentData.get({ plain: true });
+    const comment = commentData.get({ plain: true });
+    console.log(comment);
 
-      res.status(200).json(comment);
-      // res.status(200).render('comment', comment);
-    } catch (err) {
-      res.status(500).json({ success: false, error: err.message });
-    };     
+    // res.status(200).json(comment);
+    res.status(200).render('comment', {comment, comment_id: req.params.id });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  };     
 });
 
 module.exports = router;

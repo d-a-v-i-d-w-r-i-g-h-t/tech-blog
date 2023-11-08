@@ -1,0 +1,22 @@
+<div>
+    <h2>
+        {{#if posts.length}}
+            All posts by {{ username }}
+        {{else}}
+            No posts available from {{ username }}
+        {{/if}}
+    </h2>
+</div>
+{{#each posts}}
+    <a href="/post/{{ id }}">
+    <div class="eachPost">
+        <h2>{{ title }}</h2>
+        <p>{{ content }}</p>
+        <p></p>
+    </div>
+    </a>
+{{/each}}
+<div>
+    <br>
+    <p>See all <a href="/comments/{{ username }}">comments</a></p>
+</div>

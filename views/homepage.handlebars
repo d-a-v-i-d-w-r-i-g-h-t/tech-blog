@@ -1,7 +1,9 @@
-{{#each }}
-<a href="POST LINK GOES HERE">
+{{#each posts}}
+
 <div class="eachPost">
-    <h2>Post Title</h2>
+    <a href="/post/{{ id }}">
+        <h2>{{ title }}</h2>
+    </a>
+    <p>by <a href="/posts/{{ author.username }}">{{ author.username }}</a></p>
 </div>
-</a>
 {{/each}}
