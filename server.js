@@ -9,10 +9,17 @@ const sequelize = require('./config/connection');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const sess = {
+  secret: 'secret secret secret',
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+};
 
+app.use(session(sess));
 
 // Create the Handlebars.js engine object with custom helper functions
-const hbs = exphbs.create({ helpers: helpers }); // DELETE IF NOT NECESSARY
+const hbs = exphbs.create({ helpers }); // DELETE IF NOT NECESSARY
 
 // Inform Express.js which template engine we're using
 app.engine('handlebars', hbs.engine);
@@ -25,5 +32,5 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
 
 sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log(`Now listening on http://localhost:${PORT}`));
 });
