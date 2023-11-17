@@ -290,7 +290,9 @@ router.get('/signup', (req, res) => {
     return;
   }
 
-  res.render('signup');
+  const signupPage = true;
+
+  res.render('signup', { signupPage });
 });
 
 

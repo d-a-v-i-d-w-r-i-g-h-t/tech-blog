@@ -16,21 +16,25 @@
 <body>
 <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><h1>THE TECH BLOG</h1></a>
+      <a class="navbar-brand" href="#">THE TECH BLOG</a>
       <div class="navbar-expand">
         <div class="navbar-nav">
-          <a class="nav-link{{#if homepage}} active{{/if}}" aria-current="page" href="/">Home</a>
-          <a class="nav-link{{#if dashboard}} active{{/if}}" href="/dashboard">Dashboard</a>
+          <a class="nav-link{{#if homepage}} active" aria-current="page{{/if}}" href="/">Home</a>
+          <a class="nav-link{{#if dashboard}} active" aria-current="page{{/if}}" href="/dashboard">Dashboard</a>
         {{#if loggedIn}}
           <a class="nav-link" href="#" id="logout-link">Logout</a>
+        {{else if signupPage}}
+          <a class="nav-link active" href="/signup">Sign Up</a>
         {{else}}
-          <a class="nav-link{{#if loginPage}} active{{/if}}" href="/login">Login</a>
+          <a class="nav-link{{#if loginPage}} active" aria-current="page{{/if}}" href="/login">Login</a>
         {{/if}}
         </div>
       </div>
     </div>
   </nav>
+  <main>
   {{{body}}}
+  </main>
   
   {{#if loggedIn}}
   <script src="/js/logout.js"></script>

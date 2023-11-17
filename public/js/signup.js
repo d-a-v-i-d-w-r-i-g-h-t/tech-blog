@@ -1,12 +1,12 @@
 const signupFormHandler = async (event) => {
   event.preventDefault();
 
-  const passwordInput = document.querySelector('#password-signup');
-  const passwordVerifyInput = document.querySelector('#password-verify-signup');
+  const passwordInput = document.getElementById('password-signup');
+  const passwordVerifyInput = document.getElementById('password-verify-signup');
 
   // gather the data from the form elements on the page
-  const username = document.querySelector('#username-signup').value.trim();
-  const email = document.querySelector('#email-signup').value.trim();
+  const username = document.getElementById('username-signup').value.trim();
+  const email = document.getElementById('email-signup').value.trim();
   const password = passwordInput.value.trim();
   const passwordVerify = passwordVerifyInput.value.trim();
 
@@ -51,5 +51,5 @@ const signupFormHandler = async (event) => {
 
 // event listener on the signup form submit button
 document
-  .querySelector('.signup-form')
+  .getElementById('signup-form')
   .addEventListener('submit', signupFormHandler);
