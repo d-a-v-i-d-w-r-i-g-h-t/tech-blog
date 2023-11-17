@@ -23,9 +23,10 @@ router.get('/', async (req, res) => {
     console.log(posts);
 
     const loggedIn = req.session.logged_in;
+    const homepage = true;
     
     // res.status(200).json(posts);
-    res.status(200).render('homepage', { posts, loggedIn });
+    res.status(200).render('homepage', { posts, loggedIn, homepage });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -65,9 +66,10 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
     const loggedIn = req.session.logged_in;
     const username = req.params.username;
+    const dashboard = true;
 
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username, loggedIn });
+    res.status(200).render('posts', { posts, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -275,7 +277,9 @@ router.get('/login', (req, res) => {
     return;
   }
 
-  res.render('login');
+  const loginPage = true;
+
+  res.render('login', { loginPage });
 });
 
 // SIGNUP route
