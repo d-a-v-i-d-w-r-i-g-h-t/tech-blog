@@ -14,6 +14,7 @@ const loginFormHandler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
     });
 
+    // after successful login, go to the home page
     if (response.ok) {
       document.location.replace('/');
     } else {
@@ -22,16 +23,19 @@ const loginFormHandler = async (event) => {
   }
 };
 
+// redirect to the sign up page
 const redirectToSignUp = async (event) => {
   event.preventDefault();
 
   window.location.href = '/signup';
 }
 
+// event listener on the login form submit button
 document
   .getElementById('login-form')
   .addEventListener('submit', loginFormHandler);
 
+  // event listener to redirect to the sign up page
 document
-  .getElementById('sign-up')
+  .getElementById('sign-up-redirect')
   .addEventListener('click', redirectToSignUp);

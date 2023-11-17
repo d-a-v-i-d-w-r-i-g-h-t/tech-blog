@@ -18,6 +18,26 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// GET route to return if username is unique
+router.get('/check-username/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    // find one user by username
+    const existingUser = await User.findOne({
+      where: {
+        username: username
+      }
+    });
+
+    // return true (is unique, doesn't exist in database) or false (already in database)
+    res.json({ usernameIsUnique: !existingUser })
+  } catch(err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// POST route to check username & password, and save session data
 router.post('/login', async (req, res) => {
   try {
     const userData = await User.findOne({ where: { username: req.body.username } });
