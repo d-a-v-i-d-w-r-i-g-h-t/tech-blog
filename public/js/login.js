@@ -1,3 +1,11 @@
+const loginFailModalEl = document.getElementById('loginFailModal');
+const loginFailModal = new bootstrap.Modal(loginFailModalEl, {
+  keyboard: true
+});
+
+const usernameInputField = document.getElementById('username-login');
+const passwordInputField = document.getElementById('password-login');
+
 const loginFormHandler = async (event) => {
   // Stop the browser from submitting the form so we can do so with JavaScript
   event.preventDefault();
@@ -18,10 +26,24 @@ const loginFormHandler = async (event) => {
     if (response.ok) {
       document.location.replace('/');
     } else {
-      alert('Failed to log in');
+      
+      // clear username and password input fields
+      usernameInputField.value = '';
+      passwordInputField.value = '';
+      
+      // display modal to inform user
+      loginFailModal.show();
     }
   }
 };
+
+// event listener for when missing data modal is fully hidden
+loginFailModalEl.addEventListener('hidden.bs.modal', () => {
+  // reset focus on username input field
+  usernameInputField.focus();
+});
+
+
 
 // redirect to the sign up page
 const redirectToSignUp = async (event) => {

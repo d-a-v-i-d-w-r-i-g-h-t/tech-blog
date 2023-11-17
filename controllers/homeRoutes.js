@@ -271,6 +271,7 @@ router.get('/comment/:id', async (req, res) => {
   };     
 });
 
+
 // LOGIN route
 router.get('/login', (req, res) => {
   // If a session exists, redirect the request to the homepage
@@ -283,6 +284,7 @@ router.get('/login', (req, res) => {
 
   res.render('login', { loginPage });
 });
+
 
 // SIGNUP route
 router.get('/signup', (req, res) => {

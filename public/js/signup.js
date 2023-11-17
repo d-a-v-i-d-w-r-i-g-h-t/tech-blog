@@ -78,14 +78,15 @@ const signupFormHandler = async (event) => {
   const password = passwordInputField.value.trim();
   const passwordVerify = passwordVerifyInput.value.trim();
   
-  // check if the passwords match; if not, warn user
+  // check if the passwords match
   if (password !== passwordVerify) {
-    passwordMismatchModal.show();
     
     // clear password input fields
     passwordInputField.value = '';
     passwordVerifyInput.value = '';
     
+    // display modal to warn user
+    passwordMismatchModal.show();
     return; // stop form submission
   }
 
