@@ -3,8 +3,8 @@ const loginFormHandler = async (event) => {
   event.preventDefault();
 
   // Gather the data from the form elements on the page
-  const username = document.querySelector('#username-login').value.trim();
-  const password = document.querySelector('#password-login').value.trim();
+  const username = document.getElementById('username-login').value.trim();
+  const password = document.getElementById('password-login').value.trim();
 
   if (username && password) {
     // Send the username and password to the server
@@ -22,6 +22,16 @@ const loginFormHandler = async (event) => {
   }
 };
 
+const redirectToSignUp = async (event) => {
+  event.preventDefault();
+
+  window.location.href = '/signup';
+}
+
 document
-  .querySelector('.login-form')
+  .getElementById('login-form')
   .addEventListener('submit', loginFormHandler);
+
+document
+  .getElementById('sign-up')
+  .addEventListener('click', redirectToSignUp);
