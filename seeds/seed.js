@@ -18,6 +18,7 @@ const seedDatabase = async () => {
       const createdPost = await Post.create({
         ...post,
         user_id: users[Math.floor(Math.random() * users.length)].id,
+        date_created: new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000),
       });
       return createdPost;
     })

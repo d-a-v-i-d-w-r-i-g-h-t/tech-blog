@@ -3,12 +3,12 @@ const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/authorize');
 
 
-// GET ALL POSTS
+// GET ALL POSTS, sorted by date (newest at the top)
 
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
-      attributes: { exclude: ['content', 'date_created', 'user_id'] },
+      attributes: { exclude: ['content', 'user_id'] },
       order: [['date_created', 'DESC']],
       include: [
         {
@@ -41,6 +41,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const postData = await Post.findAll({
       where: { user_id: req.session.user_id },
       attributes: { exclude: ['user_id'] },
+      order: [['date_created', 'DESC']],
       include: [
         {
           model: User,
@@ -69,7 +70,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const dashboard = true;
 
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username, loggedIn, dashboard });
+    res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -96,6 +97,7 @@ router.get('/posts/:username', async (req, res) => {
     const postData = await Post.findAll({
       where: { user_id: user.id },
       attributes: { exclude: ['user_id'] },
+      order: [['date_created', 'DESC']],
       include: [
         {
           model: User,
