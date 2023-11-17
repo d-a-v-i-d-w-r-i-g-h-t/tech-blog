@@ -2,14 +2,15 @@ const router = require('express').Router();
 const { User } = require('../../models');
 const withAuth = require('../../utils/authorize');
 
+// POST SIGNUP route
 router.post('/signup', async (req, res) => {
   try {
     const userData = await User.create(req.body);
 
     req.session.save(() => {
       req.session.user_id = userData.id;
+      req.session.username = userData.username;
       req.session.logged_in = true;
-      
 
       res.status(200).json({ success: true, data: userData });
     });
@@ -17,6 +18,7 @@ router.post('/signup', async (req, res) => {
     res.status(400).json({ success: false, error: err.message });
   }
 });
+
 
 // GET route to return if username is unique
 router.get('/check-username/:username', async (req, res) => {
@@ -37,7 +39,8 @@ router.get('/check-username/:username', async (req, res) => {
   }
 });
 
-// POST route to check username & password, and save session data
+
+// POST LOGIN route to check username & password, and save session data
 router.post('/login', async (req, res) => {
   try {
     const userData = await User.findOne({ where: { username: req.body.username } });
@@ -60,6 +63,7 @@ router.post('/login', async (req, res) => {
 
     req.session.save(() => {
       req.session.user_id = userData.id;
+      req.session.username = userData.username;
       req.session.logged_in = true;
       
       res.json({ success: true, data: userData, message: 'You are now logged in!' });

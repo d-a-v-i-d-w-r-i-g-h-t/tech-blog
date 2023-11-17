@@ -1,23 +1,24 @@
 <div>
     <h2>
-        {{#if posts.length}}
-            All posts by {{ username }}
+        {{#if dashboard}}
+          My Posts
         {{else}}
+          {{#if posts.length}}
+            All posts by {{ username }}
+          {{else}}
             No posts available from {{ username }}
+          {{/if}}
         {{/if}}
     </h2>
 </div>
-{{#each posts}}
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">
-        <a href="/post/{{ id }}">{{ title }}</a>
-    </h5>
-    <h6 class="card-subtitle mb-2 text-muted">{{formatDate date_created}}</h6>
-  </div>
-</div>
+{{#each posts as |post|}}
+{{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
 {{/each}}
 <div>
     <br>
-    <p>See all <a href="/comments/{{ username }}">comments</a></p>
+    {{#if dashboard}}
+    <p>See all my <a href="/comments/{{username}}">comments</a></p>
+    {{else}}
+    <p>See all <a href="/comments/{{username}}">comments</a> by {{username}}</p>
+    {{/if}}
 </div>

@@ -8,13 +8,24 @@ const withAuth = require('../utils/authorize');
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
-      attributes: { exclude: ['content', 'user_id'] },
+      attributes: { exclude: ['user_id'] },
       order: [['date_created', 'DESC']],
       include: [
         {
           model: User,
           attributes: ['username'],
           as: 'author',
+        },
+        {
+          model: Comment,
+          attributes: ['id', 'text', 'date_created'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author',
+            },
+          ],
         },
       ],
     });
@@ -50,7 +61,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
         },
         {
           model: Comment,
-          attributes: ['id', 'text'],
+          attributes: ['id', 'text', 'date_created'],
           include: [
             {
               model: User,
@@ -63,13 +74,13 @@ router.get('/dashboard', withAuth, async (req, res) => {
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.log(posts);
+    console.dir(posts);
+    console.log(posts[1].comments);
 
     const loggedIn = req.session.logged_in;
-    const username = req.params.username;
+    const username = req.session.username;
     const dashboard = true;
-
-    // res.status(200).json(posts);
+  
     res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -79,8 +90,16 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
 
 // GET ALL POSTS BY USERNAME
-
 router.get('/posts/:username', async (req, res) => {
+  console.log('*************************');
+  console.log('req.session.username');
+  console.log(req.session.username);
+  if (req.session.username) {
+    if (req.params.username === req.session.username) {
+      res.redirect('/dashboard');
+      return;
+    }
+  }
   try {
     const userData = await User.findOne({
       where: { username: req.params.username },
@@ -106,7 +125,7 @@ router.get('/posts/:username', async (req, res) => {
         },
         {
           model: Comment,
-          attributes: ['id', 'text'],
+          attributes: ['id', 'text', 'date_created'],
           include: [
             {
               model: User,

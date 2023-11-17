@@ -12,3 +12,12 @@
 .card a:hover {
   background-color: rgba(var(--bs-primary-rgb), .2);
 }
+
+.card-text {
+  text-align: justify;
+}
+
+p {
+  margin-top: 0;    /* Remove top margin */
+  margin-bottom: 0; /* Remove bottom margin */
+}
