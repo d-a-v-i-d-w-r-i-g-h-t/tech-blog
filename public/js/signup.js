@@ -1,23 +1,35 @@
 const signupFormHandler = async (event) => {
   event.preventDefault();
 
+  const passwordInput = document.querySelector('#password-signup');
+  const passwordVerifyInput = document.querySelector('#password-verify-signup');
+
   // gather the data from the form elements on the page
   const username = document.querySelector('#username-signup').value.trim();
-  const password = document.querySelector('#password-signup').value.trim();
-  const passwordCheck = document.querySelector('#password2-signup').value.trim();
+  const email = document.querySelector('#email-signup').value.trim();
+  const password = passwordInput.value.trim();
+  const passwordVerify = passwordVerifyInput.value.trim();
 
   // check if the passwords match
-  if (password !== passwordCheck) {
+  if (password !== passwordVerify) {
     alert("Passwords do not match. Please re-enter your password.");
+
+    // clear password input fields
+    passwordInput.value = '';
+    passwordVerifyInput.value = '';
+
+    // reset focus back on first password input
+    passwordInput.focus();
+
     return; // stop form submission
   }
 
-  if (username && password) {
+  if (username && email && password) {
     try {
-      // send the e-mail and password to the server
+      // send the username, e-mail, and password to the server
       const response = await fetch('/api/users/signup', {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }),
         headers: { 'Content-Type': 'application/json' },
       });
   
@@ -31,9 +43,13 @@ const signupFormHandler = async (event) => {
       console.err('Error during form submission: ', err);
       alert('An unexpected error occurred. Please try again later.');
     }
+  } else {
+    alert(`Signup information incomplete. Please try again.`);
+    return;
   }
 };
 
+// event listener on the signup form submit button
 document
   .querySelector('.signup-form')
   .addEventListener('submit', signupFormHandler);

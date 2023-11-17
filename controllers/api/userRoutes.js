@@ -9,6 +9,7 @@ router.post('/signup', async (req, res) => {
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
+      
 
       res.status(200).json({ success: true, data: userData });
     });
@@ -51,10 +52,16 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', withAuth, (req, res) => {
   if (req.session.logged_in) {
-    req.session.destroy(() => {
-      res.status(204).end();
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(500).json({ success: false, error: 'Error logging out' });
+      } else {
+        res.status(204).end();
+      }
     });
-  } else { // using withAuth, this else will never actually occur
+    res.redirect('/');
+  } else {
+    // using withAuth, this else will never actually occur
     res.status(500).json({ success: false, error: 'Error logging out' });
   }
 });

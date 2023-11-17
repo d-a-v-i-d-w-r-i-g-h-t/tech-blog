@@ -1,0 +1,23 @@
+<div>
+    <h2>
+        {{#if comments.length}}
+            All comments by {{ username }}
+        {{else}}
+            No comments available from {{ username }}
+        {{/if}}
+    </h2>
+</div>
+{{#each comments}}
+  <div class="eachComment">
+      <p><a href="/comment/{{ id }}">{{ text }}</a></p>
+      <p>
+        <a href="/post/{{ post.id }}">{{ post.title }}</a>, 
+        by <a href="/posts/{{ post.author.username }}">{{ post.author.username }}</a>
+      </p>
+      <br>
+  </div>
+{{/each}}
+<div>
+    <br>
+    <p>See all <a href="/posts/{{ username }}">posts</a></p>
+</div>

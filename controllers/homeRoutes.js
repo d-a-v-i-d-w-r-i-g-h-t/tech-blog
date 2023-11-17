@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../models');
-
+const withAuth = require('../utils/authorize');
 
 
 // GET ALL POSTS
@@ -22,8 +22,52 @@ router.get('/', async (req, res) => {
     const posts = postData.map((post) => post.get({ plain: true }));
     console.log(posts);
 
+    const loggedIn = req.session.logged_in;
+    
     // res.status(200).json(posts);
-    res.status(200).render('homepage', { posts });
+    res.status(200).render('homepage', { posts, loggedIn });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
+
+// GET ALL POSTS BY CURRENT USER: DASHBOARD
+
+router.get('/dashboard', withAuth, async (req, res) => {
+  try {
+    const postData = await Post.findAll({
+      where: { user_id: req.session.user_id },
+      attributes: { exclude: ['user_id'] },
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
+        {
+          model: Comment,
+          attributes: ['id', 'text'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author',
+            },
+          ],
+        },
+      ],
+    });
+
+    const posts = postData.map((post) => post.get({ plain: true }));
+    console.log(posts);
+
+    const loggedIn = req.session.logged_in;
+    const username = req.params.username;
+
+    // res.status(200).json(posts);
+    res.status(200).render('posts', { posts, username, loggedIn });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -73,8 +117,11 @@ router.get('/posts/:username', async (req, res) => {
     const posts = postData.map((post) => post.get({ plain: true }));
     console.log(posts);
 
+    const loggedIn = req.session.logged_in;
+    const username = req.params.username;
+
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username: req.params.username });
+    res.status(200).render('posts', { posts, username, loggedIn });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -96,7 +143,7 @@ router.get('/post/:id', async (req, res) => {
         },
         { 
           model: Comment,
-          attributes: ['text'],
+          attributes: ['id', 'text'],
           include: [
             {
               model: User,
@@ -116,8 +163,12 @@ router.get('/post/:id', async (req, res) => {
     const post = postData.get({ plain: true });
     console.log(post);
 
+    const post_id = req.params.id;
+    const loggedIn = req.session.logged_in;
+
+
     // res.status(200).json(post);
-    res.status(200).render('post', { post, post_id: req.params.id });
+    res.status(200).render('post', { post, post_id, loggedIn });
   } catch (err) {
       res.status(500).json({ success: false, error: err.message });
   };     
@@ -160,8 +211,11 @@ router.get('/comments/:username', async (req, res) => {
     const comments = commentsData.map((comment) => comment.get({ plain: true }));
     console.log(comments);
 
+    const username = req.params.username;
+    const loggedIn = req.session.logged_in;
+
     // res.status(200).json(comments);
-    res.status(200).render('comments', { comments, username: req.params.username });
+    res.status(200).render('comments', { comments, username, loggedIn });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -203,8 +257,11 @@ router.get('/comment/:id', async (req, res) => {
     const comment = commentData.get({ plain: true });
     console.log(comment);
 
+    const comment_id = req.params.id;
+    const loggedIn = req.session.logged_in;
+
     // res.status(200).json(comment);
-    res.status(200).render('comment', {comment, comment_id: req.params.id });
+    res.status(200).render('comment', {comment, comment_id, loggedIn });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   };     

@@ -14,19 +14,19 @@
 </head>
 
 <body>
-  <header>THE TECH BLOG</header>
+  <header><h1>THE TECH BLOG</h1></header>
   <nav>
       <a href="/">Home</a>
       <a href="/dashboard">Dashboard</a>
-      {{#if req.session.logged_in}}
-      <a href="/logout">Logout</a>
+      {{#if loggedIn}}
+      <a href="#" id="logout-link">Logout</a>
       {{else}}
       <a href="/login">Login</a>
       {{/if}}
   </nav>
   {{{body}}}
   
-  {{#if logged_in}}
+  {{#if loggedIn}}
   <script src="/js/logout.js"></script>
   {{/if}}
 

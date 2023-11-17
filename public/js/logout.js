@@ -13,4 +13,9 @@ const logout = async () => {
   }
 };
 
-document.querySelector('#logout').addEventListener('click', logout);
+
+// event listener for logout link
+document.getElementById('logout-link').addEventListener('click', async (event) => {
+  event.preventDefault();
+  await logout();
+});
