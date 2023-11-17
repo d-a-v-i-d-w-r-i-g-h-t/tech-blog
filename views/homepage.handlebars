@@ -1,9 +1,18 @@
 {{#each posts}}
 
-<div class="eachPost">
+<div class="card">
     <a href="/post/{{ id }}">
         <h2>{{ title }}</h2>
     </a>
     <p>by <a href="/posts/{{ author.username }}">{{ author.username }}</a></p>
+</div>
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">
+        <a href="/post/{{ id }}">{{ title }}</a>
+    </h5>
+    <p class="card-text">by <a href="/posts/{{ author.username }}">{{ author.username }}</a></p>
+    <a href="/posts/{{ author.username }}" class="btn btn-primary">{{ author.username }}</a>
+  </div>
 </div>
 {{/each}}

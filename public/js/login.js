@@ -32,8 +32,8 @@ const redirectToSignUp = async (event) => {
 
 // event listener on the login form submit button
 document
-  .getElementById('login-form')
-  .addEventListener('submit', loginFormHandler);
+  .getElementById('login-submit')
+  .addEventListener('click', loginFormHandler);
 
   // event listener to redirect to the sign up page
 document
