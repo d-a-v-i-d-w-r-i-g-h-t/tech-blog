@@ -15,10 +15,13 @@ const seedDatabase = async () => {
 
   const posts = await Promise.all(
     postData.map(async (post) => {
+      const newDate = new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000)
       const createdPost = await Post.create({
         ...post,
         user_id: users[Math.floor(Math.random() * users.length)].id,
-        date_created: new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000),
+        date_created: newDate,
+        date_published: newDate,
+        published: true,
       });
       return createdPost;
     })

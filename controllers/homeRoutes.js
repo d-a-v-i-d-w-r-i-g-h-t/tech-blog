@@ -3,13 +3,15 @@ const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/authorize');
 
 
+
 // GET ALL POSTS, sorted by date (newest at the top)
 
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
-      attributes: { exclude: ['user_id'] },
-      order: [['date_created', 'DESC']],
+      where: { published: true },
+      attributes: { exclude: ['user_id', 'date_created', 'published'] },
+      order: [['date_published', 'DESC']],
       include: [
         {
           model: User,
@@ -114,9 +116,12 @@ router.get('/posts/:username', async (req, res) => {
     const user = userData.get({ plain: true });
 
     const postData = await Post.findAll({
-      where: { user_id: user.id },
-      attributes: { exclude: ['user_id'] },
-      order: [['date_created', 'DESC']],
+      where: { 
+        user_id: user.id,
+        published: true,
+       },
+      attributes: { exclude: ['user_id', 'date_created', 'published'] },
+      order: [['date_published', 'DESC']],
       include: [
         {
           model: User,
@@ -154,7 +159,7 @@ router.get('/posts/:username', async (req, res) => {
 
 
 // GET ONE POST BY POST ID
-
+////////////////////////////////////////////////////
 router.get('/post/:id', async (req, res) => {
   try{ 
     const postData = await Post.findByPk(req.params.id, {
@@ -248,7 +253,7 @@ router.get('/comments/:username', async (req, res) => {
 
 
 // GET ONE COMMENT BY COMMENT ID
-
+////////////////////////////////////////////////////
 router.get('/comment/:id', async (req, res) => {
   try{ 
     const commentData = await Comment.findByPk(req.params.id, {
@@ -292,7 +297,9 @@ router.get('/comment/:id', async (req, res) => {
 });
 
 
+
 // LOGIN route
+
 router.get('/login', (req, res) => {
   // If a session exists, redirect the request to the homepage
   if (req.session.logged_in) {
@@ -306,7 +313,9 @@ router.get('/login', (req, res) => {
 });
 
 
+
 // SIGNUP route
+
 router.get('/signup', (req, res) => {
   // If a session exists, redirect the request to the homepage
   if (req.session.logged_in) {
