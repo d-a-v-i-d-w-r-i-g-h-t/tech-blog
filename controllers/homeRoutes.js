@@ -142,9 +142,10 @@ router.get('/posts/:username', async (req, res) => {
 
     const loggedIn = req.session.logged_in;
     const username = req.params.username;
+    const postsPage = true;
 
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username, loggedIn });
+    res.status(200).render('posts', { posts, username, loggedIn, postsPage });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

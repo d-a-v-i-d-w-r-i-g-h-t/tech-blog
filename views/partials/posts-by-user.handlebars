@@ -2,6 +2,7 @@
     <h2>
         {{#if dashboard}}
           My Posts
+        {{else if homepage}}
         {{else}}
           {{#if posts.length}}
             All posts by {{ username }}
@@ -11,9 +12,11 @@
         {{/if}}
     </h2>
 </div>
-{{#each posts as |post|}}
-{{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
-{{/each}}
+<div id="all-posts">
+  {{#each posts as |post|}}
+  {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
+  {{/each}}
+</div>
 <div>
     <br>
     {{#if dashboard}}

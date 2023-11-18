@@ -19,6 +19,15 @@ Post.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    published: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    }
+    date_published: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    }
     date_created: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -21,3 +21,19 @@ p {
   margin-top: 0;    /* Remove top margin */
   margin-bottom: 0; /* Remove bottom margin */
 }
+
+.card-header-section {
+  display: flex;
+  justify-content: space-between;
+}
+.post-button-group {
+  /* display: flex; */
+  /* align-items: right; */
+}
+
+.post-button {
+  width: 70px;
+  height: 35px;
+  font-size: 0.8em;
+  border-radius
+}

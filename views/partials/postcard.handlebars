@@ -1,29 +1,59 @@
-<div class="card">
+<div class="card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0 post-card" data-post-id="{{id}}" data-collapse-state="true">
   <div class="card-body">
-    <h4 class="card-title">
-      <a data-bs-toggle="collapse" href="#collapsePost{{id}}" role="button">
-        {{title}}
-      </a>
-    </h4>
-    <h6 class="card-subtitle mb-2 text-body-tertiary">{{formatDate date_created}}</h6>
+    <div class="card-header-section">
+      <div>
+        <h4 class="card-title">{{title}}</h4>
+        <h6 class="card-subtitle mb-2 text-body-tertiary">{{formatDate date_created}}</h6>
+      </div>
+
+      {{!-- DASHBOARD BUTTONS --}}
+      {{#if dashboard}}
+      <div class="post-button-group btn-group" role="group">
+
+        {{!-- DELETE BUTTON --}}
+        <button type="button"
+          class="post-button delete-button btn btn-danger"
+          data-post-id="{{id}}"
+        >Delete
+        </button>
+        
+        {{!-- EDIT BUTTON --}}
+        <button type="button"
+          class="post-button edit-button btn btn-warning"
+          data-post-id="{{id}}"
+        >Edit
+        </button>
+        
+        {{!-- PUBLISH / UNPUBLISH BUTTON --}}
+        <button type="button"
+          class="post-button publish-button btn btn-outline-success"
+          data-post-id="{{id}}"
+          data-published="false"
+        >Publish
+        </button>
+      
+      </div>
+      {{/if}}
+
+    </div>
     <div class="collapse" id="collapsePost{{id}}">
       <p class="card-text mb-2">{{content}}</p>
     </div>
     {{#unless dashboard}}
     <p class="card-text text-end">&#8212;<a href="/posts/{{ author.username }}">{{ author.username }}</a></p>
     {{/unless}}
-    <div class="collapse" id="collapsePost{{id}}">
+    <div class="collapse" id="collapse2Post{{id}}">
       <h5>
-        <a data-bs-toggle="collapse" href="#collapseComments-post{{id}}" role="button">
+        <a data-collapse-comment="true" data-bs-toggle="collapse" href="#collapseComments-post{{id}}" role="button">
           Comments
         </a>
       </h5>
       <div class="collapse" id="collapseComments-post{{id}}">
         {{#each comments as |comment|}}
-        <div class="card card-body">
+        <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
           <p class="card-text">{{text}}</p>
           <p class="subtitle text-body-tertiary">{{formatDate comment.date_created}}</p>
-          <p class="card-text mb-2 text-end">&#8212;<a href="/posts/{{author.username}}">{{ author.username }}</a></p>
+          <p class="card-text mb-0 text-end">&#8212;<a href="/posts/{{author.username}}">{{ author.username }}</a></p>
         </div>
         {{/each}}
       </div>
