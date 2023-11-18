@@ -1,24 +1,38 @@
-<div>
-    <h2>
-        {{#if dashboard}}
-          My Posts
-        {{else if homepage}}
-        {{else}}
-          {{#if posts.length}}
-            All posts by {{ username }}
-          {{else}}
-            No posts available from {{ username }}
-          {{/if}}
-        {{/if}}
-    </h2>
+<div id="dashboard-header">
+
+  <h3>
+    {{#if dashboard}}
+      My Posts
+    {{else if homepage}}
+    {{!-- empty --}}
+    {{else}}
+      {{#if posts.length}}
+        All posts by {{ username }}
+      {{else}}
+        No posts available from {{ username }}
+      {{/if}}
+    {{/if}}
+  </h3>
+
+  {{#if dashboard}}
+    {{!-- NEW POST BUTTON --}}
+    <button type="button"
+      class="new-post-button btn btn-primary"
+      {{!-- data-me-instead="true"  --}}
+      data-post-id="{{id}}"
+    >New Post
+    </button>
+  {{/if}}
+
 </div>
+
 <div id="all-posts">
   {{#each posts as |post|}}
   {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
   {{/each}}
 </div>
+
 <div>
-    <br>
     {{#if dashboard}}
     <p>See all my <a href="/comments/{{username}}">comments</a></p>
     {{else}}

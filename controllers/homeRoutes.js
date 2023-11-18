@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
       where: { published: true },
-      attributes: { exclude: ['user_id', 'date_created', 'published'] },
+      attributes: { exclude: ['user_id', 'date_created'] },
       order: [['date_published', 'DESC']],
       include: [
         {
@@ -54,7 +54,10 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const postData = await Post.findAll({
       where: { user_id: req.session.user_id },
       attributes: { exclude: ['user_id'] },
-      order: [['date_created', 'DESC']],
+      order: [
+        ['date_published', 'DESC'],
+        ['date_created', 'DESC'],
+      ],
       include: [
         {
           model: User,
@@ -77,7 +80,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
     const posts = postData.map((post) => post.get({ plain: true }));
     console.dir(posts);
-    console.log(posts[1].comments);
+    // console.log(posts[1].comments);
 
     const loggedIn = req.session.logged_in;
     const username = req.session.username;
@@ -120,7 +123,7 @@ router.get('/posts/:username', async (req, res) => {
         user_id: user.id,
         published: true,
        },
-      attributes: { exclude: ['user_id', 'date_created', 'published'] },
+      attributes: { exclude: ['user_id', 'date_created'] },
       order: [['date_published', 'DESC']],
       include: [
         {

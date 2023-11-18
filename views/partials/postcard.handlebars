@@ -1,34 +1,87 @@
-<div class="card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0 post-card" data-post-id="{{id}}" data-collapse-state="true">
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">Warning</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this post?
+      </div>
+      <div class="modal-footer">
+        <div class="btn-group" role="group" aria-label="confirm delete button group">
+          <button id="ok-delete" type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Unable to Delete Warning Modal -->
+<div class="modal fade" id="unableToDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="unableToDeleteModalLabel">Warning</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Unable to delete post. Please try again.
+      </div>
+      <div class="modal-footer">
+        <div class="btn-group" role="group" aria-label="confirm delete button group">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0 post-card" id="post{{id}}-card" data-post-id="{{id}}" data-collapse-state="true">
   <div class="card-body">
     <div class="card-header-section">
       <div>
         <h4 class="card-title">{{title}}</h4>
-        <h6 class="card-subtitle mb-2 text-body-tertiary">{{formatDate date_created}}</h6>
+        <h6 class="card-subtitle mb-2 text-body-tertiary">
+        {{#if published}}
+          {{formatDate date_published}}
+        {{else}}
+          Draft
+        {{/if}}
+        </h6>
       </div>
 
       {{!-- DASHBOARD BUTTONS --}}
       {{#if dashboard}}
-      <div class="post-button-group btn-group" role="group">
+      <div id="post{{id}}-button-group" class="btn-group fade-in-out" role="group">
 
-        {{!-- DELETE BUTTON --}}
-        <button type="button"
-          class="post-button delete-button btn btn-danger"
-          data-post-id="{{id}}"
-        >Delete
-        </button>
-        
         {{!-- EDIT BUTTON --}}
         <button type="button"
           class="post-button edit-button btn btn-warning"
+          {{!-- data-me-instead="true"  --}}
           data-post-id="{{id}}"
+          disabled
         >Edit
+        </button>
+        
+        {{!-- DELETE BUTTON --}}
+        <button type="button"
+          class="post-button delete-button btn btn-danger"
+          {{!-- data-me-instead="true"  --}}
+          data-post-id="{{id}}"
+          disabled
+        >Delete
         </button>
         
         {{!-- PUBLISH / UNPUBLISH BUTTON --}}
         <button type="button"
           class="post-button publish-button btn btn-outline-success"
+          {{!-- data-me-instead="true"  --}}
           data-post-id="{{id}}"
           data-published="false"
+          disabled
         >Publish
         </button>
       
@@ -44,7 +97,7 @@
     {{/unless}}
     <div class="collapse" id="collapse2Post{{id}}">
       <h5>
-        <a data-collapse-comment="true" data-bs-toggle="collapse" href="#collapseComments-post{{id}}" role="button">
+        <a data-me-instead="true" data-bs-toggle="collapse" href="#collapseComments-post{{id}}" role="button">
           Comments
         </a>
       </h5>
