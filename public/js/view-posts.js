@@ -1,10 +1,24 @@
+function formatDate(date) {
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }
+  return new Date(date).toLocaleDateString('en-US', options);
+}
+
+document.getElementById('new-post-button').addEventListener('click', async function (event) {
+  console.log('new post button clicked')
+})
 
 document.getElementById('all-posts').addEventListener('click', async function (event) {
 
+  const newPostButton = event.target.closest('#new-post-button')
   const cardArea = event.target.closest('.post-card');
   const deleteButton = event.target.closest('.delete-button');
   const editButton = event.target.closest('.edit-button');
   const publishButton = event.target.closest('.publish-button');
+
 
   if (deleteButton) {
     handleDeleteButtonClick(event, deleteButton);
@@ -12,6 +26,7 @@ document.getElementById('all-posts').addEventListener('click', async function (e
   } else if (editButton) {
     handleEditButtonClick(event, editButton);
 
+  // } else if (event.target.classList.contains('publish-button')) {
   } else if (publishButton) {
     handlePublishButtonClick(event, publishButton);
 
@@ -44,7 +59,9 @@ async function handleDeleteButtonClick(event, deleteButton) {
         try {
           const response = await fetch(`/api/posts/${postId}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+              'Content-Type': 'application/json'
+            }
           });
 
           if (response.ok) {
@@ -71,17 +88,68 @@ async function handleDeleteButtonClick(event, deleteButton) {
 }
 
 
+
 async function handleEditButtonClick(event, editButton) {
   const postId = editButton.dataset.postId;
-  
+  console.log('edit button clicked');
 
 }
 
-async function handlePublishButtonClick(event, publishButton) {
+
+
+async function handlePublishButtonClick(event) {
+  const publishButton = event.target;
+
   const postId = publishButton.dataset.postId;
   const isPublished = publishButton.dataset.published === 'true'; // converting string to boolean
+  const publicationDateElement = document.getElementById(`post${postId}-publication-date`);
+  
+  
+  
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ published: !isPublished }),
+    });
+    
+    if (response.ok) {
+      if (isPublished) {
+        // change publication date to draft
+        publicationDateElement.textContent = "DRAFT"
+
+        // switch button to 'unpublished' mode
+        publishButton.classList.add('btn-outline-success');
+        publishButton.classList.remove('btn-success');
+        publishButton.textContent = 'Publish'
+        
+        publishButton.dataset.published = 'false';
+
+      } else {
+        // add publication date
+        publicationDateElement.textContent = formatDate(Date.now());
+
+        // switch button to 'published' mode
+        publishButton.classList.remove('btn-outline-success');
+        publishButton.classList.add('btn-success');
+        publishButton.textContent = 'Unpublish'
+    
+        publishButton.dataset.published = 'true';
+      }
+
+    } else {
+      const errorMessage = await response.text();
+      console.error(`Failed to delete post. Server response: ${errorMessage}`);
+
+      unableToDeleteModal.show();
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
+  }
 
 }
+
+
 
 async function handleCardAreaClick(event, cardArea) {
   event.preventDefault();

@@ -44,11 +44,11 @@
     <div class="card-header-section">
       <div>
         <h4 class="card-title">{{title}}</h4>
-        <h6 class="card-subtitle mb-2 text-body-tertiary">
+        <h6 id="post{{id}}-publication-date" class="card-subtitle mb-2 text-body-tertiary">
         {{#if published}}
           {{formatDate date_published}}
         {{else}}
-          Draft
+          DRAFT
         {{/if}}
         </h6>
       </div>
@@ -60,7 +60,6 @@
         {{!-- EDIT BUTTON --}}
         <button type="button"
           class="post-button edit-button btn btn-warning"
-          {{!-- data-me-instead="true"  --}}
           data-post-id="{{id}}"
           disabled
         >Edit
@@ -69,7 +68,6 @@
         {{!-- DELETE BUTTON --}}
         <button type="button"
           class="post-button delete-button btn btn-danger"
-          {{!-- data-me-instead="true"  --}}
           data-post-id="{{id}}"
           disabled
         >Delete
@@ -77,12 +75,11 @@
         
         {{!-- PUBLISH / UNPUBLISH BUTTON --}}
         <button type="button"
-          class="post-button publish-button btn btn-outline-success"
-          {{!-- data-me-instead="true"  --}}
+          class="post-button publish-button btn {{#if published}}btn-success{{else}}btn-outline-success{{/if}}"
           data-post-id="{{id}}"
-          data-published="false"
+          data-published="{{#if published}}true{{else}}false{{/if}}"
           disabled
-        >Publish
+        >{{#if published}}Unpublish{{else}}Publish{{/if}}
         </button>
       
       </div>

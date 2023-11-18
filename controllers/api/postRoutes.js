@@ -19,22 +19,31 @@ router.post('/', withAuth, async (req, res) => {
 // PUT route to update a post
 router.put('/:id', withAuth, async (req, res) => {
   try {
-    const postData = await Post.update(
-      {
-        title: req.body.title,
-        content: req.body.content,
-      },
-      {
+    // create an object with the update fields provided in req.body
+    const updateFields = {};
+    if (req.body.title) {
+      updateFields.title = req.body.title;
+    }
+    if (req.body.content) {
+      updateFields.content = req.body.content;
+    }
+    if (req.body.published !== undefined) {
+      updateFields.published = req.body.published;
+      updateFields.date_published = req.body.published ? Date.now() : null;
+    }
+
+    if (Object.keys(updateFields).length > 0) {
+      const postData = await Post.update(updateFields, {
         where: {
           id: req.params.id,
           user_id: req.session.user_id,
         },
-      }
-    );
+      });
 
-    if (!postData[0]) {
-      res.status(404).json({ success: false, message: 'No post found with this id!' });
-      return;
+      if (!postData[0]) {
+        res.status(404).json({ success: false, message: 'No post found with this id!' });
+        return;
+      }
     }
 
     res.status(200).json({ success: true, message: 'Post updated successfully!' });

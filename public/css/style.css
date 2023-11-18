@@ -1,3 +1,8 @@
+main {
+  margin: 57px 48px 48px;
+  padding-top: 40px
+}
+
 .login-page-button,
 .signup-page-button {
   width: 100px;
@@ -36,11 +41,8 @@ p {
   justify-content: space-between;
 }
 
-.new-post-button {
-  
-}
 .post-button {
-  width: 70px;
+  width: 100px;
   height: 35px;
   font-size: 0.8em;
 }
