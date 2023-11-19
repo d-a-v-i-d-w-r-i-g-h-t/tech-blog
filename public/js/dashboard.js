@@ -33,6 +33,8 @@ async function handleDeleteButtonClick(event, deleteButton) {
   
   confirmDeleteModal.show();
   
+  console.log('ok to delete');
+  return;
   if (!isConfirmDeleteEventListenerAdded) {
     
     confirmDeleteModalEl.addEventListener('click', async function (event) {
@@ -159,16 +161,21 @@ async function handlePublishButtonClick(event) {
 
 
 
-function showPostButtons(postId, showState) {
-  
+function showPostButtons(postId, showState, buttons = []) {
+  console.log('buttons');
+  console.log(buttons);
+  // do nothing if buttons array is empty
+  if (buttons.length === 0) {
+    return;
+  }
+
   const postButtonGroupElement = document.getElementById(`post${postId}-button-group`);
-  console.log('postButtonGroupElement');
-  console.log(postButtonGroupElement);
   
-  const deleteButton = postButtonGroupElement.querySelector('.delete-button');
-  const editButton = postButtonGroupElement.querySelector('.edit-button');
-  const publishButton = postButtonGroupElement.querySelector('.publish-button');
-  
+  const button = {};
+
+  buttons.forEach(buttonClass => {
+    button[buttonClass] = postButtonGroupElement.querySelector(`.${buttonClass}`);
+  });
   if (showState === true) {
     console.log('show buttons')
     // show post buttons
@@ -178,18 +185,19 @@ function showPostButtons(postId, showState) {
     setTimeout(() => {
       postButtonGroupElement.classList.add('visible')
       
-      deleteButton.removeAttribute('disabled');
-      editButton.removeAttribute('disabled');
-      publishButton.removeAttribute('disabled');
+      buttons.forEach(buttonClass => {
+        button[buttonClass].removeAttribute('disabled');
+      });    
+    
     }, 100);
     
   } else {
     console.log('hide buttons')
     // disable post buttons
-    deleteButton.setAttribute('disabled', 'true');
-    editButton.setAttribute('disabled', 'true');
-    publishButton.setAttribute('disabled', 'true');
-    
+    buttons.forEach(buttonClass => {
+      button[buttonClass].setAttribute('disabled', 'true');
+    });    
+
     postButtonGroupElement.classList.remove('visible')
     
     // add display-none after opacity has reached 0
@@ -199,20 +207,21 @@ function showPostButtons(postId, showState) {
   }
 }
 
+
 // event listener for post buttons
 document.getElementById('all-posts').addEventListener('click', async function (event) {
 
   const cardArea = event.target.closest('.post-card');
-  const deleteButton = event.target.closest('.delete-button');
   const editButton = event.target.closest('.edit-button');
+  const deleteButton = event.target.closest('.delete-button');
   const publishButton = event.target.closest('.publish-button');
 
 
-  if (deleteButton) {
-    handleDeleteButtonClick(event, deleteButton);
-
-  } else if (editButton) {
+  if (editButton) {
     handleEditButtonClick(event, editButton);
+
+  } else if (deleteButton) {
+    handleDeleteButtonClick(event, deleteButton);
 
   } else if (publishButton) {
     handlePublishButtonClick(event, publishButton);
@@ -225,7 +234,15 @@ document.addEventListener('postCollapse', async function (event) {
   const postId = event.detail.postId;
   const isCollapsed = event.detail.isCollapsed;
 
-  showPostButtons(postId, isCollapsed);
+  const buttons = [
+    'edit-button',
+    'delete-button',
+    'publish-button',
+  ];
+  console.log('buttons');
+  console.log(buttons);
+
+  showPostButtons(postId, isCollapsed, buttons);
 });
 
 // event listener for new post button click

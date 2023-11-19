@@ -13,8 +13,8 @@
         </div>
         <div class="modal-footer">
           <div class="btn-group" role="group" aria-label="confirm delete button group">
-            <button id="ok-delete" type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="ok-delete" type="button" class="modal-button btn btn-danger" data-bs-dismiss="modal">OK</button>
+            <button type="button" class="modal-button btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="modal-footer">
           <div class="btn-group" role="group" aria-label="confirm delete button group">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
           {{!-- EDIT BUTTON --}}
           <button
             type="button"
-            class="post-button edit-button btn btn-warning"
+            class="edit-button post-button btn btn-warning"
             data-post-id="{{id}}"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
@@ -83,7 +83,7 @@
           {{!-- DELETE BUTTON --}}
           <button
             type="button"
-            class="post-button delete-button btn btn-danger"
+            class="delete-button post-button btn btn-danger"
             data-post-id="{{id}}"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
@@ -95,9 +95,9 @@
             type="button"
             class=
               {{#if published}}
-                "post-button publish-button btn btn-success"
+                "publish-button post-button btn btn-success"
               {{else}}
-                "post-button publish-button btn btn-outline-success"
+                "publish-button post-button btn btn-outline-success"
               {{/if}}
             data-post-id="{{id}}"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}

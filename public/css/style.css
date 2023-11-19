@@ -4,7 +4,8 @@ main {
 }
 
 .login-page-button,
-.signup-page-button {
+.signup-page-button,
+.modal-button {
   width: 100px;
 }
 
