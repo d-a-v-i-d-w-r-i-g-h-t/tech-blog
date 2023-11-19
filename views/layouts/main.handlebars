@@ -33,7 +33,7 @@
     </div>
   </nav>
   <main>
-  {{{body}}}
+    {{{body}}}
   </main>
   
 
@@ -43,22 +43,24 @@
   
   <!-- Other JavaScript files -->
   {{#if loggedIn}}
-  <script src="/js/logout.js"></script>
+    <script src="/js/logout.js"></script>
   {{/if}}
   {{#if loginPage}}
-  <script src="/js/login.js"></script>
+    <script src="/js/login.js"></script>
   {{/if}}
   {{#if signupPage}}
-  <script src="/js/signup.js"></script>
+    <script src="/js/signup.js"></script>
   {{/if}}
   {{#if homepage}}
-  <script src="/js/view-posts.js"></script>
+    <script src="/js/view-posts.js"></script>
   {{/if}}
   {{#if dashboard}}
-  <script src="/js/view-posts.js"></script>
+    <script src="/js/view-posts.js"></script>
+    {{!-- dashboard.js listens for a custom event in view-posts.js, so it gets listed second --}}
+    <script src="/js/dashboard.js"></script>
   {{/if}}
   {{#if postsPage}}
-  <script src="/js/view-posts.js"></script>
+    <script src="/js/view-posts.js"></script>
   {{/if}}
 
 </body>

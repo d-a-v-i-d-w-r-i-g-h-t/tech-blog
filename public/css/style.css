@@ -22,7 +22,7 @@ main {
   background-color: rgba(var(--bs-primary-rgb), .2);
 }
 
-.card-text {
+.card-content {
   text-align: justify;
 }
 
@@ -54,4 +54,8 @@ p {
 
 .visible {
   opacity: 1;
+}
+
+.display-none {
+  display: none;
 }

@@ -27,14 +27,14 @@
 
 <div id="all-posts">
   {{#each posts as |post|}}
-  {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
+    {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
   {{/each}}
 </div>
 
 <div>
     {{#if dashboard}}
-    <p>See all my <a href="/comments/{{username}}">comments</a></p>
+      <p>See all my <a href="/comments/{{username}}">comments</a></p>
     {{else}}
-    <p>See all <a href="/comments/{{username}}">comments</a> by {{username}}</p>
+      <p>See all <a href="/comments/{{username}}">comments</a> by {{username}}</p>
     {{/if}}
 </div>
