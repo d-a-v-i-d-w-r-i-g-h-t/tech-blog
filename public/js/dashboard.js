@@ -1,3 +1,8 @@
+const newPostButton = document.getElementById('new-post-button')
+setTimeout(() => {
+  newPostButton.classList.add('visible')  
+}, 100);
+
 // define new confirm delete modal
 const confirmDeleteModalEl = document.getElementById('confirmDeleteModal');
 const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl, {
@@ -26,8 +31,11 @@ function formatDate(date) {
 
 
 
-
-// function for DELETE BUTTON click
+    /////////////////////
+   //  DELETE BUTTON  //
+  /////////////////////
+ //
+// function for delete button click
 async function handleDeleteButtonClick(event, deleteButton) {
   const postId = deleteButton.dataset.postId;
   
@@ -73,41 +81,164 @@ async function handleDeleteButtonClick(event, deleteButton) {
 }
 
 
-
-// function for EDIT BUTTON click
-async function handleEditButtonClick(event, editButton) {
-  const postId = editButton.dataset.postId;
-  console.log('edit button clicked');
+/////////////////////
+//  CANCEL BUTTON  //
+/////////////////////
+//
+// function for cancel button click
+async function handleCancelButtonClick(event, cancelButton) {
+  console.log('cancel button clicked');
+  
+  // change input field & textarea back to read-only elements
   
   const postCard = event.target.closest('.post-card');
-  const cardTitleEl = postCard.querySelector('.card-title');
-  const cardContentEl = postCard.querySelector('.card-content');
-  console.log('cardTitleEl');
-  console.log(cardTitleEl);
-  console.log('cardContentEl');
-  console.log(cardContentEl);
+  const titleInputEl = postCard.querySelector('.title-input');
+  const pubDateEl = postCard.querySelector('.publication-date');
+  const contentInputEl = postCard.querySelector('.content-input');
 
-  const currentTitle = cardTitleEl.textContent; // save current title in temp var
-  const currentContent = cardContentEl.textContent; // save current content in temp var
+  // disable edit mode
+  postCard.dataset.editMode = 'false';
   
-  console.log('currentTitle');
-  console.log(currentTitle);
-  console.log('currentContent');
-  console.log(currentContent);
+  // discard changes, replace original title and content saved in data attributes
+  const savedTitle = postCard.dataset.currentTitle;
+  const savedPubDate = postCard.dataset.currentPubDate;
+  const savedContent = postCard.dataset.currentContent;
   
-  // change buttons
-  // cancel, save
+  // empty data attributes
+  postCard.dataset.currentTitle = '';
+  postCard.dataset.currentPubDate = '';
+  postCard.dataset.currentContent = '';
+
+  // replace title input element with title element
+  const cardTitleEl = document.createElement('h4');
+  cardTitleEl.classList.add('card-title');
+  cardTitleEl.textContent = savedTitle;
   
-  // change textcontent to input field & textarea
+  titleInputEl.parentNode.replaceChild(cardTitleEl, titleInputEl);
+
+  // replace publication date
+  pubDateEl.textContent = savedPubDate;
   
+  // replace content input element with content element
+  const cardContentEl = document.createElement('p')
+  cardContentEl.classList.add('card-content', 'mb-2');
+  cardContentEl.textContent = savedContent;
   
-  // if edit is cancelled, replace title and content with temp var values
+  contentInputEl.parentNode.replaceChild(cardContentEl, contentInputEl);  
   
+
+  // update button configuration:
+  // show main button group, hide edit button group
+  const showPostButtonGroup = true;
+  const showPostEditButtonGroup = false;
+  
+  const postId = cancelButton.dataset.postId;
+
+  const postButtonGroupId = `post${postId}-button-group`;
+  const postButtons = [
+    'edit-button',
+    'delete-button',
+    'publish-button',
+  ];
+  
+  const postEditButtonGroupId = `post${postId}-edit-button-group`;
+  const editPostButtons = [
+    'save-edit-button',
+    'cancel-edit-button',
+  ];
+  
+  showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+  setTimeout(() => {
+    showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+  }, 500);
 }
 
 
 
-// function for PUBLISH BUTTON click
+///////////////////
+//  EDIT BUTTON  //
+///////////////////
+//
+// function for edit button click
+async function handleEditButtonClick(event, editButton) {
+  console.log('edit button clicked');
+  
+  // convert title and content elements into input field and textarea
+  
+  const postCard = event.target.closest('.post-card');
+  const cardTitleEl = postCard.querySelector('.card-title');
+  const pubDateEl = postCard.querySelector('.publication-date');
+  const cardContentEl = postCard.querySelector('.card-content');
+
+  // set edit mode
+  postCard.dataset.editMode = 'true';
+
+  // save current title, publication date, and content in data attributes
+  const currentTitle = cardTitleEl.textContent.trim();
+  const currentPubDate = pubDateEl.textContent.trim();
+  const currentContent = cardContentEl.textContent.trim();
+  
+  postCard.dataset.currentTitle = currentTitle; 
+  postCard.dataset.currentPubDate = currentPubDate
+  postCard.dataset.currentContent = currentContent;
+  
+  // replace title element with title input element
+  
+  const titleInputEl = document.createElement('input');
+  titleInputEl.type = 'text';
+  titleInputEl.classList.add('title-input', 'mb-3');
+  titleInputEl.value = currentTitle;
+
+  const inputFieldLength = currentTitle.length + 10;
+  titleInputEl.setAttribute('size', inputFieldLength.toString());
+
+  cardTitleEl.parentNode.replaceChild(titleInputEl, cardTitleEl);
+
+  // Replace publication data with 'DRAFT'
+  pubDateEl.textContent = 'DRAFT';
+      
+  // replace content element with content textarea input element
+  const contentInputEl = document.createElement('textarea');
+  contentInputEl.classList.add('content-input', 'mb-3');
+  contentInputEl.value = currentContent;
+  contentInputEl.setAttribute('rows', '10');
+
+  cardContentEl.parentNode.replaceChild(contentInputEl, cardContentEl);
+
+
+  // update button configuration:
+  // hide main button group, show edit button group
+  const showPostButtonGroup = false;
+  const showPostEditButtonGroup = true;
+  
+  const postId = editButton.dataset.postId;
+  
+  const postButtonGroupId = `post${postId}-button-group`;
+  const postButtons = [
+    'edit-button',
+    'delete-button',
+    'publish-button',
+  ];
+
+  const postEditButtonGroupId = `post${postId}-edit-button-group`;
+  const editPostButtons = [
+    'save-edit-button',
+    'cancel-edit-button',
+  ];
+
+  showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+  setTimeout(() => {
+    showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+  }, 500);
+}
+
+
+
+    //////////////////////
+   //  PUBLISH BUTTON  //
+  //////////////////////
+ //
+// function for publish button click
 async function handlePublishButtonClick(event) {
   const publishButton = event.target;
   
@@ -160,30 +291,43 @@ async function handlePublishButtonClick(event) {
 
 
 
+    /////////////////////////
+   //  Show Post Buttons  //
+  /////////////////////////
+ //
+// function to show/hide dashboard post buttons
+function showPostButtons(showState, buttonGroupId = '', buttons = []) {
 
-function showPostButtons(postId, showState, buttons = []) {
-  console.log('buttons');
-  console.log(buttons);
-  // do nothing if buttons array is empty
-  if (buttons.length === 0) {
+  // do nothing if no button group ID or buttons array is empty
+  if (buttonGroupId === '' || buttons.length === 0) {
     return;
   }
+  const buttonGroupElement = document.getElementById(buttonGroupId);
+  console.log('buttonGroupElement');
+  console.log(buttonGroupElement);
 
-  const postButtonGroupElement = document.getElementById(`post${postId}-button-group`);
-  
   const button = {};
-
+  
   buttons.forEach(buttonClass => {
-    button[buttonClass] = postButtonGroupElement.querySelector(`.${buttonClass}`);
+    button[buttonClass] = buttonGroupElement.querySelector(`.${buttonClass}`);
   });
+  console.log('button');
+  console.log(button);
+  console.log('showState');
+  console.log(showState);
+  console.log('buttonGroupId');
+  console.log(buttonGroupId);
+  console.log('buttons');
+  console.log(buttons);
+  
   if (showState === true) {
     console.log('show buttons')
     // show post buttons
-    postButtonGroupElement.classList.remove('display-none')
+    buttonGroupElement.classList.remove('display-none')
     
     // delay adding visible and removing disabled for 0.1s
     setTimeout(() => {
-      postButtonGroupElement.classList.add('visible')
+      buttonGroupElement.classList.add('visible')
       
       buttons.forEach(buttonClass => {
         button[buttonClass].removeAttribute('disabled');
@@ -192,17 +336,17 @@ function showPostButtons(postId, showState, buttons = []) {
     }, 100);
     
   } else {
-    console.log('hide buttons')
+    console.log('hide buttons (else case)')
     // disable post buttons
     buttons.forEach(buttonClass => {
       button[buttonClass].setAttribute('disabled', 'true');
     });    
 
-    postButtonGroupElement.classList.remove('visible')
+    buttonGroupElement.classList.remove('visible')
     
     // add display-none after opacity has reached 0
     setTimeout(() => {
-      postButtonGroupElement.classList.add('display-none')
+      buttonGroupElement.classList.add('display-none')
     }, 500);
   }
 }
@@ -211,11 +355,12 @@ function showPostButtons(postId, showState, buttons = []) {
 // event listener for post buttons
 document.getElementById('all-posts').addEventListener('click', async function (event) {
 
-  const cardArea = event.target.closest('.post-card');
+  // const cardArea = event.target.closest('.post-card');
   const editButton = event.target.closest('.edit-button');
   const deleteButton = event.target.closest('.delete-button');
   const publishButton = event.target.closest('.publish-button');
-
+  const saveButton = event.target.closest('.save-edit-button');
+  const cancelButton = event.target.closest('.cancel-edit-button');
 
   if (editButton) {
     handleEditButtonClick(event, editButton);
@@ -225,6 +370,12 @@ document.getElementById('all-posts').addEventListener('click', async function (e
 
   } else if (publishButton) {
     handlePublishButtonClick(event, publishButton);
+    
+  } else if (saveButton) {
+    handleSaveButtonClick(event, saveButton);
+    
+  } else if (cancelButton) {
+    handleCancelButtonClick(event, cancelButton);
   }
 });
 
@@ -233,7 +384,11 @@ document.getElementById('all-posts').addEventListener('click', async function (e
 document.addEventListener('postCollapse', async function (event) {
   const postId = event.detail.postId;
   const isCollapsed = event.detail.isCollapsed;
+  // if collapse state is true then need to un-collapse,
+  // need to show the post button group
+  const showPostButtonGroup = isCollapsed; 
 
+  const buttonGroupId = `post${postId}-button-group`;
   const buttons = [
     'edit-button',
     'delete-button',
@@ -242,11 +397,11 @@ document.addEventListener('postCollapse', async function (event) {
   console.log('buttons');
   console.log(buttons);
 
-  showPostButtons(postId, isCollapsed, buttons);
+  showPostButtons(showPostButtonGroup, buttonGroupId, buttons);
 });
 
 // event listener for new post button click
-document.getElementById('new-post-button').addEventListener('click', async function (event) {
+newPostButton.addEventListener('click', async function (event) {
   
   console.log('new post button clicked')
   

@@ -60,3 +60,13 @@ p {
 .display-none {
   display: none;
 }
+
+.title-input,
+.content-input {
+  border-radius: 0;
+  border: 1px solid rgb(197, 200, 203);
+}
+
+.content-input {
+  width: 100%;
+}

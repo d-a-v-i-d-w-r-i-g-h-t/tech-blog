@@ -49,14 +49,20 @@
   data-post-id="{{id}}"
   data-logged-in="{{loggedIn}}"
   data-collapse-state="true"
+  data-edit-mode="false"
+  data-current-title=""
+  data-current-pub-date=""
+  data-current-content=""
 >
   <div class="card-body">
     <div class="card-header-section">
       <div>
-        <h4 class="card-title">{{title}}</h4>
+        <h4 class="card-title">
+          {{title}}
+        </h4>
         <h6
           id="post{{id}}-publication-date"
-          class="card-subtitle mb-2 text-body-tertiary"
+          class="publication-date card-subtitle mb-2 text-body-tertiary"
         >
         {{#if published}}
           {{formatDate date_published}}
@@ -68,8 +74,31 @@
 
       {{!-- DASHBOARD BUTTONS --}}
       {{#if dashboard}}
-        <div id="post{{id}}-button-group" class="btn-group fade-in-out" role="group">
+        <div id="post{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
 
+          {{!-- SAVE EDIT BUTTON --}}
+          <button
+            type="button"
+            class="save-edit-button post-button btn btn-success"
+            data-post-id="{{id}}"
+            data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+            disabled="true"
+          >Save
+          </button>
+          
+          {{!-- CANCEL EDIT BUTTON --}}
+          <button
+            type="button"
+            class="cancel-edit-button post-button btn btn-outline-secondary"
+            data-post-id="{{id}}"
+            data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+            disabled="true"
+          >Cancel
+          </button>
+          
+        </div>  
+        <div id="post{{id}}-button-group" class="btn-group fade-in-out" role="group">
+          
           {{!-- EDIT BUTTON --}}
           <button
             type="button"
