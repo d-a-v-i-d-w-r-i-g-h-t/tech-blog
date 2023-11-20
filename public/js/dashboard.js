@@ -1,3 +1,4 @@
+// display new post button
 const newPostButton = document.getElementById('new-post-button')
 setTimeout(() => {
   newPostButton.classList.add('visible')  
@@ -12,6 +13,12 @@ const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl, {
 // define new unable to delete modal
 const unableToDeleteModalEl = document.getElementById('unableToDeleteModal');
 const unableToDeleteModal = new bootstrap.Modal(unableToDeleteModalEl, {
+  keyboard: false
+});
+
+// define new unable to save modal
+const unableToSaveModalEl = document.getElementById('unableToSaveModal');
+const unableToSaveModal = new bootstrap.Modal(unableToSaveModalEl, {
   keyboard: false
 });
 
@@ -31,33 +38,99 @@ function formatDate(date) {
 
 
 
-    /////////////////////
-   //  DELETE BUTTON  //
-  /////////////////////
- //
+///////////////////
+//  SAVE BUTTON  //
+///////////////////
+//
+// function for save button click
+async function handleSaveButtonClick(event) {
+  console.log('save button clicked');
+
+  const postCard = event.target.closest('.post-card');
+
+  const postId = postCard.dataset.postId;
+
+  // retrieve updated title and content from input fields
+  const titleInputEl = postCard.querySelector('.title-input');
+  const pubDateEl = postCard.querySelector('.publication-date');
+  const contentInputEl = postCard.querySelector('.content-input');
+
+  const savedTitle = titleInputEl.value.trim();
+  const savedPubDate = pubDateEl.textContent.trim();
+  const savedContent = contentInputEl.value.trim();
+  console.log('savedTitle');
+  console.log(savedTitle);
+  console.log('savedContent');
+  console.log(savedContent);
+  // try {
+    // const response = await fetch(`/api/posts/${postId}`, {
+    //   method: 'PUT',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     published: false,
+    //     title: savedTitle,
+    //     content: savedContent,
+    //   }),
+    // });
+    
+    // if (response.ok) {
+      
+      // save updated title and content in data attributes
+      postCard.dataset.currentTitle = savedTitle;
+      postCard.dataset.currentPubDate = savedPubDate;
+      postCard.dataset.currentContent = savedContent;
+
+      const publishButtonEl = postCard.querySelector('.publish-button');
+      publishButtonEl.classList.remove('btn-success');
+      publishButtonEl.classList.add('btn-outline-success');
+      publishButtonEl.dataset.published='false';
+      publishButtonEl.textContent='Publish';
+      
+      disableEditMode(postCard);
+
+  //   } else {
+  //     const errorMessage = await response.text();
+  //     console.error(`Failed to update post. Server response: ${errorMessage}`);
+      
+      unableToSaveModal.show();
+  //   }
+  // } catch (err) {
+  //   console.error('An unexpected error occurred:', err);
+  // }
+
+}
+
+
+
+/////////////////////
+//  DELETE BUTTON  //
+/////////////////////
+//
 // function for delete button click
-async function handleDeleteButtonClick(event, deleteButton) {
-  const postId = deleteButton.dataset.postId;
+async function handleDeleteButtonClick(event) {
+  console.log('delete button clicked');
+
+  const postCard = event.target.closest('.post-card');
+  
+  const postId = postCard.dataset.postId;
   
   confirmDeleteModal.show();
   
   console.log('ok to delete');
-  return;
+
   if (!isConfirmDeleteEventListenerAdded) {
     
     confirmDeleteModalEl.addEventListener('click', async function (event) {
       if (event.target.id === 'ok-delete') {
         
         console.log('ok to delete');
-        try {
-          const response = await fetch(`/api/posts/${postId}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+        // try {
+        //   const response = await fetch(`/api/posts/${postId}`, {
+        //     method: 'DELETE',
+        //     headers: { 'Content-Type': 'application/json' }
+        //   });
           
-          if (response.ok) {
+          // if (response.ok) {
             const elementId = `post${postId}-card`;
             const elementToRemove = document.getElementById(elementId);
             if (elementToRemove) {
@@ -65,15 +138,15 @@ async function handleDeleteButtonClick(event, deleteButton) {
             } else {
               console.log('Element not found');
             }
-          } else {
-            const errorMessage = await response.text();
-            console.error(`Failed to delete post. Server response: ${errorMessage}`);
+          // } else {
+          //   const errorMessage = await response.text();
+          //   console.error(`Failed to delete post. Server response: ${errorMessage}`);
             
             unableToDeleteModal.show();
-          }
-        } catch (err) {
-          console.error('An unexpected error occurred:', err);
-        }
+          // }
+        // } catch (err) {
+        //   console.error('An unexpected error occurred:', err);
+        // }
       }
     });
     isConfirmDeleteEventListenerAdded = true;
@@ -81,25 +154,38 @@ async function handleDeleteButtonClick(event, deleteButton) {
 }
 
 
+
 /////////////////////
 //  CANCEL BUTTON  //
 /////////////////////
 //
 // function for cancel button click
-async function handleCancelButtonClick(event, cancelButton) {
+async function handleCancelButtonClick(event) {
   console.log('cancel button clicked');
   
-  // change input field & textarea back to read-only elements
-  
   const postCard = event.target.closest('.post-card');
+    
+  disableEditMode(postCard);
+}
+
+
+
+/////////////////////////
+//  Disable Edit Mode  //
+/////////////////////////
+//
+// function to disable edit mode
+function disableEditMode(postCard) {
+
+  postCard.dataset.editMode = 'false';
+
+  // change input field & textarea back to read-only elements
+
   const titleInputEl = postCard.querySelector('.title-input');
   const pubDateEl = postCard.querySelector('.publication-date');
   const contentInputEl = postCard.querySelector('.content-input');
-
-  // disable edit mode
-  postCard.dataset.editMode = 'false';
   
-  // discard changes, replace original title and content saved in data attributes
+  // replace title and content with data saved in data attributes
   const savedTitle = postCard.dataset.currentTitle;
   const savedPubDate = postCard.dataset.currentPubDate;
   const savedContent = postCard.dataset.currentContent;
@@ -132,7 +218,7 @@ async function handleCancelButtonClick(event, cancelButton) {
   const showPostButtonGroup = true;
   const showPostEditButtonGroup = false;
   
-  const postId = cancelButton.dataset.postId;
+  const postId = postCard.dataset.postId;
 
   const postButtonGroupId = `post${postId}-button-group`;
   const postButtons = [
@@ -154,24 +240,24 @@ async function handleCancelButtonClick(event, cancelButton) {
 }
 
 
-
 ///////////////////
 //  EDIT BUTTON  //
 ///////////////////
 //
 // function for edit button click
-async function handleEditButtonClick(event, editButton) {
+async function handleEditButtonClick(event) {
   console.log('edit button clicked');
   
+  const postCard = event.target.closest('.post-card');
+  
+  // set edit mode
+  postCard.dataset.editMode = 'true';
+
   // convert title and content elements into input field and textarea
   
-  const postCard = event.target.closest('.post-card');
   const cardTitleEl = postCard.querySelector('.card-title');
   const pubDateEl = postCard.querySelector('.publication-date');
   const cardContentEl = postCard.querySelector('.card-content');
-
-  // set edit mode
-  postCard.dataset.editMode = 'true';
 
   // save current title, publication date, and content in data attributes
   const currentTitle = cardTitleEl.textContent.trim();
@@ -211,7 +297,7 @@ async function handleEditButtonClick(event, editButton) {
   const showPostButtonGroup = false;
   const showPostEditButtonGroup = true;
   
-  const postId = editButton.dataset.postId;
+  const postId = postCard.dataset.postId;
   
   const postButtonGroupId = `post${postId}-button-group`;
   const postButtons = [
@@ -363,19 +449,19 @@ document.getElementById('all-posts').addEventListener('click', async function (e
   const cancelButton = event.target.closest('.cancel-edit-button');
 
   if (editButton) {
-    handleEditButtonClick(event, editButton);
+    handleEditButtonClick(event);
 
   } else if (deleteButton) {
-    handleDeleteButtonClick(event, deleteButton);
+    handleDeleteButtonClick(event);
 
   } else if (publishButton) {
-    handlePublishButtonClick(event, publishButton);
+    handlePublishButtonClick(event);
     
   } else if (saveButton) {
-    handleSaveButtonClick(event, saveButton);
+    handleSaveButtonClick(event);
     
   } else if (cancelButton) {
-    handleCancelButtonClick(event, cancelButton);
+    handleCancelButtonClick(event);
   }
 });
 

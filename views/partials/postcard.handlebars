@@ -33,9 +33,25 @@
           Unable to delete post. Please try again.
         </div>
         <div class="modal-footer">
-          <div class="btn-group" role="group" aria-label="confirm delete button group">
-            <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
-          </div>
+          <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unable to Save Post Warning Modal -->
+  <div class="modal fade" id="unableToSaveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToSaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="unableToSaveModalLabel">Warning</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Unable to save post. Please try again.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>
@@ -80,7 +96,7 @@
           <button
             type="button"
             class="save-edit-button post-button btn btn-success"
-            data-post-id="{{id}}"
+            {{!-- data-post-id="{{id}}" --}}
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Save
@@ -90,7 +106,7 @@
           <button
             type="button"
             class="cancel-edit-button post-button btn btn-outline-secondary"
-            data-post-id="{{id}}"
+            {{!-- data-post-id="{{id}}" --}}
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Cancel
@@ -103,7 +119,7 @@
           <button
             type="button"
             class="edit-button post-button btn btn-warning"
-            data-post-id="{{id}}"
+            {{!-- data-post-id="{{id}}" --}}
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Edit
@@ -113,7 +129,7 @@
           <button
             type="button"
             class="delete-button post-button btn btn-danger"
-            data-post-id="{{id}}"
+            {{!-- data-post-id="{{id}}" --}}
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Delete
