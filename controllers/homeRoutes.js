@@ -80,14 +80,55 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
     const posts = postData.map((post) => post.get({ plain: true }));
     console.dir(posts);
-    // console.log(posts[1].comments);
 
     const loggedIn = req.session.logged_in;
     const username = req.session.username;
     const dashboard = true;
-    console.log('*** posts **********************************************************');
-    console.log(posts);
     res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
+// GET ALL COMMENTS BY CURRENT USER: DASHBOARD
+
+router.get('/dashboard/comments', withAuth, async (req, res) => {
+  try {
+    const commentData = await Comment.findAll({
+      where: { user_id: req.session.user_id },
+      attributes: { exclude: ['user_id', 'post_id'] },
+      order: [
+        ['date_created', 'DESC'],
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
+        {
+          model: Post,
+          attributes: ['id', 'title', 'content'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author',
+            },
+          ],
+        },
+      ],
+    });
+
+    const comments = commentData.map((comment) => comment.get({ plain: true }));
+    console.dir(comments);
+
+    const loggedIn = req.session.logged_in;
+    const username = req.session.username;
+    const commentsPage = true;
+    const dashboard = true;
+    res.status(200).render('comments', { comments, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -229,7 +270,7 @@ router.get('/comments/:username', async (req, res) => {
       include: [
         {
           model: Post,
-          attributes: ['id', 'title'],
+          attributes: ['id', 'title', 'content'],
           include: [
             {
               model: User,
@@ -246,9 +287,9 @@ router.get('/comments/:username', async (req, res) => {
 
     const username = req.params.username;
     const loggedIn = req.session.logged_in;
-
-    // res.status(200).json(comments);
-    res.status(200).render('comments', { comments, username, loggedIn });
+    const commentsPage = true;
+    const dashboard = true;
+    res.status(200).render('comments', { comments, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

@@ -20,6 +20,8 @@ router.post('/', withAuth, async (req, res) => {
 router.put('/:id', withAuth, async (req, res) => {
   try {
     // create an object with the update fields provided in req.body
+    console.log('req.body');
+    console.log(req.body);
     const updateFields = {};
     if (req.body.title) {
       updateFields.title = req.body.title;
@@ -39,6 +41,10 @@ router.put('/:id', withAuth, async (req, res) => {
           user_id: req.session.user_id,
         },
       });
+
+      console.log('postData');
+      console.log(postData);
+
 
       if (!postData[0]) {
         res.status(404).json({ success: false, message: 'No post found with this id!' });

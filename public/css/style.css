@@ -32,11 +32,11 @@ p {
   margin-bottom: 0; /* Remove bottom margin */
 }
 
-#dashboard-header {
+#posts-header {
   margin-bottom: 10px;
 }
 
-#dashboard-header,
+#posts-header,
 .card-header-section {
   display: flex;
   justify-content: space-between;

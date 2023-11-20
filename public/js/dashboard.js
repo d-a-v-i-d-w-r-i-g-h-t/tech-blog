@@ -4,6 +4,9 @@ setTimeout(() => {
   newPostButton.classList.add('visible')  
 }, 100);
 
+const newPostTitle = 'New Post';
+const newPostContent = `What's on your mind?`
+
 // define new confirm delete modal
 const confirmDeleteModalEl = document.getElementById('confirmDeleteModal');
 const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl, {
@@ -25,6 +28,23 @@ const unableToSaveModal = new bootstrap.Modal(unableToSaveModalEl, {
 // set global variable to prevent adding multiple confirm delete event listeners
 let isConfirmDeleteEventListenerAdded = false;
 
+function init() {
+  const allPostsEl = document.getElementById('all-posts');
+  if (allPostsEl.hasChildNodes()) {
+    const firstPost = allPostsEl.querySelector('.post-card');
+    console.log('allPostsEl');
+    console.log(allPostsEl);
+    console.log('firstPost');
+    console.log(firstPost);
+
+    const firstPostTitleEl = firstPost.querySelector('.card-title');
+    if (firstPostTitleEl && firstPostTitleEl.textContent.trim() === newPostTitle) {
+      firstPostTitleEl.click();
+      enableEditMode(firstPost);
+    }
+  }
+}
+init();
 
 // function to format date when publishing post
 function formatDate(date) {
@@ -51,27 +71,14 @@ async function handleNewPostButtonClick(event) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', },
       body: JSON.stringify({
-        title: '',
-        content: '',
+        title: newPostTitle,
+        content: newPostContent,
       }),
     });
-
+    
     if (response.ok) {
-      const result = await response.json();
-      console.log('Post created successfully:');
-      console.log(result.data);
-
-      const postId = result.data.id;
-      const postCard = document.getElementById(`post${postId}-card`);
 
       location.reload();
-
-      ////////////////////////////////////////////////////////////////////
-      const target = postCard.querySelector('.card-header-section');
-      console.log('target');
-      console.log(target);
-      enableEditMode(postCard);
-
 
     } else {
       const errorMessage = await response.text();
@@ -130,35 +137,41 @@ async function handleDeleteButtonClick(event) {
       if (event.target.id === 'ok-delete') {
         
         console.log(`confirm: ok to delete post ${postId}`);
-        try {
-          const response = await fetch(`/api/posts/${postId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-          });
-          
-          if (response.ok) {
-            const elementId = `post${postId}-card`;
-            const elementToRemove = document.getElementById(elementId);
-            if (elementToRemove) {
-              elementToRemove.remove();
-            } else {
-              console.log('Element not found');
-            }
-          } else {
-            const errorMessage = await response.text();
-            console.error(`Failed to delete post. Server response: ${errorMessage}`);
-            
-            unableToDeleteModal.show();
-          }
-        } catch (err) {
-          console.error('An unexpected error occurred:', err);
-        }
+
+        deletePost(postId)
       }
     });
     isConfirmDeleteEventListenerAdded = true;
   }
 }
 
+
+async function deletePost(postId) {
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (response.ok) {
+      const elementId = `post${postId}-card`;
+      const elementToRemove = document.getElementById(elementId);
+      if (elementToRemove) {
+        elementToRemove.remove();
+      } else {
+        console.log('Element not found');
+      }
+    } else {
+      const errorMessage = await response.text();
+      console.error(`Failed to delete post. Server response: ${errorMessage}`);
+      
+      unableToDeleteModal.show();
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
+  }
+
+}
 
 
     //////////////////////
@@ -238,10 +251,12 @@ async function handleSaveButtonClick(event) {
   const savedTitle = titleInputEl.value.trim();
   const savedPubDate = pubDateEl.textContent.trim();
   const savedContent = contentInputEl.value.trim();
-  console.log('savedTitle');
-  console.log(savedTitle);
-  console.log('savedContent');
-  console.log(savedContent);
+
+  if (savedTitle === postCard.dataset.currentTitle && savedContent === postCard.dataset.currentContent) {
+    disableEditMode(postCard);
+    return;
+  }
+
   try {
     const response = await fetch(`/api/posts/${postId}`, {
       method: 'PUT',
@@ -292,8 +307,19 @@ async function handleCancelButtonClick(event) {
   console.log('cancel button clicked');
   
   const postCard = event.target.closest('.post-card');
+  const postId = postCard.dataset.postId;
+
+  const savedTitle = postCard.dataset.currentTitle;
+  const savedContent = postCard.dataset.currentContent;
+
+  if (savedTitle === newPostTitle && savedContent === newPostContent) {
+
+    deletePost(postId);
+
+  } else {
     
-  disableEditMode(postCard);
+    disableEditMode(postCard);
+  }
 }
 
 

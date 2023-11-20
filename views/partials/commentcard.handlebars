@@ -39,36 +39,15 @@
     </div>
   </div>
 
-  <!-- Unable to Save Post Warning Modal -->
-  <div class="modal fade" id="unableToSaveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToSaveModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="unableToSaveModalLabel">Warning</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Unable to save post. Please try again.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
 {{/if}}
 
 <div
-  id="post{{id}}-card"
+  id="comment{{id}}-card"
   class="post-card card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
-  data-post-id="{{id}}"
+  data-comment-id="{{id}}"
   data-logged-in="{{loggedIn}}"
-  data-collapse-state="true"
   data-edit-mode="false"
-  data-current-title=""
-  data-current-pub-date=""
-  data-current-content=""
+  data-current-text=""
 >
   <div class="card-body">
     <div class="card-header-section">
@@ -77,20 +56,16 @@
           {{title}}
         </h4>
         <h6
-          id="post{{id}}-publication-date"
-          class="publication-date card-subtitle mb-2 text-body-tertiary"
+          id="comment{{id}}-date"
+          class="comment-date card-subtitle mb-2 text-body-tertiary"
         >
-        {{#if published}}
-          {{formatDate date_published}}
-        {{else}}
-          DRAFT
-        {{/if}}
+          {{formatDate date_created}}
         </h6>
       </div>
 
       {{!-- DASHBOARD BUTTONS --}}
       {{#if dashboard}}
-        <div id="post{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
+        <div id="comment{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
 
           {{!-- SAVE EDIT BUTTON --}}
           <button
@@ -131,71 +106,18 @@
           >Delete
           </button>
           
-          {{!-- PUBLISH / UNPUBLISH BUTTON --}}
-          <button
-            type="button"
-            class=
-              {{#if published}}
-                "publish-button post-button btn btn-success"
-              {{else}}
-                "publish-button post-button btn btn-outline-success"
-              {{/if}}
-            data-post-id="{{id}}"
-            data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
-            data-published=
-              {{#if published}}
-                "true"
-              {{else}}
-                "false"
-              {{/if}}
-            disabled="true"
-          >
-            {{#if published}}
-              Unpublish
-            {{else}}
-              Publish
-            {{/if}}
-          </button>
         
         </div>
       {{/if}}
 
     </div>
-    <div class="collapse" id="collapsePost{{id}}">
-      <p class="card-content mb-2">{{content}}</p>
-    </div>
     {{#unless dashboard}}
       <p class="card-content text-end">
         &#8212;
-        <a href="/posts/{{ author.username }}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+        <a href="/posts/{{ author.username }}"> {{!-- clicking this link will not collapse the post --}}
           {{ author.username }}
         </a>
       </p>
     {{/unless}}
-    <div class="collapse" id="collapse2Post{{id}}">
-      <h5>
-        <a data-no-collapse="true" data-bs-toggle="collapse" href="#collapseComments-post{{id}}" role="button"> {{!-- clicking this link will not collapse the post --}}
-          Comments
-        </a>
-      </h5>
-      <div class="collapse" id="collapseComments-post{{id}}">
-        {{#if comments.length}}
-          {{#each comments as |comment|}}
-            <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
-              <p class="card-content">{{text}}</p>
-              <p class="subtitle text-body-tertiary">{{formatDate comment.date_created}}</p>
-              <p class="card-content mb-0 text-end">
-                &#8212;
-                <a href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-                  {{ author.username }}
-                </a>
-              </p>
-            </div>
-          {{/each}}
-        {{else}}
-          <p>No comments yet</p>
-        {{/if}}
-      </div>
-    </div>
   </div>
 </div>

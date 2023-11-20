@@ -1,34 +1,40 @@
-<div id="dashboard-header">
+{{#unless homepage}}
+  <div id="posts-header">
 
-  <h3>
-    {{#if dashboard}}
-      My Posts
-    {{else if homepage}}
-    {{!-- empty --}}
-    {{else}}
-      {{#if posts.length}}
-        All posts by {{ username }}
+    <h3>
+      {{#if dashboard}}
+        My Posts
+      {{else if homepage}}
+      {{!-- empty --}}
       {{else}}
-        No posts available from {{ username }}
+        {{#if posts.length}}
+          All Posts by {{ username }}
+        {{else}}
+          No posts available from {{ username }}
+        {{/if}}
       {{/if}}
+    </h3>
+
+    {{#if dashboard}}
+      {{!-- NEW POST BUTTON --}}
+      <button type="button"
+        id="new-post-button"
+        class="btn btn-primary fade-in-out"
+      >New Post
+      </button>
     {{/if}}
-  </h3>
 
-  {{#if dashboard}}
-    {{!-- NEW POST BUTTON --}}
-    <button type="button"
-      id="new-post-button"
-      class="btn btn-primary fade-in-out"
-    >New Post
-    </button>
-  {{/if}}
-
-</div>
+  </div>
+{{/unless}}
 
 <div id="all-posts">
-  {{#each posts as |post|}}
-    {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
-  {{/each}}
+  {{#if posts.length}}
+    {{#each posts as |post|}}
+      {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
+    {{/each}}
+  {{else}}
+    No posts yet...
+  {{/if}}
 </div>
 
 <div>
