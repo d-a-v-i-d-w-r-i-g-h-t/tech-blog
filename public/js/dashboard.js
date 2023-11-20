@@ -86,66 +86,16 @@ async function handleNewPostButtonClick(event) {
 
 
     ///////////////////
-   //  SAVE BUTTON  //
+   //  EDIT BUTTON  //
   ///////////////////
  //
-// function for save button click
-async function handleSaveButtonClick(event) {
-  console.log('save button clicked');
-
+// function for edit button click
+async function handleEditButtonClick(event) {
+  console.log('edit button clicked');
+  
   const postCard = event.target.closest('.post-card');
-
-  const postId = postCard.dataset.postId;
-
-  // retrieve updated title and content from input fields
-  const titleInputEl = postCard.querySelector('.title-input');
-  const pubDateEl = postCard.querySelector('.publication-date');
-  const contentInputEl = postCard.querySelector('.content-input');
-
-  const savedTitle = titleInputEl.value.trim();
-  const savedPubDate = pubDateEl.textContent.trim();
-  const savedContent = contentInputEl.value.trim();
-  console.log('savedTitle');
-  console.log(savedTitle);
-  console.log('savedContent');
-  console.log(savedContent);
-  try {
-    const response = await fetch(`/api/posts/${postId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        published: false,
-        title: savedTitle,
-        content: savedContent,
-      }),
-    });
-    console.log('save response');
-    console.log(response);
-    
-    if (response.ok) {
-      
-      // save updated title and content in data attributes
-      postCard.dataset.currentTitle = savedTitle;
-      postCard.dataset.currentPubDate = savedPubDate;
-      postCard.dataset.currentContent = savedContent;
-
-      const publishButtonEl = postCard.querySelector('.publish-button');
-      publishButtonEl.classList.remove('btn-success');
-      publishButtonEl.classList.add('btn-outline-success');
-      publishButtonEl.dataset.published='false';
-      publishButtonEl.textContent='Publish';
-      
-      disableEditMode(postCard);
-
-    } else {
-      const errorMessage = await response.text();
-      console.error(`Failed to update post. Server response: ${errorMessage}`);
-      
-      unableToSaveModal.show();
-    }
-  } catch (err) {
-    console.error('An unexpected error occurred:', err);
-  }
+  
+  enableEditMode(postCard);
 }
 
 
@@ -206,6 +156,128 @@ async function handleDeleteButtonClick(event) {
       }
     });
     isConfirmDeleteEventListenerAdded = true;
+  }
+}
+
+
+
+    //////////////////////
+   //  PUBLISH BUTTON  //
+  //////////////////////
+ //
+// function for publish button click
+async function handlePublishButtonClick(event) {
+  const publishButton = event.target;
+  
+  const postId = publishButton.dataset.postId;
+  const isPublished = publishButton.dataset.published === 'true'; // converting string to boolean
+  const publicationDateElement = document.getElementById(`post${postId}-publication-date`);
+  
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ published: !isPublished }),
+    });
+    
+    if (response.ok) {
+      if (isPublished) {
+        // change publication date to draft
+        publicationDateElement.textContent = "DRAFT"
+        
+        // switch button to 'unpublished' mode
+        publishButton.classList.add('btn-outline-success');
+        publishButton.classList.remove('btn-success');
+        publishButton.textContent = 'Publish'
+        
+        publishButton.dataset.published = 'false';
+        
+      } else {
+        // add publication date
+        publicationDateElement.textContent = formatDate(Date.now());
+        
+        // switch button to 'published' mode
+        publishButton.classList.remove('btn-outline-success');
+        publishButton.classList.add('btn-success');
+        publishButton.textContent = 'Unpublish'
+        
+        publishButton.dataset.published = 'true';
+      }
+      
+    } else {
+      const errorMessage = await response.text();
+      console.error(`Failed to delete post. Server response: ${errorMessage}`);
+      
+      unableToDeleteModal.show();
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
+  }
+  
+}
+
+
+
+    ///////////////////
+   //  SAVE BUTTON  //
+  ///////////////////
+ //
+// function for save button click
+async function handleSaveButtonClick(event) {
+  console.log('save button clicked');
+
+  const postCard = event.target.closest('.post-card');
+
+  const postId = postCard.dataset.postId;
+
+  // retrieve updated title and content from input fields
+  const titleInputEl = postCard.querySelector('.title-input');
+  const pubDateEl = postCard.querySelector('.publication-date');
+  const contentInputEl = postCard.querySelector('.content-input');
+
+  const savedTitle = titleInputEl.value.trim();
+  const savedPubDate = pubDateEl.textContent.trim();
+  const savedContent = contentInputEl.value.trim();
+  console.log('savedTitle');
+  console.log(savedTitle);
+  console.log('savedContent');
+  console.log(savedContent);
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        published: false,
+        title: savedTitle,
+        content: savedContent,
+      }),
+    });
+    console.log('save response');
+    console.log(response);
+    
+    if (response.ok) {
+      
+      // save updated title and content in data attributes
+      postCard.dataset.currentTitle = savedTitle;
+      postCard.dataset.currentPubDate = savedPubDate;
+      postCard.dataset.currentContent = savedContent;
+
+      const publishButtonEl = postCard.querySelector('.publish-button');
+      publishButtonEl.classList.remove('btn-success');
+      publishButtonEl.classList.add('btn-outline-success');
+      publishButtonEl.dataset.published='false';
+      publishButtonEl.textContent='Publish';
+      
+      disableEditMode(postCard);
+
+    } else {
+      const errorMessage = await response.text();
+      console.error(`Failed to update post. Server response: ${errorMessage}`);
+      
+      unableToSaveModal.show();
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
   }
 }
 
@@ -370,79 +442,6 @@ function disableEditMode(postCard) {
     showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
   }, 500);
 }
-
-
-    ///////////////////
-   //  EDIT BUTTON  //
-  ///////////////////
- //
-// function for edit button click
-async function handleEditButtonClick(event) {
-  console.log('edit button clicked');
-  
-  const postCard = event.target.closest('.post-card');
-  
-  enableEditMode(postCard);
-
-}
-
-
-
-    //////////////////////
-   //  PUBLISH BUTTON  //
-  //////////////////////
- //
-// function for publish button click
-async function handlePublishButtonClick(event) {
-  const publishButton = event.target;
-  
-  const postId = publishButton.dataset.postId;
-  const isPublished = publishButton.dataset.published === 'true'; // converting string to boolean
-  const publicationDateElement = document.getElementById(`post${postId}-publication-date`);
-  
-  try {
-    const response = await fetch(`/api/posts/${postId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ published: !isPublished }),
-    });
-    
-    if (response.ok) {
-      if (isPublished) {
-        // change publication date to draft
-        publicationDateElement.textContent = "DRAFT"
-        
-        // switch button to 'unpublished' mode
-        publishButton.classList.add('btn-outline-success');
-        publishButton.classList.remove('btn-success');
-        publishButton.textContent = 'Publish'
-        
-        publishButton.dataset.published = 'false';
-        
-      } else {
-        // add publication date
-        publicationDateElement.textContent = formatDate(Date.now());
-        
-        // switch button to 'published' mode
-        publishButton.classList.remove('btn-outline-success');
-        publishButton.classList.add('btn-success');
-        publishButton.textContent = 'Unpublish'
-        
-        publishButton.dataset.published = 'true';
-      }
-      
-    } else {
-      const errorMessage = await response.text();
-      console.error(`Failed to delete post. Server response: ${errorMessage}`);
-      
-      unableToDeleteModal.show();
-    }
-  } catch (err) {
-    console.error('An unexpected error occurred:', err);
-  }
-  
-}
-
 
 
     /////////////////////////
