@@ -67,7 +67,9 @@ async function handleNewPostButtonClick(event) {
       location.reload();
 
       ////////////////////////////////////////////////////////////////////
-      postCard.click();
+      const target = postCard.querySelector('.card-header-section');
+      console.log('target');
+      console.log(target);
       enableEditMode(postCard);
 
 
@@ -155,21 +157,29 @@ async function handleSaveButtonClick(event) {
 // function for delete button click
 async function handleDeleteButtonClick(event) {
   console.log('delete button clicked');
-
   const postCard = event.target.closest('.post-card');
   
   const postId = postCard.dataset.postId;
+  console.log('postId');
+  console.log(postId);
   
+  // store the postId in the modal for later retrieval
+  confirmDeleteModalEl.dataset.postId = postId;
+
   confirmDeleteModal.show();
   
-  console.log('ok to delete');
+  console.log(`ok to delete post ${postId}`);
 
   if (!isConfirmDeleteEventListenerAdded) {
     
     confirmDeleteModalEl.addEventListener('click', async function (event) {
+      
+      // retrieve the postId from the modal data attribute
+      const postId = confirmDeleteModalEl.dataset.postId;
+      
       if (event.target.id === 'ok-delete') {
         
-        console.log('ok to delete');
+        console.log(`confirm: ok to delete post ${postId}`);
         try {
           const response = await fetch(`/api/posts/${postId}`, {
             method: 'DELETE',
