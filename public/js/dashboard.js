@@ -38,10 +38,55 @@ function formatDate(date) {
 
 
 
-///////////////////
-//  SAVE BUTTON  //
-///////////////////
-//
+    //////////////////
+   //  NEW BUTTON  //
+  //////////////////
+ //
+// function for new button click
+async function handleNewPostButtonClick(event) {
+  console.log('new button clicked');
+  console.log(event.target);
+  try {
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', },
+      body: JSON.stringify({
+        title: '',
+        content: '',
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Post created successfully:');
+      console.log(result.data);
+
+      const postId = result.data.id;
+      const postCard = document.getElementById(`post${postId}-card`);
+
+      location.reload();
+
+      ////////////////////////////////////////////////////////////////////
+      postCard.click();
+      enableEditMode(postCard);
+
+
+    } else {
+      const errorMessage = await response.text();
+      console.error('Failed to create post:', errorMessage);
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
+  }
+
+}
+
+
+
+    ///////////////////
+   //  SAVE BUTTON  //
+  ///////////////////
+ //
 // function for save button click
 async function handleSaveButtonClick(event) {
   console.log('save button clicked');
@@ -62,18 +107,20 @@ async function handleSaveButtonClick(event) {
   console.log(savedTitle);
   console.log('savedContent');
   console.log(savedContent);
-  // try {
-    // const response = await fetch(`/api/posts/${postId}`, {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     published: false,
-    //     title: savedTitle,
-    //     content: savedContent,
-    //   }),
-    // });
+  try {
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        published: false,
+        title: savedTitle,
+        content: savedContent,
+      }),
+    });
+    console.log('save response');
+    console.log(response);
     
-    // if (response.ok) {
+    if (response.ok) {
       
       // save updated title and content in data attributes
       postCard.dataset.currentTitle = savedTitle;
@@ -88,24 +135,23 @@ async function handleSaveButtonClick(event) {
       
       disableEditMode(postCard);
 
-  //   } else {
-  //     const errorMessage = await response.text();
-  //     console.error(`Failed to update post. Server response: ${errorMessage}`);
+    } else {
+      const errorMessage = await response.text();
+      console.error(`Failed to update post. Server response: ${errorMessage}`);
       
       unableToSaveModal.show();
-  //   }
-  // } catch (err) {
-  //   console.error('An unexpected error occurred:', err);
-  // }
-
+    }
+  } catch (err) {
+    console.error('An unexpected error occurred:', err);
+  }
 }
 
 
 
-/////////////////////
-//  DELETE BUTTON  //
-/////////////////////
-//
+    /////////////////////
+   //  DELETE BUTTON  //
+  /////////////////////
+ //
 // function for delete button click
 async function handleDeleteButtonClick(event) {
   console.log('delete button clicked');
@@ -124,13 +170,13 @@ async function handleDeleteButtonClick(event) {
       if (event.target.id === 'ok-delete') {
         
         console.log('ok to delete');
-        // try {
-        //   const response = await fetch(`/api/posts/${postId}`, {
-        //     method: 'DELETE',
-        //     headers: { 'Content-Type': 'application/json' }
-        //   });
+        try {
+          const response = await fetch(`/api/posts/${postId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
           
-          // if (response.ok) {
+          if (response.ok) {
             const elementId = `post${postId}-card`;
             const elementToRemove = document.getElementById(elementId);
             if (elementToRemove) {
@@ -138,15 +184,15 @@ async function handleDeleteButtonClick(event) {
             } else {
               console.log('Element not found');
             }
-          // } else {
-          //   const errorMessage = await response.text();
-          //   console.error(`Failed to delete post. Server response: ${errorMessage}`);
+          } else {
+            const errorMessage = await response.text();
+            console.error(`Failed to delete post. Server response: ${errorMessage}`);
             
             unableToDeleteModal.show();
-          // }
-        // } catch (err) {
-        //   console.error('An unexpected error occurred:', err);
-        // }
+          }
+        } catch (err) {
+          console.error('An unexpected error occurred:', err);
+        }
       }
     });
     isConfirmDeleteEventListenerAdded = true;
@@ -155,10 +201,10 @@ async function handleDeleteButtonClick(event) {
 
 
 
-/////////////////////
-//  CANCEL BUTTON  //
-/////////////////////
-//
+    /////////////////////
+   //  CANCEL BUTTON  //
+  /////////////////////
+ //
 // function for cancel button click
 async function handleCancelButtonClick(event) {
   console.log('cancel button clicked');
@@ -170,10 +216,86 @@ async function handleCancelButtonClick(event) {
 
 
 
-/////////////////////////
-//  Disable Edit Mode  //
-/////////////////////////
-//
+    ////////////////////////
+   //  Enable Edit Mode  //
+  ////////////////////////
+ //
+// function to enable edit mode
+function enableEditMode(postCard) {
+
+  postCard.dataset.editMode = 'true';
+
+  // convert title and content elements into input field and textarea
+  
+  const cardTitleEl = postCard.querySelector('.card-title');
+  const pubDateEl = postCard.querySelector('.publication-date');
+  const cardContentEl = postCard.querySelector('.card-content');
+
+  // save current title, publication date, and content in data attributes
+  const currentTitle = cardTitleEl.textContent.trim();
+  const currentPubDate = pubDateEl.textContent.trim();
+  const currentContent = cardContentEl.textContent.trim();
+  
+  postCard.dataset.currentTitle = currentTitle; 
+  postCard.dataset.currentPubDate = currentPubDate
+  postCard.dataset.currentContent = currentContent;
+  
+  // replace title element with title input element
+  
+  const titleInputEl = document.createElement('input');
+  titleInputEl.type = 'text';
+  titleInputEl.classList.add('title-input', 'mb-3');
+  titleInputEl.value = currentTitle;
+
+  const inputFieldLength = currentTitle.length + 10;
+  titleInputEl.setAttribute('size', inputFieldLength.toString());
+
+  cardTitleEl.parentNode.replaceChild(titleInputEl, cardTitleEl);
+
+  // Replace publication data with 'DRAFT'
+  pubDateEl.textContent = 'DRAFT';
+      
+  // replace content element with content textarea input element
+  const contentInputEl = document.createElement('textarea');
+  contentInputEl.classList.add('content-input', 'mb-3');
+  contentInputEl.value = currentContent;
+  contentInputEl.setAttribute('rows', '10');
+
+  cardContentEl.parentNode.replaceChild(contentInputEl, cardContentEl);
+
+
+  // update button configuration:
+  // hide main button group, show edit button group
+  const showPostButtonGroup = false;
+  const showPostEditButtonGroup = true;
+  
+  const postId = postCard.dataset.postId;
+  
+  const postButtonGroupId = `post${postId}-button-group`;
+  const postButtons = [
+    'edit-button',
+    'delete-button',
+    'publish-button',
+  ];
+
+  const postEditButtonGroupId = `post${postId}-edit-button-group`;
+  const editPostButtons = [
+    'save-edit-button',
+    'cancel-edit-button',
+  ];
+
+  showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+  setTimeout(() => {
+    showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+  }, 500);
+}
+
+
+
+    /////////////////////////
+   //  Disable Edit Mode  //
+  /////////////////////////
+ //
 // function to disable edit mode
 function disableEditMode(postCard) {
 
@@ -240,82 +362,18 @@ function disableEditMode(postCard) {
 }
 
 
-///////////////////
-//  EDIT BUTTON  //
-///////////////////
-//
+    ///////////////////
+   //  EDIT BUTTON  //
+  ///////////////////
+ //
 // function for edit button click
 async function handleEditButtonClick(event) {
   console.log('edit button clicked');
   
   const postCard = event.target.closest('.post-card');
   
-  // set edit mode
-  postCard.dataset.editMode = 'true';
+  enableEditMode(postCard);
 
-  // convert title and content elements into input field and textarea
-  
-  const cardTitleEl = postCard.querySelector('.card-title');
-  const pubDateEl = postCard.querySelector('.publication-date');
-  const cardContentEl = postCard.querySelector('.card-content');
-
-  // save current title, publication date, and content in data attributes
-  const currentTitle = cardTitleEl.textContent.trim();
-  const currentPubDate = pubDateEl.textContent.trim();
-  const currentContent = cardContentEl.textContent.trim();
-  
-  postCard.dataset.currentTitle = currentTitle; 
-  postCard.dataset.currentPubDate = currentPubDate
-  postCard.dataset.currentContent = currentContent;
-  
-  // replace title element with title input element
-  
-  const titleInputEl = document.createElement('input');
-  titleInputEl.type = 'text';
-  titleInputEl.classList.add('title-input', 'mb-3');
-  titleInputEl.value = currentTitle;
-
-  const inputFieldLength = currentTitle.length + 10;
-  titleInputEl.setAttribute('size', inputFieldLength.toString());
-
-  cardTitleEl.parentNode.replaceChild(titleInputEl, cardTitleEl);
-
-  // Replace publication data with 'DRAFT'
-  pubDateEl.textContent = 'DRAFT';
-      
-  // replace content element with content textarea input element
-  const contentInputEl = document.createElement('textarea');
-  contentInputEl.classList.add('content-input', 'mb-3');
-  contentInputEl.value = currentContent;
-  contentInputEl.setAttribute('rows', '10');
-
-  cardContentEl.parentNode.replaceChild(contentInputEl, cardContentEl);
-
-
-  // update button configuration:
-  // hide main button group, show edit button group
-  const showPostButtonGroup = false;
-  const showPostEditButtonGroup = true;
-  
-  const postId = postCard.dataset.postId;
-  
-  const postButtonGroupId = `post${postId}-button-group`;
-  const postButtons = [
-    'edit-button',
-    'delete-button',
-    'publish-button',
-  ];
-
-  const postEditButtonGroupId = `post${postId}-edit-button-group`;
-  const editPostButtons = [
-    'save-edit-button',
-    'cancel-edit-button',
-  ];
-
-  showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
-  setTimeout(() => {
-    showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
-  }, 500);
 }
 
 
@@ -490,5 +548,6 @@ document.addEventListener('postCollapse', async function (event) {
 newPostButton.addEventListener('click', async function (event) {
   
   console.log('new post button clicked')
-  
+  handleNewPostButtonClick(event);
+
 });

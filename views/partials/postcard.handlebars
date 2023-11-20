@@ -183,18 +183,22 @@
         </a>
       </h5>
       <div class="collapse" id="collapseComments-post{{id}}">
-        {{#each comments as |comment|}}
-          <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
-            <p class="card-content">{{text}}</p>
-            <p class="subtitle text-body-tertiary">{{formatDate comment.date_created}}</p>
-            <p class="card-content mb-0 text-end">
-              &#8212;
-              <a href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-                {{ author.username }}
-              </a>
-            </p>
-          </div>
-        {{/each}}
+        {{#if comments.length}}
+          {{#each comments as |comment|}}
+            <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
+              <p class="card-content">{{text}}</p>
+              <p class="subtitle text-body-tertiary">{{formatDate comment.date_created}}</p>
+              <p class="card-content mb-0 text-end">
+                &#8212;
+                <a href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+                  {{ author.username }}
+                </a>
+              </p>
+            </div>
+          {{/each}}
+        {{else}}
+          <p>No comments yet</p>
+        {{/if}}
       </div>
     </div>
   </div>

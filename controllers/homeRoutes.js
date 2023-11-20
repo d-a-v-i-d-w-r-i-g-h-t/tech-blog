@@ -1,8 +1,7 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/authorize');
-
-
+const sequelize = require("../config/connection");
 
 // GET ALL POSTS, sorted by date (newest at the top)
 
@@ -55,8 +54,9 @@ router.get('/dashboard', withAuth, async (req, res) => {
       where: { user_id: req.session.user_id },
       attributes: { exclude: ['user_id'] },
       order: [
-        ['date_published', 'DESC'],
-        ['date_created', 'DESC'],
+        ['published', 'ASC'], // Sort by 'published' in ascending order (false first)
+        ['date_created', 'DESC'], // Sort by 'date_created' in descending order for unpublished posts
+        ['date_published', 'DESC'], // Sort by 'date_published' in descending order for published posts
       ],
       include: [
         {
@@ -85,7 +85,8 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const loggedIn = req.session.logged_in;
     const username = req.session.username;
     const dashboard = true;
-  
+    console.log('*** posts **********************************************************');
+    console.log(posts);
     res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
