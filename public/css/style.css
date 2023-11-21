@@ -42,7 +42,8 @@ p {
   justify-content: space-between;
 }
 
-.post-button {
+.post-button,
+.comment-button {
   width: 100px;
   height: 35px;
   font-size: 0.8em;

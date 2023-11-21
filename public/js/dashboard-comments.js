@@ -115,16 +115,12 @@ async function handleSaveCommentEditButtonClick(event) {
 
   const commentId = commentCard.dataset.commentId;
 
-  // retrieve updated title and content from input fields
-  const textInputEl = commentCard.querySelector('.title-input');
-  const pubDateEl = commentCard.querySelector('.publication-date');
-  const contentInputEl = commentCard.querySelector('.content-input');
+  // retrieve updated text from input fields
+  const textInputEl = commentCard.querySelector('.text-input');
 
   const savedText = textInputEl.value.trim();
-  const savedPubDate = pubDateEl.textContent.trim();
-  const savedContent = contentInputEl.value.trim();
 
-  if (savedText === commentCard.dataset.currentText && savedContent === commentCard.dataset.currentContent) {
+  if (savedText === commentCard.dataset.currentText) {
     disableEditMode(commentCard);
     return;
   }
@@ -136,7 +132,6 @@ async function handleSaveCommentEditButtonClick(event) {
       body: JSON.stringify({
         published: false,
         title: savedText,
-        content: savedContent,
       }),
     });
     console.log('save response');
@@ -146,8 +141,6 @@ async function handleSaveCommentEditButtonClick(event) {
       
       // save updated title and content in data attributes
       commentCard.dataset.currentText = savedText;
-      commentCard.dataset.currentPubDate = savedPubDate;
-      commentCard.dataset.currentContent = savedContent;
 
       disableEditMode(commentCard);
 
@@ -177,7 +170,7 @@ async function handleCancelCommentEditButtonClick(event) {
 
   const savedText = commentCard.dataset.currentText;
 
-  if (savedText === newCommentText) {
+  if (savedText === '') {
 
     deleteComment(commentId);
 
@@ -236,7 +229,7 @@ function enableEditMode(commentCard) {
   const commentEditButtonGroupId = `comment${commentId}-edit-comment-button-group`;
   const editCommentButtons = [
     'save-comment-edit-button',
-    'cancel-pcommentost-edit-button',
+    'cancel-comment-edit-button',
   ];
 
   showButtons(showCommentButtonGroup, commentButtonGroupId, commentButtons);

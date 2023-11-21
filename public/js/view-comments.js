@@ -54,3 +54,14 @@ async function handleCommentCardClick(event, commentCard) {
     console.log('hidden');
   }
 }
+
+
+// event listener for clicks on comments
+document.getElementById('all-comments').addEventListener('click', async function (event) {
+
+  const commentCard = event.target.closest('.comment-card');
+
+  if (commentCard) {
+    handleCommentCardClick(event, commentCard);
+  }
+});
