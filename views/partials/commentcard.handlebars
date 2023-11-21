@@ -1,4 +1,4 @@
-{{#if dashboard}}
+{{#if dashboardComments}}
 
   <!-- Delete Confirm Modal -->
   <div class="modal fade" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -50,27 +50,62 @@
   data-current-text=""
 >
   <div class="card-body">
-    <div class="card-header-section">
-      <div>
+
+    <div class="collapse" id="collapsePostComment{{id}}">
+      {{#if post}}
+        <div class="associated-post" data-post-id="{{post.id}}">
+          <div>
+            <h4 class="card-title">
+              {{post.title}}
+            </h4>
+            <h6
+              id="comment{{id}}-date"
+              class="comment-date card-subtitle mb-2 text-body-tertiary"
+            >
+              {{formatDate date_created}}
+            </h6>
+            <p class="card-content mb-2">{{post.content}}</p>
+            <p class="card-content text-end">
+              &#8212;
+              <a href="/posts/{{ post.author.username }}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+                {{ post.author.username }}
+              </a>
+            </p>
+          </div>
+        </div>
+      {{else}}
         <h4 class="card-title">
-          {{title}}
+          Post not available
         </h4>
-        <h6
-          id="comment{{id}}-date"
-          class="comment-date card-subtitle mb-2 text-body-tertiary"
-        >
-          {{formatDate date_created}}
-        </h6>
+      {{/if}}
+    </div>
+
+    <div class="card-header-section">
+
+      <div class="comment">
+        <p class="comment-text">{{comment.text}}</p>
+
+        {{#unless dashboardComments}}
+          {{!-- signature block --}}
+          <p class="card-content text-end">
+            &#8212;
+            <a href="/posts/{{ author.username }}"> {{!-- clicking this link will not collapse the post --}}
+              {{ author.username }}
+            </a>
+          </p>
+        {{/unless}}
       </div>
 
-      {{!-- DASHBOARD BUTTONS --}}
-      {{#if dashboard}}
+      {{!-- COMMENTS DASHBOARD BUTTONS --}}
+      {{#if dashboardComments}}
+
+        {{!-- COMMENT EDIT BUTTON GROUP --}}
         <div id="comment{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
 
           {{!-- SAVE EDIT BUTTON --}}
           <button
             type="button"
-            class="save-edit-button post-button btn btn-success"
+            class="save-edit-button comment-button btn btn-success"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Save
@@ -79,19 +114,21 @@
           {{!-- CANCEL EDIT BUTTON --}}
           <button
             type="button"
-            class="cancel-edit-button post-button btn btn-outline-secondary"
+            class="cancel-edit-button comment-button btn btn-outline-secondary"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Cancel
           </button>
           
-        </div>  
+        </div>
+
+        {{!-- COMMENT MAIN BUTTON GROUP --}}
         <div id="post{{id}}-button-group" class="btn-group fade-in-out" role="group">
           
           {{!-- EDIT BUTTON --}}
           <button
             type="button"
-            class="edit-button post-button btn btn-warning"
+            class="edit-button comment-button btn btn-warning"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Edit
@@ -100,7 +137,7 @@
           {{!-- DELETE BUTTON --}}
           <button
             type="button"
-            class="delete-button post-button btn btn-danger"
+            class="delete-button comment-button btn btn-danger"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Delete
@@ -111,13 +148,5 @@
       {{/if}}
 
     </div>
-    {{#unless dashboard}}
-      <p class="card-content text-end">
-        &#8212;
-        <a href="/posts/{{ author.username }}"> {{!-- clicking this link will not collapse the post --}}
-          {{ author.username }}
-        </a>
-      </p>
-    {{/unless}}
   </div>
 </div>

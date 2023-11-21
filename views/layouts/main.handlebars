@@ -21,6 +21,7 @@
         <div class="navbar-nav">
           <a class="nav-link{{#if homepage}} active" aria-current="page{{/if}}" href="/">Home</a>
           <a class="nav-link{{#if dashboard}} active" aria-current="page{{/if}}" href="/dashboard">Dashboard</a>
+          <a class="nav-link{{#if dashboardComments}} active" aria-current="page{{/if}}" href="/dashboard">Dashboard</a>
         {{#if loggedIn}}
           <a class="nav-link" href="#" id="logout-link">Logout</a>
         {{else if signupPage}}

@@ -3,8 +3,10 @@ const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/authorize');
 const sequelize = require("../config/connection");
 
-// GET ALL POSTS, sorted by date (newest at the top)
 
+
+// GET ALL POSTS, sorted by date (newest at the top)
+//
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
@@ -32,7 +34,7 @@ router.get('/', async (req, res) => {
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.log(posts);
+    console.dir(posts);
 
     const loggedIn = req.session.logged_in;
     const homepage = true;
@@ -47,7 +49,7 @@ router.get('/', async (req, res) => {
 
 
 // GET ALL POSTS BY CURRENT USER: DASHBOARD
-
+//
 router.get('/dashboard', withAuth, async (req, res) => {
   try {
     const postData = await Post.findAll({
@@ -91,52 +93,9 @@ router.get('/dashboard', withAuth, async (req, res) => {
 });
 
 
-// GET ALL COMMENTS BY CURRENT USER: DASHBOARD
-
-router.get('/dashboard/comments', withAuth, async (req, res) => {
-  try {
-    const commentData = await Comment.findAll({
-      where: { user_id: req.session.user_id },
-      attributes: { exclude: ['user_id', 'post_id'] },
-      order: [
-        ['date_created', 'DESC'],
-      ],
-      include: [
-        {
-          model: User,
-          attributes: ['username'],
-          as: 'author',
-        },
-        {
-          model: Post,
-          attributes: ['id', 'title', 'content'],
-          include: [
-            {
-              model: User,
-              attributes: ['username'],
-              as: 'author',
-            },
-          ],
-        },
-      ],
-    });
-
-    const comments = commentData.map((comment) => comment.get({ plain: true }));
-    console.dir(comments);
-
-    const loggedIn = req.session.logged_in;
-    const username = req.session.username;
-    const commentsPage = true;
-    const dashboard = true;
-    res.status(200).render('comments', { comments, username, loggedIn, dashboard });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-
 
 // GET ALL POSTS BY USERNAME
+//
 router.get('/posts/:username', async (req, res) => {
   console.log('*************************');
   console.log('req.session.username');
@@ -188,7 +147,7 @@ router.get('/posts/:username', async (req, res) => {
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.log(posts);
+    console.dir(posts);
 
     const loggedIn = req.session.logged_in;
     const username = req.params.username;
@@ -250,8 +209,57 @@ router.get('/post/:id', async (req, res) => {
 
 
 
-// GET ALL COMMENTS BY USERNAME
+// GET ALL COMMENTS BY CURRENT USER: DASHBOARD
 
+router.get('/dashboard/comments', withAuth, async (req, res) => {
+  try {
+    const commentData = await Comment.findAll({
+      where: { user_id: req.session.user_id },
+      attributes: { exclude: ['user_id', 'post_id'] },
+      order: [
+        ['date_created', 'DESC'],
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
+        {
+          model: Post,
+          where: { published: true },
+          attributes: ['id', 'title', 'content', 'date_published'],
+          include: [
+            {
+              model: User,
+              attributes: ['username'],
+              as: 'author',
+            },
+          ],
+        },
+      ],
+    });
+
+    const comments = commentData.map((comment) => comment.get({ plain: true }));
+    console.dir(comments);
+
+    const loggedIn = req.session.logged_in;
+    const username = req.session.username;
+    const commentsPage = true;
+    const dashboardComments = true;
+
+    res.status(200).render('comments', 
+      {comments, username, loggedIn, commentsPage, dashboardComments }
+    );
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
+
+// GET ALL COMMENTS BY USERNAME
+//
 router.get('/comments/:username', async (req, res) => {
   try {
     const userData = await User.findOne({
@@ -267,7 +275,15 @@ router.get('/comments/:username', async (req, res) => {
     const commentsData = await Comment.findAll({
       where: { user_id: userData.id },
       attributes: { exclude: ['user_id', 'post_id'] },
+      order: [
+        ['date_created', 'DESC'],
+      ],
       include: [
+        {
+          model: User,
+          attributes: ['username'],
+          as: 'author',
+        },
         {
           model: Post,
           attributes: ['id', 'title', 'content'],
@@ -283,13 +299,15 @@ router.get('/comments/:username', async (req, res) => {
     });
 
     const comments = commentsData.map((comment) => comment.get({ plain: true }));
-    console.log(comments);
+    console.dir(comments);
 
-    const username = req.params.username;
     const loggedIn = req.session.logged_in;
+    const username = req.params.username;
     const commentsPage = true;
-    const dashboard = true;
-    res.status(200).render('comments', { comments, username, loggedIn, dashboard });
+
+    res.status(200).render('comments', 
+      { comments, username, loggedIn, commentsPage }
+    );
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
