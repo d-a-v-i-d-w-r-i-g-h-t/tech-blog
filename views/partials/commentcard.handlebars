@@ -1,11 +1,11 @@
 {{#if dashboardComments}}
 
-  <!-- Delete Confirm Modal -->
-  <div class="modal fade" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <!-- Delete Comment Confirm Modal -->
+  <div class="modal fade" id="confirmDeleteCommentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteCommentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">Warning</h1>
+          <h1 class="modal-title fs-5" id="confirmDeleteCommentModalLabel">Warning</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -21,12 +21,12 @@
     </div>
   </div>
 
-  <!-- Unable to Delete Warning Modal -->
-  <div class="modal fade" id="unableToDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToDeleteModalLabel" aria-hidden="true">
+  <!-- Unable to Delete Comment Warning Modal -->
+  <div class="modal fade" id="unableToDeleteCommentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToDeleteCommentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="unableToDeleteModalLabel">Warning</h1>
+          <h1 class="modal-title fs-5" id="unableToDeleteCommentModalLabel">Warning</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -39,55 +39,77 @@
     </div>
   </div>
 
+  <!-- Unable to Save Comment Warning Modal -->
+  <div class="modal fade" id="unableToSaveCommentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToSaveCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="unableToSaveCommentModalLabel">Warning</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Unable to save post. Please try again.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="modal-button btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {{/if}}
 
 <div
   id="comment{{id}}-card"
-  class="post-card card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
+  class="comment-card card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
   data-comment-id="{{id}}"
   data-logged-in="{{loggedIn}}"
+  data-collapse-state="true"
   data-edit-mode="false"
   data-current-text=""
 >
   <div class="card-body">
 
-    <div class="collapse" id="collapsePostComment{{id}}">
-      {{#if post}}
-        <div class="associated-post" data-post-id="{{post.id}}">
-          <div>
-            <h4 class="card-title">
-              {{post.title}}
-            </h4>
-            <h6
-              id="comment{{id}}-date"
-              class="comment-date card-subtitle mb-2 text-body-tertiary"
-            >
-              {{formatDate date_created}}
-            </h6>
-            <p class="card-content mb-2">{{post.content}}</p>
-            <p class="card-content text-end">
-              &#8212;
-              <a href="/posts/{{ post.author.username }}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-                {{ post.author.username }}
-              </a>
-            </p>
-          </div>
+  {{#if post}}
+    <div class="associated-post" data-post-id="{{post.id}}">
+      <div>
+        <h5 class="card-title">
+          {{post.title}}
+        </h5>
+
+        <div class="collapse" id="collapsePostComment{{id}}">
+          <h6
+            id="comment{{id}}-date"
+            class="comment-date card-subtitle mb-2 text-body-tertiary"
+          >
+            {{formatDate date_created}}
+          </h6>
+          <p class="card-content mb-2">{{post.content}}</p>
+          <p class="card-content text-end">
+            &#8212;
+            <a href="/posts/{{ post.author.username }}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+              {{ post.author.username }}
+            </a>
+          </p>
         </div>
-      {{else}}
-        <h4 class="card-title">
-          Post not available
-        </h4>
-      {{/if}}
+
+      </div>
     </div>
+  {{else}}
+    <h4 class="card-title">
+      Post not available
+    </h4>
+  {{/if}}
 
     <div class="card-header-section">
 
       <div class="comment">
-        <p class="comment-text">{{comment.text}}</p>
+        <p class="comment-text">{{text}}</p>
+        <p class="comment-date text-body-tertiary">{{formatDate date_created}}</p>
 
         {{#unless dashboardComments}}
           {{!-- signature block --}}
-          <p class="card-content text-end">
+          <p class="card-content text-end pt-1">
             &#8212;
             <a href="/posts/{{ author.username }}"> {{!-- clicking this link will not collapse the post --}}
               {{ author.username }}
@@ -100,21 +122,21 @@
       {{#if dashboardComments}}
 
         {{!-- COMMENT EDIT BUTTON GROUP --}}
-        <div id="comment{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
+        <div id="comment{{id}}-edit-comment-button-group" class="btn-group fade-in-out display-none" role="group">
 
-          {{!-- SAVE EDIT BUTTON --}}
+          {{!-- SAVE POST EDIT BUTTON --}}
           <button
             type="button"
-            class="save-edit-button comment-button btn btn-success"
+            class="save-comment-edit-button comment-button btn btn-success"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Save
           </button>
           
-          {{!-- CANCEL EDIT BUTTON --}}
+          {{!-- CANCEL POST EDIT BUTTON --}}
           <button
             type="button"
-            class="cancel-edit-button comment-button btn btn-outline-secondary"
+            class="cancel-comment-edit-button comment-button btn btn-outline-secondary"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Cancel
@@ -123,12 +145,12 @@
         </div>
 
         {{!-- COMMENT MAIN BUTTON GROUP --}}
-        <div id="post{{id}}-button-group" class="btn-group fade-in-out" role="group">
+        <div id="comment{{id}}-button-group" class="btn-group fade-in-out" role="group">
           
           {{!-- EDIT BUTTON --}}
           <button
             type="button"
-            class="edit-button comment-button btn btn-warning"
+            class="edit-comment-button comment-button btn btn-warning"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Edit
@@ -137,7 +159,7 @@
           {{!-- DELETE BUTTON --}}
           <button
             type="button"
-            class="delete-button comment-button btn btn-danger"
+            class="delete-comment-button comment-button btn btn-danger"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Delete

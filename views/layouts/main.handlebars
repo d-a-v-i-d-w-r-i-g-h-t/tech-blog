@@ -19,9 +19,20 @@
       <a class="navbar-brand" href="#">THE TECH BLOG</a>
       <div class="navbar-expand">
         <div class="navbar-nav">
-          <a class="nav-link{{#if homepage}} active" aria-current="page{{/if}}" href="/">Home</a>
-          <a class="nav-link{{#if dashboard}} active" aria-current="page{{/if}}" href="/dashboard">Dashboard</a>
-          <a class="nav-link{{#if dashboardComments}} active" aria-current="page{{/if}}" href="/dashboard">Dashboard</a>
+          {{#if homepage}}
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+          {{else}}
+            <a class="nav-link" href="/">Home</a>
+          {{/if}}
+          {{#if dashboard}}
+            <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
+          {{else}}
+            {{#if dashboardComments}}
+              <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
+            {{else}}
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            {{/if}}
+          {{/if}}
         {{#if loggedIn}}
           <a class="nav-link" href="#" id="logout-link">Logout</a>
         {{else if signupPage}}
@@ -55,13 +66,22 @@
   {{#if homepage}}
     <script src="/js/view-posts.js"></script>
   {{/if}}
+  {{#if postsPage}}
+    <script src="/js/view-posts.js"></script>
+  {{/if}}
   {{#if dashboard}}
+    <script src="/js/format-date.js"></script>
+    <script src="/js/show-buttons.js"></script>
     <script src="/js/view-posts.js"></script>
     {{!-- dashboard.js listens for a custom event in view-posts.js, so it gets listed second --}}
     <script src="/js/dashboard.js"></script>
   {{/if}}
-  {{#if postsPage}}
-    <script src="/js/view-posts.js"></script>
+  {{#if dashboardComments}}
+    <script src="/js/format-date.js"></script>
+    <script src="/js/show-buttons.js"></script>
+    <script src="/js/view-comments.js"></script>
+    {{!-- dashboard-comments.js listens for a custom event in view-comments.js, so it gets listed second --}}
+    <script src="/js/dashboard-comments.js"></script>
   {{/if}}
 
 </body>

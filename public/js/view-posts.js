@@ -1,5 +1,5 @@
 // function to handle clicks on posts, to collapse and uncollapse posts and comment sections
-async function handlepostCardClick(event, postCard) {
+async function handlePostCardClick(event, postCard) {
   event.preventDefault();
   
   console.log('event.target');
@@ -69,6 +69,6 @@ document.getElementById('all-posts').addEventListener('click', async function (e
   const postCard = event.target.closest('.post-card');
 
   if (postCard) {
-    handlepostCardClick(event, postCard);
+    handlePostCardClick(event, postCard);
   }
 });

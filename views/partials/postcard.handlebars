@@ -1,11 +1,11 @@
 {{#if dashboard}}
 
-  <!-- Delete Confirm Modal -->
-  <div class="modal fade" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <!-- Delete Post Confirm Modal -->
+  <div class="modal fade" id="confirmDeletePostModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeletePostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">Warning</h1>
+          <h1 class="modal-title fs-5" id="confirmDeletePostModalLabel">Warning</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -21,12 +21,12 @@
     </div>
   </div>
 
-  <!-- Unable to Delete Warning Modal -->
-  <div class="modal fade" id="unableToDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToDeleteModalLabel" aria-hidden="true">
+  <!-- Unable to Delete Post Warning Modal -->
+  <div class="modal fade" id="unableToDeletePostModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToDeletePostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="unableToDeleteModalLabel">Warning</h1>
+          <h1 class="modal-title fs-5" id="unableToDeletePostModalLabel">Warning</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -40,11 +40,11 @@
   </div>
 
   <!-- Unable to Save Post Warning Modal -->
-  <div class="modal fade" id="unableToSaveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToSaveModalLabel" aria-hidden="true">
+  <div class="modal fade" id="unableToSavePostModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unableToSavePostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="unableToSaveModalLabel">Warning</h1>
+          <h1 class="modal-title fs-5" id="unableToSavePostModalLabel">Warning</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -90,12 +90,12 @@
 
       {{!-- DASHBOARD BUTTONS --}}
       {{#if dashboard}}
-        <div id="post{{id}}-edit-button-group" class="btn-group fade-in-out display-none" role="group">
+        <div id="post{{id}}-edit-post-button-group" class="btn-group fade-in-out display-none" role="group">
 
           {{!-- SAVE EDIT BUTTON --}}
           <button
             type="button"
-            class="save-edit-button post-button btn btn-success"
+            class="save-post-edit-button post-button btn btn-success"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Save
@@ -104,7 +104,7 @@
           {{!-- CANCEL EDIT BUTTON --}}
           <button
             type="button"
-            class="cancel-edit-button post-button btn btn-outline-secondary"
+            class="cancel-post-edit-button post-button btn btn-outline-secondary"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Cancel
@@ -116,7 +116,7 @@
           {{!-- EDIT BUTTON --}}
           <button
             type="button"
-            class="edit-button post-button btn btn-warning"
+            class="edit-post-button post-button btn btn-warning"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Edit
@@ -125,7 +125,7 @@
           {{!-- DELETE BUTTON --}}
           <button
             type="button"
-            class="delete-button post-button btn btn-danger"
+            class="delete-post-button post-button btn btn-danger"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
             disabled="true"
           >Delete
@@ -136,9 +136,9 @@
             type="button"
             class=
               {{#if published}}
-                "publish-button post-button btn btn-success"
+                "publish-post-button post-button btn btn-success"
               {{else}}
-                "publish-button post-button btn btn-outline-success"
+                "publish-post-button post-button btn btn-outline-success"
               {{/if}}
             data-post-id="{{id}}"
             data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}

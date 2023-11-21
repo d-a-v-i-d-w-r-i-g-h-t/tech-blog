@@ -7,27 +7,28 @@ setTimeout(() => {
 const newPostTitle = 'New Post';
 const newPostContent = `What's on your mind?`
 
-// define new confirm delete modal
-const confirmDeleteModalEl = document.getElementById('confirmDeleteModal');
-const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl, {
+// define new confirm delete post modal
+const confirmDeletePostModalEl = document.getElementById('confirmDeletePostModal');
+const confirmDeletePostModal = new bootstrap.Modal(confirmDeletePostModalEl, {
   keyboard: false
 });
 
-// define new unable to delete modal
-const unableToDeleteModalEl = document.getElementById('unableToDeleteModal');
-const unableToDeleteModal = new bootstrap.Modal(unableToDeleteModalEl, {
+// define new unable to delete post modal
+const unableToDeletePostModalEl = document.getElementById('unableToDeletePostModal');
+const unableToDeletePostModal = new bootstrap.Modal(unableToDeletePostModalEl, {
   keyboard: false
 });
 
-// define new unable to save modal
-const unableToSaveModalEl = document.getElementById('unableToSaveModal');
-const unableToSaveModal = new bootstrap.Modal(unableToSaveModalEl, {
+// define new unable to save post modal
+const unableToSavePostModalEl = document.getElementById('unableToSavePostModal');
+const unableToSavePostModal = new bootstrap.Modal(unableToSavePostModalEl, {
   keyboard: false
 });
 
-// set global variable to prevent adding multiple confirm delete event listeners
-let isConfirmDeleteEventListenerAdded = false;
+// set global variable to prevent adding multiple confirm delete post event listeners
+let isConfirmDeletePostEventListenerAdded = false;
 
+// if unchanged new post, go straight to edit mode on dashboard load
 function init() {
   const allPostsEl = document.getElementById('all-posts');
   if (allPostsEl.hasChildNodes()) {
@@ -45,16 +46,6 @@ function init() {
   }
 }
 init();
-
-// function to format date when publishing post
-function formatDate(date) {
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }
-  return new Date(date).toLocaleDateString('en-US', options);
-}
 
 
 
@@ -97,7 +88,7 @@ async function handleNewPostButtonClick(event) {
   ///////////////////
  //
 // function for edit button click
-async function handleEditButtonClick(event) {
+async function handleEditPostButtonClick(event) {
   console.log('edit button clicked');
   
   const postCard = event.target.closest('.post-card');
@@ -112,7 +103,7 @@ async function handleEditButtonClick(event) {
   /////////////////////
  //
 // function for delete button click
-async function handleDeleteButtonClick(event) {
+async function handleDeletePostButtonClick(event) {
   console.log('delete button clicked');
   const postCard = event.target.closest('.post-card');
   
@@ -121,18 +112,18 @@ async function handleDeleteButtonClick(event) {
   console.log(postId);
   
   // store the postId in the modal for later retrieval
-  confirmDeleteModalEl.dataset.postId = postId;
+  confirmDeletePostModalEl.dataset.postId = postId;
 
-  confirmDeleteModal.show();
+  confirmDeletePostModal.show();
   
   console.log(`ok to delete post ${postId}`);
 
-  if (!isConfirmDeleteEventListenerAdded) {
+  if (!isConfirmDeletePostEventListenerAdded) {
     
-    confirmDeleteModalEl.addEventListener('click', async function (event) {
+    confirmDeletePostModalEl.addEventListener('click', async function (event) {
       
       // retrieve the postId from the modal data attribute
-      const postId = confirmDeleteModalEl.dataset.postId;
+      const postId = confirmDeletePostModalEl.dataset.postId;
       
       if (event.target.id === 'ok-delete') {
         
@@ -141,7 +132,7 @@ async function handleDeleteButtonClick(event) {
         deletePost(postId)
       }
     });
-    isConfirmDeleteEventListenerAdded = true;
+    isConfirmDeletePostEventListenerAdded = true;
   }
 }
 
@@ -165,12 +156,11 @@ async function deletePost(postId) {
       const errorMessage = await response.text();
       console.error(`Failed to delete post. Server response: ${errorMessage}`);
       
-      unableToDeleteModal.show();
+      unableToDeletePostModal.show();
     }
   } catch (err) {
     console.error('An unexpected error occurred:', err);
   }
-
 }
 
 
@@ -179,7 +169,7 @@ async function deletePost(postId) {
   //////////////////////
  //
 // function for publish button click
-async function handlePublishButtonClick(event) {
+async function handlePublishPostButtonClick(event) {
   const publishButton = event.target;
   
   const postId = publishButton.dataset.postId;
@@ -221,7 +211,7 @@ async function handlePublishButtonClick(event) {
       const errorMessage = await response.text();
       console.error(`Failed to delete post. Server response: ${errorMessage}`);
       
-      unableToDeleteModal.show();
+      unableToDeletePostModal.show();
     }
   } catch (err) {
     console.error('An unexpected error occurred:', err);
@@ -236,7 +226,7 @@ async function handlePublishButtonClick(event) {
   ///////////////////
  //
 // function for save button click
-async function handleSaveButtonClick(event) {
+async function handleSavePostEditButtonClick(event) {
   console.log('save button clicked');
 
   const postCard = event.target.closest('.post-card');
@@ -277,7 +267,7 @@ async function handleSaveButtonClick(event) {
       postCard.dataset.currentPubDate = savedPubDate;
       postCard.dataset.currentContent = savedContent;
 
-      const publishButtonEl = postCard.querySelector('.publish-button');
+      const publishButtonEl = postCard.querySelector('.publish-post-button');
       publishButtonEl.classList.remove('btn-success');
       publishButtonEl.classList.add('btn-outline-success');
       publishButtonEl.dataset.published='false';
@@ -289,7 +279,7 @@ async function handleSaveButtonClick(event) {
       const errorMessage = await response.text();
       console.error(`Failed to update post. Server response: ${errorMessage}`);
       
-      unableToSaveModal.show();
+      unableToSavePostModal.show();
     }
   } catch (err) {
     console.error('An unexpected error occurred:', err);
@@ -303,7 +293,7 @@ async function handleSaveButtonClick(event) {
   /////////////////////
  //
 // function for cancel button click
-async function handleCancelButtonClick(event) {
+async function handleCancelPostEditButtonClick(event) {
   console.log('cancel button clicked');
   
   const postCard = event.target.closest('.post-card');
@@ -381,20 +371,20 @@ function enableEditMode(postCard) {
   
   const postButtonGroupId = `post${postId}-button-group`;
   const postButtons = [
-    'edit-button',
-    'delete-button',
-    'publish-button',
+    'edit-post-button',
+    'delete-post-button',
+    'publish-post-button',
   ];
 
-  const postEditButtonGroupId = `post${postId}-edit-button-group`;
+  const postEditButtonGroupId = `post${postId}-edit-post-button-group`;
   const editPostButtons = [
-    'save-edit-button',
-    'cancel-edit-button',
+    'save-post-edit-button',
+    'cancel-post-edit-button',
   ];
 
-  showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+  showButtons(showPostButtonGroup, postButtonGroupId, postButtons);
   setTimeout(() => {
-    showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+    showButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
   }, 500);
 }
 
@@ -452,109 +442,49 @@ function disableEditMode(postCard) {
 
   const postButtonGroupId = `post${postId}-button-group`;
   const postButtons = [
-    'edit-button',
-    'delete-button',
-    'publish-button',
+    'edit-post-button',
+    'delete-post-button',
+    'publish-post-button',
   ];
   
-  const postEditButtonGroupId = `post${postId}-edit-button-group`;
+  const postEditButtonGroupId = `post${postId}-edit-post-button-group`;
   const editPostButtons = [
-    'save-edit-button',
-    'cancel-edit-button',
+    'save-post-edit-button',
+    'cancel-post-edit-button',
   ];
   
-  showPostButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+  showButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
   setTimeout(() => {
-    showPostButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+    showButtons(showPostButtonGroup, postButtonGroupId, postButtons);
   }, 500);
 }
 
 
-    /////////////////////////
-   //  Show Post Buttons  //
-  /////////////////////////
- //
-// function to show/hide dashboard post buttons
-function showPostButtons(showState, buttonGroupId = '', buttons = []) {
-
-  // do nothing if no button group ID or buttons array is empty
-  if (buttonGroupId === '' || buttons.length === 0) {
-    return;
-  }
-  const buttonGroupElement = document.getElementById(buttonGroupId);
-  console.log('buttonGroupElement');
-  console.log(buttonGroupElement);
-
-  const button = {};
-  
-  buttons.forEach(buttonClass => {
-    button[buttonClass] = buttonGroupElement.querySelector(`.${buttonClass}`);
-  });
-  console.log('button');
-  console.log(button);
-  console.log('showState');
-  console.log(showState);
-  console.log('buttonGroupId');
-  console.log(buttonGroupId);
-  console.log('buttons');
-  console.log(buttons);
-  
-  if (showState === true) {
-    console.log('show buttons')
-    // show post buttons
-    buttonGroupElement.classList.remove('display-none')
-    
-    // delay adding visible and removing disabled for 0.1s
-    setTimeout(() => {
-      buttonGroupElement.classList.add('visible')
-      
-      buttons.forEach(buttonClass => {
-        button[buttonClass].removeAttribute('disabled');
-      });    
-    
-    }, 100);
-    
-  } else {
-    console.log('hide buttons (else case)')
-    // disable post buttons
-    buttons.forEach(buttonClass => {
-      button[buttonClass].setAttribute('disabled', 'true');
-    });    
-
-    buttonGroupElement.classList.remove('visible')
-    
-    // add display-none after opacity has reached 0
-    setTimeout(() => {
-      buttonGroupElement.classList.add('display-none')
-    }, 500);
-  }
-}
 
 
 // event listener for post buttons
 document.getElementById('all-posts').addEventListener('click', async function (event) {
 
-  // const cardArea = event.target.closest('.post-card');
-  const editButton = event.target.closest('.edit-button');
-  const deleteButton = event.target.closest('.delete-button');
-  const publishButton = event.target.closest('.publish-button');
-  const saveButton = event.target.closest('.save-edit-button');
-  const cancelButton = event.target.closest('.cancel-edit-button');
+  const editPostButton = event.target.closest('.edit-post-button');
+  const deletePostButton = event.target.closest('.delete-post-button');
+  const publishPostButton = event.target.closest('.publish-post-button');
+  const savePostEditButton = event.target.closest('.save-post-edit-button');
+  const cancelPostEditButton = event.target.closest('.cancel-post-edit-button');
 
-  if (editButton) {
-    handleEditButtonClick(event);
+  if (editPostButton) {
+    handleEditPostButtonClick(event);
 
-  } else if (deleteButton) {
-    handleDeleteButtonClick(event);
+  } else if (deletePostButton) {
+    handleDeletePostButtonClick(event);
 
-  } else if (publishButton) {
-    handlePublishButtonClick(event);
+  } else if (publishPostButton) {
+    handlePublishPostButtonClick(event);
     
-  } else if (saveButton) {
-    handleSaveButtonClick(event);
+  } else if (savePostEditButton) {
+    handleSavePostEditButtonClick(event);
     
-  } else if (cancelButton) {
-    handleCancelButtonClick(event);
+  } else if (cancelPostEditButton) {
+    handleCancelPostEditButtonClick(event);
   }
 });
 
@@ -569,14 +499,14 @@ document.addEventListener('postCollapse', async function (event) {
 
   const buttonGroupId = `post${postId}-button-group`;
   const buttons = [
-    'edit-button',
-    'delete-button',
-    'publish-button',
+    'edit-post-button',
+    'delete-post-button',
+    'publish-post-button',
   ];
   console.log('buttons');
   console.log(buttons);
 
-  showPostButtons(showPostButtonGroup, buttonGroupId, buttons);
+  showButtons(showPostButtonGroup, buttonGroupId, buttons);
 });
 
 // event listener for new post button click
