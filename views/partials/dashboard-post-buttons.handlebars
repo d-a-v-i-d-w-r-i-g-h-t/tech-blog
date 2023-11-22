@@ -1,0 +1,72 @@
+{{!-- EDIT POST BUTTON GROUP --}}
+<div id="post{{post.id}}-edit-post-button-group" class="btn-group fade-in-out display-none" role="group">
+
+  {{!-- SAVE EDIT BUTTON --}}
+  <button
+    type="button"
+    class="save-post-edit-button post-button btn btn-success"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Save
+  </button>
+  
+  {{!-- CANCEL EDIT BUTTON --}}
+  <button
+    type="button"
+    class="cancel-post-edit-button post-button btn btn-outline-secondary"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Cancel
+  </button>
+  
+</div>
+
+{{!-- MAIN BUTTON GROUP --}}
+<div id="post{{post.id}}-button-group" class="btn-group fade-in-out" role="group">
+  
+  {{!-- EDIT BUTTON --}}
+  <button
+    type="button"
+    class="edit-post-button post-button btn btn-warning"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Edit
+  </button>
+  
+  {{!-- DELETE BUTTON --}}
+  <button
+    type="button"
+    class="delete-post-button post-button btn btn-danger"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Delete
+  </button>
+  
+  {{!-- PUBLISH / UNPUBLISH BUTTON --}}
+  <button
+    type="button"
+    class=
+    
+      {{#if post.published}}
+        "publish-post-button post-button btn btn-success"
+      {{else}}
+        "publish-post-button post-button btn btn-outline-success"
+      {{/if}}
+    data-post-id="{{post.id}}"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    data-published=
+      {{#if post.published}}
+        "true"
+      {{else}}
+        "false"
+      {{/if}}
+    disabled="true"
+  >
+    {{#if post.published}}
+      Unpublish
+    {{else}}
+      Publish
+    {{/if}}
+  </button>
+
+</div>

@@ -10,16 +10,16 @@ main {
 }
 
 .card {
-  border-radius: 0;
+
 }
 
-.card a {
+.bg-link {
   color: black;
   text-decoration: none;
   transition: background-color 2s ease;
 }
 
-.card a:hover {
+.bg-link:hover {
   background-color: rgba(var(--bs-primary-rgb), .2);
 }
 

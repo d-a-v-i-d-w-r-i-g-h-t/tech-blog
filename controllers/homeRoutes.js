@@ -198,10 +198,10 @@ router.get('/post/:id', async (req, res) => {
 
     const post_id = req.params.id;
     const loggedIn = req.session.logged_in;
-
+    const singlePost = true;
 
     // res.status(200).json(post);
-    res.status(200).render('post', { post, post_id, loggedIn });
+    res.status(200).render('post', { post, post_id, loggedIn, singlePost });
   } catch (err) {
       res.status(500).json({ success: false, error: err.message });
   };     

@@ -5,9 +5,9 @@
       My Comments
     {{else}}
       {{#if comments.length}}
-        All Comments by {{ username }}
+        All Comments by {{username}}
       {{else}}
-        No comments available from {{ username }}
+        No comments available from {{username}}
       {{/if}}
     {{/if}}
   </h3>
@@ -24,10 +24,10 @@
   {{/if}}
 </div>
 
-<div>
+<div class="pt-2">
     {{#if dashboardComments}}
-      <p>See all my <a href="/dashboard">posts</a></p>
+      <p><a class="bg-link" href="/dashboard">See all my posts</a></p>
     {{else}}
-      <p>See all <a href="/posts/{{username}}">posts</a> by {{username}}</p>
+      <p><a class="bg-link" href="/posts/{{username}}">See all posts by {{username}}</a></p>
     {{/if}}
 </div>

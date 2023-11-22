@@ -8,9 +8,9 @@
       {{!-- empty --}}
       {{else}}
         {{#if posts.length}}
-          All Posts by {{ username }}
+          All Posts by {{username}}
         {{else}}
-          No posts available from {{ username }}
+          No posts available from {{username}}
         {{/if}}
       {{/if}}
     </h3>
@@ -30,17 +30,19 @@
 <div id="all-posts">
   {{#if posts.length}}
     {{#each posts as |post|}}
-      {{>postcard post=post dashboard=../dashboard loggedIn=../loggedIn}}
+      {{>postcard post=post homepage=../homepage dashboard=../dashboard loggedIn=../loggedIn}}
     {{/each}}
   {{else}}
     No posts yet...
   {{/if}}
 </div>
 
-<div>
-  {{#if dashboard}}
-    <p>See all my <a href="/dashboard/comments">comments</a></p>
-  {{else}}
-    <p>See all <a href="/comments/{{username}}">comments</a> by {{username}}</p>
-  {{/if}}
-</div>
+{{#unless homepage}}
+  <div class="pt-2">
+    {{#if dashboard}}
+      <p><a class="bg-link" href="/dashboard/comments">See all my comments</a></p>
+    {{else}}
+      <p><a class="bg-link" href="/comments/{{username}}">See all comments by {{username}}</a></p>
+    {{/if}}
+  </div>
+{{/unless}}

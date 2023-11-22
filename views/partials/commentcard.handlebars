@@ -73,10 +73,12 @@
   {{#if post}}
     <div class="associated-post" data-post-id="{{post.id}}">
       <div>
+        {{!-- POST TITLE --}}
         <h5 class="card-title">
-          {{post.title}}
+          <a class="bg-link" href="/post/{{post.id}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+            {{post.title}}
+          </a>
         </h5>
-
         <div class="collapse" id="collapsePostComment{{id}}">
           <h6
             id="comment{{id}}-date"
@@ -84,11 +86,12 @@
           >
             {{formatDate date_created}}
           </h6>
+          {{!-- POST CONTENT --}}
           <p class="card-content mb-2">{{post.content}}</p>
           <p class="card-content text-end mb-4">
             &#8212;
-            <a href="/posts/{{ post.author.username }}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-              {{ post.author.username }}
+            <a class="bg-link" href="/posts/{{post.author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+              {{post.author.username}}
             </a>
           </p>
         </div>
@@ -104,18 +107,24 @@
     <div class="card-header-section">
 
       <div class="comment">
-        <p class="comment-text">{{text}}</p>
-        <p class="comment-date text-body-tertiary">{{formatDate date_created}}</p>
 
-        {{#unless dashboardComments}}
+        <div class=" ps-3 py-2 pe-5 rounded-0 bg-body-tertiary">
+          {{!-- COMMENT TEXT --}}
+          <p class="comment-text">{{text}}</p>
+          {{!-- COMMENT DATE --}}
+          <p class="comment-date text-body-tertiary">{{formatDate date_created}}</p>
+        </div>
+
+        {{!-- {{#unless dashboardComments}} --}}
+        {{#if homepage}}
           {{!-- signature block --}}
           <p class="card-content text-end pt-1">
             &#8212;
-            <a href="/posts/{{ author.username }}"> {{!-- clicking this link will not collapse the post --}}
-              {{ author.username }}
+            <a class="bg-link" href="/posts/{{author.username}}"> {{!-- clicking this link will not collapse the post --}}
+              {{author.username}}
             </a>
           </p>
-        {{/unless}}
+        {{/if}}
       </div>
 
       {{!-- COMMENTS DASHBOARD BUTTONS --}}

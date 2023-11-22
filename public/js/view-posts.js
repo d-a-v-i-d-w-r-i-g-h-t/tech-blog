@@ -1,14 +1,17 @@
 // function to handle clicks on posts, to collapse and uncollapse posts and comment sections
 async function handlePostCardClick(event, postCard) {
-  event.preventDefault();
   
   console.log('event.target');
   console.log(event.target);
   
-  // ignore the click if user is trying to click on the Comments title or the dashboard buttons
+  // ignore the click if user is trying to click on designated links such as Comments title, or the dashboard buttons
   if (event.target.dataset.noCollapse === 'true' || postCard.dataset.editMode === 'true') {
     return;
+
+  } else {
+    event.preventDefault();
   }
+
   const postId = postCard.dataset.postId;
   const loggedIn = postCard.dataset.loggedIn;
   const collapseElementId = `collapsePost${postId}`;

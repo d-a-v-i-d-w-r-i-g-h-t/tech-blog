@@ -1,6 +1,5 @@
 // function to handle clicks on comments, to collapse and uncollapse post sections
 async function handleCommentCardClick(event, commentCard) {
-  event.preventDefault();
   
   console.log('event.target');
   console.log(event.target);
@@ -8,7 +7,11 @@ async function handleCommentCardClick(event, commentCard) {
   // ignore the click if user is trying to click on the post, post author, comment author, or the dashboard buttons
   if (event.target.dataset.noCollapse === 'true' || commentCard.dataset.editMode === 'true') {
     return;
+
+  } else {
+    event.preventDefault();
   }
+
   const commentId = commentCard.dataset.commentId;
   const loggedIn = commentCard.dataset.loggedIn;
   const collapseElementId = `collapsePostComment${commentId}`;
