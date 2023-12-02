@@ -49,6 +49,9 @@
       <p class="card-content ps-3">{{post.content}}</p>
     </div>
     {{#if dashboard}}
+      {{!-- no author, user's own posts --}}
+    {{else if username}}
+      {{!-- no author, author already displayed at top of page --}}
     {{else}}
       {{!-- POST AUTHOR --}}
       <p class="card-content text-end pb-3">

@@ -86,10 +86,9 @@ router.get('/dashboard', withAuth, async (req, res) => {
     console.dir(posts);
 
     const loggedIn = req.session.logged_in;
-    const username = req.session.username;
     const dashboard = true;
 
-    res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
+    res.status(200).render('dashboard', { posts, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -192,6 +191,8 @@ router.get('/post/:id', async (req, res) => {
       ],
     });
 
+
+
     if(!postData) {
       res.status(404).json({ success: false, message: 'No post with this id!' });
       return;
@@ -247,12 +248,11 @@ router.get('/dashboard/comments', withAuth, async (req, res) => {
     console.dir(comments);
 
     const loggedIn = req.session.logged_in;
-    const username = req.session.username;
     const commentsPage = true;
     const dashboardComments = true;
 
     res.status(200).render('comments', 
-      {comments, username, loggedIn, commentsPage, dashboardComments }
+      {comments, loggedIn, commentsPage, dashboardComments }
     );
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
