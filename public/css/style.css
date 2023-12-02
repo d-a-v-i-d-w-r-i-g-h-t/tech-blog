@@ -1,6 +1,6 @@
 main {
   margin: 57px 48px 48px;
-  padding-top: 40px
+  padding-top: 24px
 }
 
 .login-page-button,
@@ -9,16 +9,11 @@ main {
   width: 100px;
 }
 
-.card {
-
-}
-
 .bg-link {
   color: black;
   text-decoration: none;
   transition: background-color 2s ease;
 }
-
 .bg-link:hover {
   background-color: rgba(var(--bs-primary-rgb), .2);
 }
@@ -32,11 +27,8 @@ p {
   margin-bottom: 0; /* Remove bottom margin */
 }
 
-#posts-header {
-  margin-bottom: 10px;
-}
-
 #posts-header,
+.comments-header,
 .card-header-section {
   display: flex;
   justify-content: space-between;

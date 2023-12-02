@@ -1,7 +1,7 @@
 {{#unless homepage}}
-  <div id="posts-header">
+  <div id="posts-header" class="mb-2">
 
-    <h3>
+    <h3 class="mb-0">
       {{#if dashboard}}
         My Posts
       {{else if homepage}}
@@ -19,7 +19,7 @@
       {{!-- NEW POST BUTTON --}}
       <button type="button"
         id="new-post-button"
-        class="btn btn-primary fade-in-out"
+        class="btn btn-primary py-0 fade-in-out"
       >New Post
       </button>
     {{/if}}
@@ -30,7 +30,7 @@
 <div id="all-posts">
   {{#if posts.length}}
     {{#each posts as |post|}}
-      {{>postcard post=post homepage=../homepage dashboard=../dashboard loggedIn=../loggedIn}}
+      {{> postcard post=post loggedIn=../loggedIn homepage=../homepage dashboard=../dashboard}}
     {{/each}}
   {{else}}
     No posts yet...

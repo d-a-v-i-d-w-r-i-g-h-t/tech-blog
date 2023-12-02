@@ -57,28 +57,27 @@
   {{#if loggedIn}}
     <script src="/js/logout.js"></script>
   {{/if}}
+
   {{#if loginPage}}
     <script src="/js/login.js"></script>
-  {{/if}}
-  {{#if signupPage}}
+
+  {{else if signupPage}}
     <script src="/js/signup.js"></script>
-  {{/if}}
-  {{#if homepage}}
+  
+  {{else}}
     <script src="/js/view-posts.js"></script>
+    <script src="/js/show-buttons.js"></script>
+
   {{/if}}
-  {{#if postsPage}}
-    <script src="/js/view-posts.js"></script>
-  {{/if}}
+
   {{#if dashboard}}
     <script src="/js/format-date.js"></script>
-    <script src="/js/show-buttons.js"></script>
-    <script src="/js/view-posts.js"></script>
     {{!-- dashboard.js listens for a custom event in view-posts.js, so it gets listed second --}}
     <script src="/js/dashboard.js"></script>
   {{/if}}
+
   {{#if dashboardComments}}
     <script src="/js/format-date.js"></script>
-    <script src="/js/show-buttons.js"></script>
     <script src="/js/view-comments.js"></script>
     {{!-- dashboard-comments.js listens for a custom event in view-comments.js, so it gets listed second --}}
     <script src="/js/dashboard-comments.js"></script>

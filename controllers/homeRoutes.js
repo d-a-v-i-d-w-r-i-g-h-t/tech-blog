@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const postData = await Post.findAll({
       where: { published: true },
       attributes: { exclude: ['user_id', 'date_created'] },
-      order: [['date_published', 'DESC']],
+      order: [['date_published', 'DESC']], // sorting posts by date published, newest first
       include: [
         {
           model: User,
@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
+          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -69,6 +70,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
+          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -86,6 +88,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const loggedIn = req.session.logged_in;
     const username = req.session.username;
     const dashboard = true;
+
     res.status(200).render('dashboard', { posts, username, loggedIn, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -125,7 +128,7 @@ router.get('/posts/:username', async (req, res) => {
         published: true,
        },
       attributes: { exclude: ['user_id', 'date_created'] },
-      order: [['date_published', 'DESC']],
+      order: [['date_published', 'DESC']], // sorting posts by date published, newest first
       include: [
         {
           model: User,
@@ -135,6 +138,7 @@ router.get('/posts/:username', async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
+          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -151,10 +155,9 @@ router.get('/posts/:username', async (req, res) => {
 
     const loggedIn = req.session.logged_in;
     const username = req.params.username;
-    const postsPage = true;
 
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username, loggedIn, postsPage });
+    res.status(200).render('posts', { posts, username, loggedIn });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -176,7 +179,8 @@ router.get('/post/:id', async (req, res) => {
         },
         { 
           model: Comment,
-          attributes: ['id', 'text'],
+          attributes: ['id', 'text', 'date_created'],
+          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -189,19 +193,18 @@ router.get('/post/:id', async (req, res) => {
     });
 
     if(!postData) {
-        res.status(404).json({ success: false, message: 'No post with this id!' });
-        return;
+      res.status(404).json({ success: false, message: 'No post with this id!' });
+      return;
     }
-
+    
     const post = postData.get({ plain: true });
-    console.log(post);
-
+    
     const post_id = req.params.id;
     const loggedIn = req.session.logged_in;
+    const dashboard = post.author.username === req.session.username ? true : false;
     const singlePost = true;
-
-    // res.status(200).json(post);
-    res.status(200).render('post', { post, post_id, loggedIn, singlePost });
+    
+    res.status(200).render('post', { post, post_id, loggedIn, singlePost, dashboard  });
   } catch (err) {
       res.status(500).json({ success: false, error: err.message });
   };     
@@ -362,7 +365,7 @@ router.get('/comment/:id', async (req, res) => {
 
 
 // LOGIN route
-
+//
 router.get('/login', (req, res) => {
   // If a session exists, redirect the request to the homepage
   if (req.session.logged_in) {
@@ -378,7 +381,7 @@ router.get('/login', (req, res) => {
 
 
 // SIGNUP route
-
+//
 router.get('/signup', (req, res) => {
   // If a session exists, redirect the request to the homepage
   if (req.session.logged_in) {

@@ -1,28 +1,30 @@
 // function to handle clicks on posts, to collapse and uncollapse posts and comment sections
-async function handlePostCardClick(event, postCard) {
+async function handlePostCardClick(event, postCardElement) {
   
-  console.log('event.target');
+  console.log('postCardClick event.target');
   console.log(event.target);
   
   // ignore the click if user is trying to click on designated links such as Comments title, or the dashboard buttons
-  if (event.target.dataset.noCollapse === 'true' || postCard.dataset.editMode === 'true') {
+  if (event.target.dataset.noCollapse === 'true' || postCardElement.dataset.editMode === 'true') {
     return;
 
   } else {
     event.preventDefault();
   }
 
-  const postId = postCard.dataset.postId;
-  const loggedIn = postCard.dataset.loggedIn;
+  toggleCollapsePost(postCardElement);
+}
+
+
+function toggleCollapsePost(postCardElement) {
+
+  const postId = postCardElement.dataset.postId;
+  const loggedIn = postCardElement.dataset.loggedIn;
   const collapseElementId = `collapsePost${postId}`;
   const collapseElement2Id = `collapse2Post${postId}`;
-  console.log('collapseElementId');
-  console.log(collapseElementId);
 
   const collapseElement = document.getElementById(collapseElementId);
   const collapseElement2 = document.getElementById(collapseElement2Id);
-  console.log('collapseElement');
-  console.log(collapseElement);
 
   const bsPostContentCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
     toggle: false
@@ -31,7 +33,7 @@ async function handlePostCardClick(event, postCard) {
     toggle: false
   });
   
-  const isCollapsed = postCard.dataset.collapseState === 'true';
+  const isCollapsed = postCardElement.dataset.collapseState === 'true'; // convert string to boolean
   
   if (loggedIn) {
     
@@ -51,7 +53,7 @@ async function handlePostCardClick(event, postCard) {
   if (isCollapsed === true) {
     bsPostContentCollapse.show();
     bsPostContentCollapse2.show();
-    postCard.dataset.collapseState = 'false'
+    postCardElement.dataset.collapseState = 'false'
     
     console.log('shown');
     
@@ -59,19 +61,65 @@ async function handlePostCardClick(event, postCard) {
   } else {
     bsPostContentCollapse.hide();
     bsPostContentCollapse2.hide();
-    postCard.dataset.collapseState = 'true'
+    postCardElement.dataset.collapseState = 'true'
     
     console.log('hidden');
   }
 }
 
 
-// event listener for clicks on posts
-document.getElementById('all-posts').addEventListener('click', async function (event) {
+function displayNewCommentButton({ displayButton, postId }) {
+  
+  const newCommentButtonId = `post${postId}-new-comment-button`;
+  const newCommentButton = [ 'new-comment-button' ];
+    
+  showButtons(displayButton, newCommentButtonId, newCommentButton);
+}
 
-  const postCard = event.target.closest('.post-card');
 
-  if (postCard) {
-    handlePostCardClick(event, postCard);
+function handleCollapseEvent({ isHide, event }) {
+  const collapseSection = event.target;
+  const collapseType = collapseSection.dataset.collapseType;
+
+  if (collapseType === "comments") {
+    const postCard = event.target.closest('.post-card');
+    const postId = postCard.dataset.postId;
+
+    displayNewCommentButton({ displayButton: !isHide, postId })
   }
-});
+}
+
+
+function viewPostsInit() {
+  
+  const allPostsEl = document.getElementById('all-posts');
+  
+  if (allPostsEl) {
+    // event listener for clicks on posts
+    allPostsEl.addEventListener('click', async function (event) {
+      
+      const postCard = event.target.closest('.post-card');
+      
+      if (postCard) {
+        handlePostCardClick(event, postCard);
+      }
+    });
+    
+  } else {
+    // there is only one post, and it needs to be uncollapsed
+    const postCard = document.querySelector('.post-card');
+    toggleCollapsePost(postCard);
+  }
+  
+  // event listener for uncollapsing sections
+  document.addEventListener('show.bs.collapse', function (event) {
+    handleCollapseEvent({ isHide: false, event })
+  });
+  
+  // event listener for collapsing sections
+  document.addEventListener('hide.bs.collapse', function (event) {
+    handleCollapseEvent({ isHide: true, event })
+  }); 
+}
+
+viewPostsInit();

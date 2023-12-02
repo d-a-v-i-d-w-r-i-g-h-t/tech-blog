@@ -188,6 +188,7 @@ async function handleCancelCommentEditButtonClick(event) {
  //
 // function to enable edit mode
 function enableEditMode(commentCard) {
+console.log('Enable Edit Mode');
 
   commentCard.dataset.editMode = 'true';
 
@@ -246,6 +247,7 @@ function enableEditMode(commentCard) {
  //
 // function to disable edit mode
 function disableEditMode(commentCard) {
+  console.log('Disable Edit Mode');
 
   commentCard.dataset.editMode = 'false';
 

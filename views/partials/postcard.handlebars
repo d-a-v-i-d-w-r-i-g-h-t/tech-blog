@@ -4,7 +4,7 @@
 
 <div
   id="post{{post.id}}-card"
-  class="post-card card border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
+  class="post-card card pt-3 border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
   data-post-id="{{post.id}}"
   data-logged-in="{{loggedIn}}"
   data-collapse-state="true"
@@ -13,14 +13,18 @@
   data-current-pub-date=""
   data-current-content=""
 >
-  <div class="card-body">
+  <div>
     <div class="card-header-section">
       <div>
         {{!-- POST TITLE --}}
         <h4 class="card-title">
-          <a class="bg-link" href="/post/{{post.id}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+          {{#if singlePost}}
             {{post.title}}
-          </a>
+          {{else}}
+            <a class="bg-link" href="/post/{{post.id}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+              {{post.title}}
+            </a>
+          {{/if}}
         </h4>
         <h6
           id="post{{post.id}}-publication-date"
@@ -36,58 +40,66 @@
       </div>
 
       {{#if dashboard}}
-      {{>dashboard-post-buttons post=post}}
+        {{> dashboard-post-buttons post=post}}
       {{/if}}
 
     </div>
-    <div class="collapse" id="collapsePost{{post.id}}">
+    <div class="collapse" data-collapse-type="post" id="collapsePost{{post.id}}">
       {{!-- POST CONTENT --}}
       <p class="card-content ps-3">{{post.content}}</p>
     </div>
-    {{#if homepage}}
+    {{#if dashboard}}
+    {{else}}
       {{!-- POST AUTHOR --}}
-      <p class="card-content text-end">
+      <p class="card-content text-end pb-3">
         <a class="bg-link" href="/posts/{{post.author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
           &#8212;{{post.author.username}}
         </a>
       </p>
     {{/if}}
-    <div class="collapse" id="collapse2Post{{post.id}}">
+    <div class="collapse" data-collapse-type="" id="collapse2Post{{post.id}}">
 
       {{!-- COMMENT HEADER --}}
-      <div class="comment-header">
-        <h5 class="mt-3">
+      <div class="comments-header my-3">
+        <h5>
           <a class="bg-link" data-no-collapse="true" data-bs-toggle="collapse" href="#collapseComments-post{{post.id}}" role="button"> {{!-- clicking this link will not collapse the post --}}
             Comments
           </a>
         </h5>
 
-        {{#if dashboard}}
-
-        {{/if}}
+        {{!-- NEW COMMENT BUTTON --}}
+        <div id="post{{post.id}}-new-comment-button" class="fade-in-out display-none">
+          <button
+            type="button"
+            class="btn btn-primary px-2 py-0 new-comment-button"
+          >New Comment
+          </button>
+        </div>
 
       </div>
-      <div class="collapse" id="collapseComments-post{{post.id}}">
-        {{#if post.comments.length}}
-          {{#each post.comments as |comment|}}
-            <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
-              <div class=" ps-3 py-2 pe-5 rounded-0 bg-body-tertiary">
-                {{!-- COMMENT TEXT --}}
-                <p class="card-content">{{text}}</p>
-                {{!-- COMMENT DATE --}}
-                <p class="subtitle text-body-tertiary">{{formatDate comment.date_created}}</p>
+      <div class="collapse" data-collapse-type="comments" id="collapseComments-post{{post.id}}">
+        <div class="mb-3">
+          {{#if post.comments.length}}
+            {{#each post.comments as |comment|}}
+              <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
+                <div class=" ps-3 py-2 pe-3 rounded-0 bg-body-tertiary">
+                  {{!-- COMMENT TEXT --}}
+                  <p class="card-content">{{text}}</p>
+                  {{!-- COMMENT DATE --}}
+                  <p class="subtitle text-body-tertiary">{{formatDate date_created}}</p>
+                  {{!-- COMMENT AUTHOR --}}
+                  <p class="card-content mb-0 text-end">
+                    <a class="bg-link" href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
+                      &#8212; {{author.username}}
+                    </a>
+                  </p>
+                </div>
               </div>
-              {{!-- COMMENT AUTHOR --}}
-              <p class="card-content mb-0 text-end">
-                <a class="bg-link" href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-                  &#8212; {{author.username}}
-                </a>
-              </p>
-            </div>
-          {{/each}}
-        {{else}}
-          <p>No comments yet</p>
-        {{/if}}
+            {{/each}}
+          {{else}}
+            <p>No comments yet</p>
+          {{/if}}
+        </div>
       </div>
     </div>
   </div>

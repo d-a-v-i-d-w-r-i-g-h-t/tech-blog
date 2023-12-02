@@ -1,11 +1,26 @@
-// display new post button
-const newPostButton = document.getElementById('new-post-button')
-setTimeout(() => {
-  newPostButton.classList.add('visible')  
-}, 100);
-
+// global constants
 const newPostTitle = 'New Post';
 const newPostContent = `What's on your mind?`
+
+const allPostsEl = document.getElementById('all-posts');
+if (allPostsEl) {
+  
+  // display new post button
+  const newPostButton = document.getElementById('new-post-button')
+  setTimeout(() => {
+    newPostButton.classList.add('visible')  
+  }, 100);
+
+  // event listener for new post button click
+  newPostButton.addEventListener('click', async function (event) {
+    
+    console.log('new post button clicked')
+    handleNewPostButtonClick(event);
+  });
+  
+  init();
+}
+
 
 // define new confirm delete post modal
 const confirmDeletePostModalEl = document.getElementById('confirmDeletePostModal');
@@ -45,15 +60,14 @@ function init() {
     }
   }
 }
-init();
 
 
 
-    //////////////////
-   //  NEW BUTTON  //
-  //////////////////
+    ///////////////////////
+   //  NEW POST BUTTON  //
+  ///////////////////////
  //
-// function for new button click
+// function for new post button click
 async function handleNewPostButtonClick(event) {
   console.log('new button clicked');
   console.log(event.target);
@@ -463,7 +477,16 @@ function disableEditMode(postCard) {
 
 
 // event listener for post buttons
-document.getElementById('all-posts').addEventListener('click', async function (event) {
+const allPostsContainer = document.getElementById('all-posts');
+const postCardContainers = document.querySelectorAll('.post-card');
+
+const listenerTarget = allPostsContainer
+  ? allPostsContainer
+  : postCardContainers.length >= 1
+    ? postCardContainers[0]
+    : null;
+
+listenerTarget.addEventListener('click', async function (event) {
 
   const editPostButton = event.target.closest('.edit-post-button');
   const deletePostButton = event.target.closest('.delete-post-button');
@@ -490,7 +513,9 @@ document.getElementById('all-posts').addEventListener('click', async function (e
 
 
 // event listener for custom event postCollapse
-document.addEventListener('postCollapse', async function (event) {
+document.addEventListener('postCollapse', postCollapseHandler); 
+
+async function postCollapseHandler(event) {
   const postId = event.detail.postId;
   const isCollapsed = event.detail.isCollapsed;
   // if collapse state is true then need to un-collapse,
@@ -507,12 +532,5 @@ document.addEventListener('postCollapse', async function (event) {
   console.log(buttons);
 
   showButtons(showPostButtonGroup, buttonGroupId, buttons);
-});
 
-// event listener for new post button click
-newPostButton.addEventListener('click', async function (event) {
-  
-  console.log('new post button clicked')
-  handleNewPostButtonClick(event);
-
-});
+}

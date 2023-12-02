@@ -9,6 +9,14 @@ function showButtons(showState, buttonGroupId = '', buttons = []) {
   if (buttonGroupId === '' || buttons.length === 0) {
     return;
   }
+  console.log('showButtons *******************************************');
+  console.log('showState');
+  console.log(showState);
+  console.log('buttonGroupId');
+  console.log(buttonGroupId);
+  console.log('buttons');
+  console.log(buttons);
+
   const buttonGroupElement = document.getElementById(buttonGroupId);
   console.log('buttonGroupElement');
   console.log(buttonGroupElement);
@@ -20,16 +28,10 @@ function showButtons(showState, buttonGroupId = '', buttons = []) {
   });
   console.log('button');
   console.log(button);
-  console.log('showState');
-  console.log(showState);
-  console.log('buttonGroupId');
-  console.log(buttonGroupId);
-  console.log('buttons');
-  console.log(buttons);
   
   if (showState === true) {
     console.log('show buttons')
-    // show post buttons
+    // show and enable post buttons
     buttonGroupElement.classList.remove('display-none')
     
     // delay adding visible and removing disabled for 0.1s
@@ -37,15 +39,25 @@ function showButtons(showState, buttonGroupId = '', buttons = []) {
       buttonGroupElement.classList.add('visible')
       
       buttons.forEach(buttonClass => {
+        console.log('buttonClass');
+        console.log(buttonClass);
+        console.log('button[buttonClass]');
+        console.log(button[buttonClass]);
+        
         button[buttonClass].removeAttribute('disabled');
       });    
-    
+      
     }, 100);
     
   } else {
-    console.log('hide buttons (else case)')
-    // disable post buttons
+    console.log('hide buttons')
+    // hide and disable post buttons
     buttons.forEach(buttonClass => {
+      console.log('buttonClass');
+      console.log(buttonClass);
+      console.log('button[buttonClass]');
+      console.log(button[buttonClass]);
+      
       button[buttonClass].setAttribute('disabled', 'true');
     });    
 
