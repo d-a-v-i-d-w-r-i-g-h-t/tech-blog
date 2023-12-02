@@ -35,20 +35,6 @@ function toggleCollapsePost(postCardElement) {
   
   const isCollapsed = postCardElement.dataset.collapseState === 'true'; // convert string to boolean
   
-  if (loggedIn) {
-    
-    // Create a custom event to communicate with dashboard.js if it is active
-    var event = new CustomEvent('postCollapse', {
-      detail: { 
-        postId: postId,
-        isCollapsed: isCollapsed,
-      }
-    });
-    
-    // dispatch the event
-    document.dispatchEvent(event);
-  }
-  
   // if collapse state is true then uncollapse post content
   if (isCollapsed === true) {
     bsPostContentCollapse.show();
@@ -77,12 +63,12 @@ function displayNewCommentButton({ displayButton, postId }) {
 }
 
 
-function handleCollapseEvent({ isHide, event }) {
+function handleCommentCollapseEvent({ isHide, event }) {
   const collapseSection = event.target;
   const collapseType = collapseSection.dataset.collapseType;
 
   if (collapseType === "comments") {
-    const postCard = event.target.closest('.post-card');
+    const postCard = collapseSection.closest('.post-card');
     const postId = postCard.dataset.postId;
 
     displayNewCommentButton({ displayButton: !isHide, postId })
@@ -110,16 +96,16 @@ function viewPostsInit() {
     const postCard = document.querySelector('.post-card');
     toggleCollapsePost(postCard);
   }
-  
+
   // event listener for uncollapsing sections
   document.addEventListener('show.bs.collapse', function (event) {
-    handleCollapseEvent({ isHide: false, event })
+    handleCommentCollapseEvent({ isHide: false, event })
   });
   
   // event listener for collapsing sections
   document.addEventListener('hide.bs.collapse', function (event) {
-    handleCollapseEvent({ isHide: true, event })
+    handleCommentCollapseEvent({ isHide: true, event })
   }); 
-}
-
+}  
+  
 viewPostsInit();

@@ -512,25 +512,37 @@ listenerTarget.addEventListener('click', async function (event) {
 });
 
 
-// event listener for custom event postCollapse
-document.addEventListener('postCollapse', postCollapseHandler); 
+// event listener for uncollapsing sections
+document.addEventListener('show.bs.collapse', function (event) {
+  handlePostCollapseEvent({ isHide: false, event })
+});
 
-async function postCollapseHandler(event) {
-  const postId = event.detail.postId;
-  const isCollapsed = event.detail.isCollapsed;
-  // if collapse state is true then need to un-collapse,
-  // need to show the post button group
-  const showPostButtonGroup = isCollapsed; 
+// event listener for collapsing sections
+document.addEventListener('hide.bs.collapse', function (event) {
+  handlePostCollapseEvent({ isHide: true, event })
+}); 
 
-  const buttonGroupId = `post${postId}-button-group`;
-  const buttons = [
-    'edit-post-button',
-    'delete-post-button',
-    'publish-post-button',
-  ];
-  console.log('buttons');
-  console.log(buttons);
 
-  showButtons(showPostButtonGroup, buttonGroupId, buttons);
+function handlePostCollapseEvent({ isHide, event }){
+  const collapseSection = event.target;
+  const collapseType = collapseSection.dataset.collapseType;
+  
+  if (collapseType === "post") {
+    console.log('post uncollapse event');
+    const showPostButtonGroup = !isHide; 
 
+    const postCard = collapseSection.closest('.post-card');
+    const postId = postCard.dataset.postId;
+    const buttonGroupId = `post${postId}-button-group`;
+    const buttons = [
+      'edit-post-button',
+      'delete-post-button',
+      'publish-post-button',
+    ];
+    console.log('buttons');
+    console.log(buttons);
+
+    showButtons(showPostButtonGroup, buttonGroupId, buttons);
+  }
 }
+
