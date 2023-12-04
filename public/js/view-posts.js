@@ -1,25 +1,27 @@
+    ///////////////////////////////
+   //  HANDLE POST CLICK EVENT  //
+  ///////////////////////////////
+ //
 // function to handle clicks on posts, to collapse and uncollapse posts and comment sections
-async function handlePostCardClick(event, postCardElement) {
-  
-  console.log('postCardClick event.target');
-  console.log(event.target);
-  
+async function handlePostCardClick(event) {
+  const postCard = event.target.closest('.post-card');
+
   // ignore the click if user is trying to click on designated links such as Comments title, or the dashboard buttons
-  if (event.target.dataset.noCollapse === 'true' || postCardElement.dataset.editMode === 'true') {
+  if (event.target.dataset.noCollapse === 'true' || postCard.dataset.editMode === 'true') {
     return;
-
-  } else {
-    event.preventDefault();
   }
-
-  toggleCollapsePost(postCardElement);
+  toggleCollapsePost(postCard);
 }
 
 
+    ////////////////////////////
+   //  TOGGLE COLLAPSE POST  //
+  ////////////////////////////
+ //
+// function to collapse and uncollapse posts
 function toggleCollapsePost(postCardElement) {
-
   const postId = postCardElement.dataset.postId;
-  const loggedIn = postCardElement.dataset.loggedIn;
+  // post collapse is made up of two collapse elements
   const collapseElementId = `collapsePost${postId}`;
   const collapseElement2Id = `collapse2Post${postId}`;
 
@@ -41,28 +43,20 @@ function toggleCollapsePost(postCardElement) {
     bsPostContentCollapse2.show();
     postCardElement.dataset.collapseState = 'false'
     
-    console.log('shown');
-    
   // otherwise collapse post content
   } else {
     bsPostContentCollapse.hide();
     bsPostContentCollapse2.hide();
     postCardElement.dataset.collapseState = 'true'
-    
-    console.log('hidden');
   }
 }
 
 
-function displayNewCommentButton({ displayButton, postId }) {
-  
-  const newCommentButtonId = `post${postId}-new-comment-button`;
-  const newCommentButton = [ 'new-comment-button' ];
-    
-  showButtons(displayButton, newCommentButtonId, newCommentButton);
-}
-
-
+    /////////////////////////////////////
+   //  HANDLE COMMENT COLLAPSE EVENT  //
+  /////////////////////////////////////
+ //
+// function to handle comment collapse events
 function handleCommentCollapseEvent({ isHide, event }) {
   const collapseSection = event.target;
   const collapseType = collapseSection.dataset.collapseType;
@@ -76,18 +70,49 @@ function handleCommentCollapseEvent({ isHide, event }) {
 }
 
 
+    ////////////////////////////////////
+   //  SHOW/HIDE NEW COMMENT BUTTON  //
+  ////////////////////////////////////
+ //
+// function to show or hide new comment button
+function displayNewCommentButton({ displayButton, postId }) {
+  const newCommentButtonId = `post${postId}-new-comment-button`;
+  const newCommentButton = [ 'new-comment-button' ];
+    
+  showButtons(displayButton, newCommentButtonId, newCommentButton);
+}  
+
+
+    //////////////////////////
+   //  NEW COMMENT BUTTON  //
+  //////////////////////////
+ //
+// function for new comment button click
+function handleNewCommentButtonClick(event) {
+  console.log('new comment button click');
+  // const 
+}
+
+
+    /////////////////////////////
+   //  INITIALIZE VIEW POSTS  //
+  /////////////////////////////
+ //
+// function to initialize view posts
 function viewPostsInit() {
-  
   const allPostsEl = document.getElementById('all-posts');
   
   if (allPostsEl) {
-    // event listener for clicks on posts
+    // add event listener for clicks on posts
     allPostsEl.addEventListener('click', async function (event) {
-      
+      const newCommentButton = event.target.closest('.new-comment-button');
       const postCard = event.target.closest('.post-card');
-      
-      if (postCard) {
-        handlePostCardClick(event, postCard);
+
+      if (newCommentButton) {
+        handleNewCommentButtonClick(event);
+
+      } else if (postCard) {
+        handlePostCardClick(event);
       }
     });
     

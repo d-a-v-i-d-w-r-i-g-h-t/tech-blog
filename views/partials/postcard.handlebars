@@ -9,6 +9,7 @@
   data-logged-in="{{loggedIn}}"
   data-collapse-state="true"
   data-edit-mode="false"
+  data-new-post="false"
   data-current-title=""
   data-current-pub-date=""
   data-current-content=""
@@ -21,9 +22,11 @@
           {{#if singlePost}}
             {{post.title}}
           {{else}}
-            <a class="bg-link" href="/post/{{post.id}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-              {{post.title}}
-            </a>
+            {{!-- clicking this link will not collapse the post --}}
+            <a
+              class="bg-link"
+              href="/post/{{post.id}}" data-no-collapse="true"
+            >{{post.title}}</a>
           {{/if}}
         </h4>
         <h6
@@ -55,9 +58,12 @@
     {{else}}
       {{!-- POST AUTHOR --}}
       <p class="card-content text-end pb-3">
-        <a class="bg-link" href="/posts/{{post.author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-          &#8212;{{post.author.username}}
-        </a>
+        {{!-- clicking this link will not collapse the post --}}
+        <a
+          class="bg-link"
+          href="/posts/{{post.author.username}}"
+          data-no-collapse="true"
+        >&#8212; {{post.author.username}}</a>
       </p>
     {{/if}}
     <div class="collapse" data-collapse-type="" id="collapse2Post{{post.id}}">
@@ -65,9 +71,14 @@
       {{!-- COMMENT HEADER --}}
       <div class="comments-header my-3">
         <h5>
-          <a class="bg-link" data-no-collapse="true" data-bs-toggle="collapse" href="#collapseComments-post{{post.id}}" role="button"> {{!-- clicking this link will not collapse the post --}}
-            Comments
-          </a>
+          {{!-- clicking this link will not collapse the post --}}
+          <a 
+            class="bg-link"
+            data-no-collapse="true"
+            data-bs-toggle="collapse"
+            href="#collapseComments-post{{post.id}}"
+            role="button"
+          >Comments</a>
         </h5>
 
         {{!-- NEW COMMENT BUTTON --}}
@@ -75,8 +86,8 @@
           <button
             type="button"
             class="btn btn-primary px-2 py-0 new-comment-button"
-          >New Comment
-          </button>
+            disabled="true"
+          >New Comment</button>
         </div>
 
       </div>
@@ -92,9 +103,12 @@
                   <p class="subtitle text-body-tertiary">{{formatDate date_created}}</p>
                   {{!-- COMMENT AUTHOR --}}
                   <p class="card-content mb-0 text-end">
-                    <a class="bg-link" href="/posts/{{author.username}}" data-no-collapse="true"> {{!-- clicking this link will not collapse the post --}}
-                      &#8212; {{author.username}}
-                    </a>
+                    {{!-- clicking this link will not collapse the post --}}
+                    <a 
+                      class="bg-link"
+                      href="/posts/{{author.username}}"
+                      data-no-collapse="true"
+                    >&#8212; {{author.username}}</a>
                   </p>
                 </div>
               </div>

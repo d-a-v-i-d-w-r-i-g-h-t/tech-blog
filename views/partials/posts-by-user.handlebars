@@ -17,11 +17,12 @@
 
     {{#if dashboard}}
       {{!-- NEW POST BUTTON --}}
-      <button type="button"
-        id="new-post-button"
-        class="btn btn-primary py-0 fade-in-out"
-      >New Post
-      </button>
+      <div id="new-post-button" class="fade-in-out display-none">
+        <button type="button"
+          class="btn btn-primary py-0 new-post-button"
+          disabled="true"
+        >New Post</button>
+      </div>
     {{/if}}
 
   </div>

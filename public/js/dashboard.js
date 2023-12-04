@@ -1,26 +1,4 @@
-// global constants
-const newPostTitle = 'New Post';
-const newPostContent = `What's on your mind?`
-
-const allPostsEl = document.getElementById('all-posts');
-if (allPostsEl) {
-  
-  // display new post button
-  const newPostButton = document.getElementById('new-post-button')
-  setTimeout(() => {
-    newPostButton.classList.add('visible')  
-  }, 100);
-
-  // event listener for new post button click
-  newPostButton.addEventListener('click', async function (event) {
-    
-    console.log('new post button clicked')
-    handleNewPostButtonClick(event);
-  });
-  
-  init();
-}
-
+// set up modals
 
 // define new confirm delete post modal
 const confirmDeletePostModalEl = document.getElementById('confirmDeletePostModal');
@@ -43,24 +21,6 @@ const unableToSavePostModal = new bootstrap.Modal(unableToSavePostModalEl, {
 // set global variable to prevent adding multiple confirm delete post event listeners
 let isConfirmDeletePostEventListenerAdded = false;
 
-// if unchanged new post, go straight to edit mode on dashboard load
-function init() {
-  const allPostsEl = document.getElementById('all-posts');
-  if (allPostsEl.hasChildNodes()) {
-    const firstPost = allPostsEl.querySelector('.post-card');
-    console.log('allPostsEl');
-    console.log(allPostsEl);
-    console.log('firstPost');
-    console.log(firstPost);
-
-    const firstPostTitleEl = firstPost.querySelector('.card-title');
-    if (firstPostTitleEl && firstPostTitleEl.textContent.trim() === newPostTitle) {
-      firstPostTitleEl.click();
-      enableEditMode(firstPost);
-    }
-  }
-}
-
 
 
     ///////////////////////
@@ -69,20 +29,18 @@ function init() {
  //
 // function for new post button click
 async function handleNewPostButtonClick(event) {
-  console.log('new button clicked');
-  console.log(event.target);
   try {
     const response = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', },
       body: JSON.stringify({
-        title: newPostTitle,
-        content: newPostContent,
+        title: '',
+        content: '',
       }),
     });
     
     if (response.ok) {
-
+      // reload the page, init will handle shifting the new post to edit mode
       location.reload();
 
     } else {
@@ -92,7 +50,6 @@ async function handleNewPostButtonClick(event) {
   } catch (err) {
     console.error('An unexpected error occurred:', err);
   }
-
 }
 
 
@@ -102,11 +59,8 @@ async function handleNewPostButtonClick(event) {
   ///////////////////
  //
 // function for edit button click
-async function handleEditPostButtonClick(event) {
-  console.log('edit button clicked');
-  
+async function handleEditPostButtonClick(event) {  
   const postCard = event.target.closest('.post-card');
-  
   enableEditMode(postCard);
 }
 
@@ -118,31 +72,20 @@ async function handleEditPostButtonClick(event) {
  //
 // function for delete button click
 async function handleDeletePostButtonClick(event) {
-  console.log('delete button clicked');
   const postCard = event.target.closest('.post-card');
-  
   const postId = postCard.dataset.postId;
-  console.log('postId');
-  console.log(postId);
   
   // store the postId in the modal for later retrieval
   confirmDeletePostModalEl.dataset.postId = postId;
-
   confirmDeletePostModal.show();
-  
-  console.log(`ok to delete post ${postId}`);
 
   if (!isConfirmDeletePostEventListenerAdded) {
-    
     confirmDeletePostModalEl.addEventListener('click', async function (event) {
       
       // retrieve the postId from the modal data attribute
       const postId = confirmDeletePostModalEl.dataset.postId;
       
       if (event.target.id === 'ok-delete') {
-        
-        console.log(`confirm: ok to delete post ${postId}`);
-
         deletePost(postId)
       }
     });
@@ -150,7 +93,7 @@ async function handleDeletePostButtonClick(event) {
   }
 }
 
-
+// delete post from the database
 async function deletePost(postId) {
   try {
     const response = await fetch(`/api/posts/${postId}`, {
@@ -169,13 +112,14 @@ async function deletePost(postId) {
     } else {
       const errorMessage = await response.text();
       console.error(`Failed to delete post. Server response: ${errorMessage}`);
-      
+
       unableToDeletePostModal.show();
     }
   } catch (err) {
     console.error('An unexpected error occurred:', err);
   }
 }
+
 
 
     //////////////////////
@@ -206,7 +150,6 @@ async function handlePublishPostButtonClick(event) {
         publishButton.classList.add('btn-outline-success');
         publishButton.classList.remove('btn-success');
         publishButton.textContent = 'Publish'
-        
         publishButton.dataset.published = 'false';
         
       } else {
@@ -217,20 +160,15 @@ async function handlePublishPostButtonClick(event) {
         publishButton.classList.remove('btn-outline-success');
         publishButton.classList.add('btn-success');
         publishButton.textContent = 'Unpublish'
-        
         publishButton.dataset.published = 'true';
       }
-      
     } else {
       const errorMessage = await response.text();
-      console.error(`Failed to delete post. Server response: ${errorMessage}`);
-      
-      unableToDeletePostModal.show();
+      console.error(`Failed to update 'Published' status. Server response: ${errorMessage}`);
     }
   } catch (err) {
     console.error('An unexpected error occurred:', err);
   }
-  
 }
 
 
@@ -241,10 +179,7 @@ async function handlePublishPostButtonClick(event) {
  //
 // function for save button click
 async function handleSavePostEditButtonClick(event) {
-  console.log('save button clicked');
-
   const postCard = event.target.closest('.post-card');
-
   const postId = postCard.dataset.postId;
 
   // retrieve updated title and content from input fields
@@ -256,11 +191,14 @@ async function handleSavePostEditButtonClick(event) {
   const savedPubDate = pubDateEl.textContent.trim();
   const savedContent = contentInputEl.value.trim();
 
-  if (savedTitle === postCard.dataset.currentTitle && savedContent === postCard.dataset.currentContent) {
+  // if nothing has changed, return
+  if (savedTitle === postCard.dataset.currentTitle &&
+    savedContent === postCard.dataset.currentContent)
+  {
     disableEditMode(postCard);
     return;
   }
-
+  // if something has changed:
   try {
     const response = await fetch(`/api/posts/${postId}`, {
       method: 'PUT',
@@ -271,8 +209,6 @@ async function handleSavePostEditButtonClick(event) {
         content: savedContent,
       }),
     });
-    console.log('save response');
-    console.log(response);
     
     if (response.ok) {
       
@@ -281,18 +217,21 @@ async function handleSavePostEditButtonClick(event) {
       postCard.dataset.currentPubDate = savedPubDate;
       postCard.dataset.currentContent = savedContent;
 
+      // reset Unpublish button => Publish button with correct text and styling
+      // see dashboard-post-buttons.handlebars
       const publishButtonEl = postCard.querySelector('.publish-post-button');
       publishButtonEl.classList.remove('btn-success');
       publishButtonEl.classList.add('btn-outline-success');
       publishButtonEl.dataset.published='false';
       publishButtonEl.textContent='Publish';
       
+      postCard.dataset.newPost = "false";
       disableEditMode(postCard);
 
     } else {
       const errorMessage = await response.text();
       console.error(`Failed to update post. Server response: ${errorMessage}`);
-      
+
       unableToSavePostModal.show();
     }
   } catch (err) {
@@ -308,17 +247,19 @@ async function handleSavePostEditButtonClick(event) {
  //
 // function for cancel button click
 async function handleCancelPostEditButtonClick(event) {
-  console.log('cancel button clicked');
-  
   const postCard = event.target.closest('.post-card');
   const postId = postCard.dataset.postId;
 
   const savedTitle = postCard.dataset.currentTitle;
   const savedContent = postCard.dataset.currentContent;
 
-  if (savedTitle === newPostTitle && savedContent === newPostContent) {
-
-    deletePost(postId);
+  // if the post was blank prior to any input, then delete it
+  if (savedTitle === '' && savedContent === '') {
+    toggleCollapsePost(postCard);
+    setTimeout(() => {
+      deletePost(postId);
+      displayNewPostButton({ displayButton: true });
+    }, 200);
 
   } else {
     
@@ -358,13 +299,14 @@ function enableEditMode(postCard) {
   titleInputEl.type = 'text';
   titleInputEl.classList.add('title-input', 'mb-3');
   titleInputEl.value = currentTitle;
+  titleInputEl.placeholder = 'New Post Title';
 
-  const inputFieldLength = currentTitle.length + 10;
+  const inputFieldLength = Math.max(currentTitle.length, titleInputEl.placeholder.length) + 10;
   titleInputEl.setAttribute('size', inputFieldLength.toString());
 
   cardTitleEl.parentNode.replaceChild(titleInputEl, cardTitleEl);
 
-  // Replace publication data with 'DRAFT'
+  // Replace publication date with 'DRAFT'
   pubDateEl.textContent = 'DRAFT';
       
   // replace content element with content textarea input element
@@ -372,33 +314,18 @@ function enableEditMode(postCard) {
   contentInputEl.classList.add('content-input', 'mb-3');
   contentInputEl.value = currentContent;
   contentInputEl.setAttribute('rows', '10');
+  contentInputEl.placeholder = `What's on your mind?`
 
   cardContentEl.parentNode.replaceChild(contentInputEl, cardContentEl);
 
-
   // update button configuration:
-  // hide main button group, show edit button group
-  const showPostButtonGroup = false;
-  const showPostEditButtonGroup = true;
-  
+  // hide new post button and main button group, show edit button group
   const postId = postCard.dataset.postId;
   
-  const postButtonGroupId = `post${postId}-button-group`;
-  const postButtons = [
-    'edit-post-button',
-    'delete-post-button',
-    'publish-post-button',
-  ];
-
-  const postEditButtonGroupId = `post${postId}-edit-post-button-group`;
-  const editPostButtons = [
-    'save-post-edit-button',
-    'cancel-post-edit-button',
-  ];
-
-  showButtons(showPostButtonGroup, postButtonGroupId, postButtons);
+  displayNewPostButton({ displayButton: false });
+  displayPostButtonGroup({ displayButtonGroup: false, postId });
   setTimeout(() => {
-    showButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
+    displayEditPostButtonGroup({ displayButtonGroup: true, postId });
   }, 500);
 }
 
@@ -410,7 +337,6 @@ function enableEditMode(postCard) {
  //
 // function to disable edit mode
 function disableEditMode(postCard) {
-
   postCard.dataset.editMode = 'false';
 
   // change input field & textarea back to read-only elements
@@ -448,101 +374,164 @@ function disableEditMode(postCard) {
   
 
   // update button configuration:
-  // show main button group, hide edit button group
-  const showPostButtonGroup = true;
-  const showPostEditButtonGroup = false;
-  
+  // show new post button and main button group, hide edit button group
   const postId = postCard.dataset.postId;
 
+  displayEditPostButtonGroup({ displayButtonGroup: false, postId });
+  setTimeout(() => {
+    displayNewPostButton({ displayButton: true });
+    displayPostButtonGroup({ displayButtonGroup: true, postId });
+  }, 500);
+}
+
+
+    /////////////////////////////////
+   //  SHOW/HIDE NEW POST BUTTON  //
+  /////////////////////////////////
+ //
+// function to show or hide new post button
+function displayNewPostButton({ displayButton }) {
+  const newPostButtonId = 'new-post-button';
+  const newPostButton = [ 'new-post-button' ];
+    
+  showButtons(displayButton, newPostButtonId, newPostButton);
+}
+
+
+    //////////////////////////////////
+   //  SHOW/HIDE POST BUTTON GROUP //
+  //////////////////////////////////
+ //
+// function to show or hide post button group
+function displayPostButtonGroup({ displayButtonGroup, postId }) {
   const postButtonGroupId = `post${postId}-button-group`;
   const postButtons = [
     'edit-post-button',
     'delete-post-button',
     'publish-post-button',
   ];
-  
-  const postEditButtonGroupId = `post${postId}-edit-post-button-group`;
+  showButtons(displayButtonGroup, postButtonGroupId, postButtons);
+}
+
+
+    ///////////////////////////////////////
+   //  SHOW/HIDE EDIT POST BUTTON GROUP //
+  ///////////////////////////////////////
+ //
+// function to show or hide post edit button group
+function displayEditPostButtonGroup({ displayButtonGroup, postId }) {
+  const editPostButtonGroupId = `post${postId}-edit-post-button-group`;
   const editPostButtons = [
     'save-post-edit-button',
     'cancel-post-edit-button',
   ];
-  
-  showButtons(showPostEditButtonGroup, postEditButtonGroupId, editPostButtons);
-  setTimeout(() => {
-    showButtons(showPostButtonGroup, postButtonGroupId, postButtons);
-  }, 500);
+  showButtons(displayButtonGroup, editPostButtonGroupId, editPostButtons);
 }
 
 
-
-
-// event listener for post buttons
-const allPostsContainer = document.getElementById('all-posts');
-const postCardContainers = document.querySelectorAll('.post-card');
-
-const listenerTarget = allPostsContainer
-  ? allPostsContainer
-  : postCardContainers.length >= 1
-    ? postCardContainers[0]
-    : null;
-
-listenerTarget.addEventListener('click', async function (event) {
-
-  const editPostButton = event.target.closest('.edit-post-button');
-  const deletePostButton = event.target.closest('.delete-post-button');
-  const publishPostButton = event.target.closest('.publish-post-button');
-  const savePostEditButton = event.target.closest('.save-post-edit-button');
-  const cancelPostEditButton = event.target.closest('.cancel-post-edit-button');
-
-  if (editPostButton) {
-    handleEditPostButtonClick(event);
-
-  } else if (deletePostButton) {
-    handleDeletePostButtonClick(event);
-
-  } else if (publishPostButton) {
-    handlePublishPostButtonClick(event);
-    
-  } else if (savePostEditButton) {
-    handleSavePostEditButtonClick(event);
-    
-  } else if (cancelPostEditButton) {
-    handleCancelPostEditButtonClick(event);
-  }
-});
-
-
-// event listener for uncollapsing sections
-document.addEventListener('show.bs.collapse', function (event) {
-  handlePostCollapseEvent({ isHide: false, event })
-});
-
-// event listener for collapsing sections
-document.addEventListener('hide.bs.collapse', function (event) {
-  handlePostCollapseEvent({ isHide: true, event })
-}); 
-
-
+    //////////////////////////////////
+   //  HANDLE POST COLLAPSE EVENT  //
+  //////////////////////////////////
+ //
+// function to handle post collapse events
 function handlePostCollapseEvent({ isHide, event }){
   const collapseSection = event.target;
   const collapseType = collapseSection.dataset.collapseType;
   
   if (collapseType === "post") {
-    console.log('post uncollapse event');
     const showPostButtonGroup = !isHide; 
-
     const postCard = collapseSection.closest('.post-card');
     const postId = postCard.dataset.postId;
-    const buttonGroupId = `post${postId}-button-group`;
-    const buttons = [
-      'edit-post-button',
-      'delete-post-button',
-      'publish-post-button',
-    ];
-    console.log('buttons');
-    console.log(buttons);
+    
+    const isNewPost = postCard.dataset.newPost === "true"; // convert string to boolean
 
-    showButtons(showPostButtonGroup, buttonGroupId, buttons);
+    if (!isNewPost) {
+      displayPostButtonGroup({ displayButtonGroup: showPostButtonGroup, postId });
+    }
   }
 }
 
+
+    ////////////////////////////
+   //  INITIALIZE DASHBOARD  //
+  ////////////////////////////
+ //
+// initialize page: add new post event listener, deal with new post if there is one
+function init() {
+
+  // add event listener for post buttons
+  const allPostsContainer = document.getElementById('all-posts');
+  const postCardContainers = document.querySelectorAll('.post-card');
+
+  const listenerTarget = allPostsContainer
+    ? allPostsContainer
+    : postCardContainers.length >= 1
+      ? postCardContainers[0]
+      : null;
+
+  listenerTarget.addEventListener('click', async function (event) {
+
+    const editPostButton = event.target.closest('.edit-post-button');
+    const deletePostButton = event.target.closest('.delete-post-button');
+    const publishPostButton = event.target.closest('.publish-post-button');
+    const savePostEditButton = event.target.closest('.save-post-edit-button');
+    const cancelPostEditButton = event.target.closest('.cancel-post-edit-button');
+
+    if (editPostButton) {
+      handleEditPostButtonClick(event);
+
+    } else if (deletePostButton) {
+      handleDeletePostButtonClick(event);
+
+    } else if (publishPostButton) {
+      handlePublishPostButtonClick(event);
+      
+    } else if (savePostEditButton) {
+      handleSavePostEditButtonClick(event);
+      
+    } else if (cancelPostEditButton) {
+      handleCancelPostEditButtonClick(event);
+    }
+  });
+
+  if (allPostsContainer) {
+    
+    // add event listener for new post button click
+    document.querySelector('.new-post-button').addEventListener(
+      'click', event => handleNewPostButtonClick(event)
+    );  
+    
+    // add event listener for uncollapsing sections
+    document.addEventListener('show.bs.collapse', function (event) {
+      handlePostCollapseEvent({ isHide: false, event })
+    });  
+    
+    // add event listener for collapsing sections
+    document.addEventListener('hide.bs.collapse', function (event) {
+      handlePostCollapseEvent({ isHide: true, event })
+    });  
+
+    // if unchanged new post, go straight to edit mode on dashboard load
+    if (allPostsContainer.hasChildNodes()) {
+      const firstPost = allPostsContainer.querySelector('.post-card');
+      const firstPostTitleEl = firstPost.querySelector('.card-title');
+      const firstPostContentEl = firstPost.querySelector('.card-content');
+      
+      if (firstPostTitleEl && firstPostContentEl) {
+        if (firstPostTitleEl.textContent.trim() === '' &&
+        firstPostContentEl.textContent.trim() === '') {
+          
+          firstPost.dataset.newPost = "true";
+          enableEditMode(firstPost);
+          toggleCollapsePost(firstPost);
+          return;
+        } 
+      }
+    }
+    displayNewPostButton({ displayButton: true });
+  }
+}
+
+window.onload = function () {
+  init();
+};
