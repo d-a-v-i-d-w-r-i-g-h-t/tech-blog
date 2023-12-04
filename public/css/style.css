@@ -1,6 +1,22 @@
+/* Define a keyframe animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to the elements you want to fade in */
+.fade-in {
+}
+
+
 main {
   margin: 57px 48px 48px;
-  padding-top: 24px
+  padding-top: 24px;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 .login-page-button,
