@@ -35,19 +35,46 @@ function toggleCollapsePost(postCardElement) {
     toggle: false,
   });
   
-  const isCollapsed = postCardElement.dataset.collapseState === 'true'; // convert string to boolean
-  
+  const isCollapsed = !collapseElement.classList.contains('show');
+
   // if collapse state is true then uncollapse post content
   if (isCollapsed === true) {
     bsPostContentCollapse.show();
     bsPostContentCollapse2.show();
-    postCardElement.dataset.collapseState = 'false';
     
   // otherwise collapse post content
   } else {
     bsPostContentCollapse.hide();
     bsPostContentCollapse2.hide();
-    postCardElement.dataset.collapseState = 'true';
+  }
+}
+
+
+    ////////////////////////////////
+   //  TOGGLE COLLAPSE COMMENTS  //
+  ////////////////////////////////
+ //
+// function to collapse and uncollapse comments
+function toggleCollapseComments(postCardElement) {
+  const postId = postCardElement.dataset.postId;
+
+  const collapseElementId = `collapseComments-post${postId}`;
+
+  const collapseElement = document.getElementById(collapseElementId);
+
+  const bsPostCommentsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
+    toggle: false,
+  });
+  
+  const isCollapsed = !collapseElement.classList.contains('show');
+  
+  // if collapse state is true then uncollapse post content
+  if (isCollapsed === true) {
+    bsPostCommentsCollapse.show();
+    
+  // otherwise collapse post content
+  } else {
+    bsPostCommentsCollapse.hide();
   }
 }
 
@@ -121,10 +148,15 @@ function viewPostsInit() {
 
     console.log('single post');
     const postCard = document.querySelector('.post-card');
-
+    
     setTimeout(() => {
       toggleCollapsePost(postCard);
-    }, 100);
+    }, 500);
+    
+    setTimeout(() => {
+      toggleCollapseComments(postCard);
+    }, 1400);
+    
   }
 
   // event listener for uncollapsing sections
