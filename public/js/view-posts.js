@@ -29,10 +29,10 @@ function toggleCollapsePost(postCardElement) {
   const collapseElement2 = document.getElementById(collapseElement2Id);
 
   const bsPostContentCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
-    toggle: false
+    toggle: false,
   });
   const bsPostContentCollapse2 = bootstrap.Collapse.getOrCreateInstance(collapseElement2, {
-    toggle: false
+    toggle: false,
   });
   
   const isCollapsed = postCardElement.dataset.collapseState === 'true'; // convert string to boolean
@@ -41,13 +41,13 @@ function toggleCollapsePost(postCardElement) {
   if (isCollapsed === true) {
     bsPostContentCollapse.show();
     bsPostContentCollapse2.show();
-    postCardElement.dataset.collapseState = 'false'
+    postCardElement.dataset.collapseState = 'false';
     
   // otherwise collapse post content
   } else {
     bsPostContentCollapse.hide();
     bsPostContentCollapse2.hide();
-    postCardElement.dataset.collapseState = 'true'
+    postCardElement.dataset.collapseState = 'true';
   }
 }
 
@@ -102,7 +102,8 @@ function handleNewCommentButtonClick(event) {
 function viewPostsInit() {
   const allPostsEl = document.getElementById('all-posts');
   
-  if (allPostsEl) {
+  if (allPostsEl) { // multiple posts mode
+
     // add event listener for clicks on posts
     allPostsEl.addEventListener('click', async function (event) {
       const newCommentButton = event.target.closest('.new-comment-button');
@@ -116,20 +117,26 @@ function viewPostsInit() {
       }
     });
     
-  } else {
-    // there is only one post, and it needs to be uncollapsed
+  } else { // single post mode: there is only one post, and it needs to be uncollapsed
+
+    console.log('single post');
     const postCard = document.querySelector('.post-card');
-    toggleCollapsePost(postCard);
+
+    setTimeout(() => {
+      toggleCollapsePost(postCard);
+    }, 100);
   }
 
   // event listener for uncollapsing sections
   document.addEventListener('show.bs.collapse', function (event) {
     handleCommentCollapseEvent({ isHide: false, event })
+    // alert(`uncollapse: ${event.target}`);
   });
   
   // event listener for collapsing sections
   document.addEventListener('hide.bs.collapse', function (event) {
     handleCommentCollapseEvent({ isHide: true, event })
+    // alert(`collapse: ${event.target}`);
   }); 
 }  
   

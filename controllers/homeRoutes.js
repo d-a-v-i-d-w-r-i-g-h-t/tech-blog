@@ -4,9 +4,11 @@ const withAuth = require('../utils/authorize');
 const sequelize = require("../config/connection");
 
 
-
-// GET ALL POSTS, sorted by date (newest at the top)
-//
+    /////////////////////
+   //  GET ALL POSTS  //
+  /////////////////////
+ //
+// sorted by date (newest at the top)
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll({
@@ -48,9 +50,11 @@ router.get('/', async (req, res) => {
 });
 
 
-
-// GET ALL POSTS BY CURRENT USER: DASHBOARD
-//
+    ////////////////////////////////////////////////
+   //  GET ALL POSTS BY CURRENT USER: DASHBOARD  //
+  ////////////////////////////////////////////////
+ //
+// sorted by date (newest at the top, unpublished first)
 router.get('/dashboard', withAuth, async (req, res) => {
   try {
     const postData = await Post.findAll({
@@ -95,13 +99,12 @@ router.get('/dashboard', withAuth, async (req, res) => {
 });
 
 
-
-// GET ALL POSTS BY USERNAME
-//
+    /////////////////////////////////
+   //  GET ALL POSTS BY USERNAME  //
+  /////////////////////////////////
+ //
+// sorted by date (newest at the top)
 router.get('/posts/:username', async (req, res) => {
-  console.log('*************************');
-  console.log('req.session.username');
-  console.log(req.session.username);
   if (req.session.username) {
     if (req.params.username === req.session.username) {
       res.redirect('/dashboard');
@@ -163,8 +166,12 @@ router.get('/posts/:username', async (req, res) => {
 });
 
 
-
-// GET ONE POST BY POST ID
+    ///////////////////////////////
+   //  GET ONE POST BY POST ID  //
+  ///////////////////////////////
+ //
+// comments sorted by date created, newest first
+// 
 ////////////////////////////////////////////////////
 router.get('/post/:id', async (req, res) => {
   try{ 
@@ -191,8 +198,6 @@ router.get('/post/:id', async (req, res) => {
       ],
     });
 
-
-
     if(!postData) {
       res.status(404).json({ success: false, message: 'No post with this id!' });
       return;
@@ -212,9 +217,11 @@ router.get('/post/:id', async (req, res) => {
 });
 
 
-
-// GET ALL COMMENTS BY CURRENT USER: DASHBOARD
-
+    ///////////////////////////////////////////////////
+   //  GET ALL COMMENTS BY CURRENT USER: DASHBOARD  //
+  ///////////////////////////////////////////////////
+ //
+// comments sorted by date created, newest first
 router.get('/dashboard/comments', withAuth, async (req, res) => {
   try {
     const commentData = await Comment.findAll({
@@ -260,9 +267,11 @@ router.get('/dashboard/comments', withAuth, async (req, res) => {
 });
 
 
-
-// GET ALL COMMENTS BY USERNAME
-//
+    ////////////////////////////////////
+   //  GET ALL COMMENTS BY USERNAME  //
+  ////////////////////////////////////
+ //
+// comments sorted by date created, newest first
 router.get('/comments/:username', async (req, res) => {
   try {
     const userData = await User.findOne({
@@ -317,8 +326,11 @@ router.get('/comments/:username', async (req, res) => {
 });
 
 
-
-// GET ONE COMMENT BY COMMENT ID
+    ///////////////////////////////////// /////////////// DO WE NEED THIS? ///////////////
+   //  GET ONE COMMENT BY COMMENT ID  //
+  /////////////////////////////////////
+ //
+// 
 ////////////////////////////////////////////////////
 router.get('/comment/:id', async (req, res) => {
   try{ 
@@ -363,8 +375,10 @@ router.get('/comment/:id', async (req, res) => {
 });
 
 
-
-// LOGIN route
+    ///////////////////
+   //  LOGIN ROUTE  //
+  ///////////////////
+ //
 //
 router.get('/login', (req, res) => {
   // If a session exists, redirect the request to the homepage
@@ -379,8 +393,10 @@ router.get('/login', (req, res) => {
 });
 
 
-
-// SIGNUP route
+    ////////////////////
+   //  SIGNUP ROUTE  //
+  ////////////////////
+ //
 //
 router.get('/signup', (req, res) => {
   // If a session exists, redirect the request to the homepage
@@ -393,6 +409,7 @@ router.get('/signup', (req, res) => {
 
   res.render('signup', { signupPage });
 });
+
 
 
 module.exports = router;

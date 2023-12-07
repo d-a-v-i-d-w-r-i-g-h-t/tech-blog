@@ -93,6 +93,12 @@ async function handleDeletePostButtonClick(event) {
   }
 }
 
+
+
+    ///////////////////
+   //  DELETE POST  //
+  ///////////////////
+ //
 // delete post from the database
 async function deletePost(postId) {
   try {
@@ -270,7 +276,7 @@ async function handleCancelPostEditButtonClick(event) {
 
 
     ////////////////////////
-   //  Enable Edit Mode  //
+   //  ENABLE EDIT MODE  //
   ////////////////////////
  //
 // function to enable edit mode
@@ -332,7 +338,7 @@ function enableEditMode(postCard) {
 
 
     /////////////////////////
-   //  Disable Edit Mode  //
+   //  DISABLE EDIT MODE  //
   /////////////////////////
  //
 // function to disable edit mode
@@ -385,6 +391,7 @@ function disableEditMode(postCard) {
 }
 
 
+
     /////////////////////////////////
    //  SHOW/HIDE NEW POST BUTTON  //
   /////////////////////////////////
@@ -396,6 +403,7 @@ function displayNewPostButton({ displayButton }) {
     
   showButtons(displayButton, newPostButtonId, newPostButton);
 }
+
 
 
     //////////////////////////////////
@@ -414,6 +422,7 @@ function displayPostButtonGroup({ displayButtonGroup, postId }) {
 }
 
 
+
     ///////////////////////////////////////
    //  SHOW/HIDE EDIT POST BUTTON GROUP //
   ///////////////////////////////////////
@@ -427,6 +436,7 @@ function displayEditPostButtonGroup({ displayButtonGroup, postId }) {
   ];
   showButtons(displayButtonGroup, editPostButtonGroupId, editPostButtons);
 }
+
 
 
     //////////////////////////////////
@@ -450,6 +460,7 @@ function handlePostCollapseEvent({ isHide, event }){
     }
   }
 }
+
 
 
     ////////////////////////////
@@ -494,23 +505,18 @@ function init() {
     }
   });
 
-  if (allPostsContainer) {
+  if (allPostsContainer) { // multiple post mode
     
     // add event listener for new post button click
     document.querySelector('.new-post-button').addEventListener(
       'click', event => handleNewPostButtonClick(event)
     );  
     
-    // add event listener for uncollapsing sections
-    document.addEventListener('show.bs.collapse', function (event) {
-      handlePostCollapseEvent({ isHide: false, event })
-    });  
-    
     // add event listener for collapsing sections
     document.addEventListener('hide.bs.collapse', function (event) {
       handlePostCollapseEvent({ isHide: true, event })
     });  
-
+    
     // if unchanged new post, go straight to edit mode on dashboard load
     if (allPostsContainer.hasChildNodes()) {
       const firstPost = allPostsContainer.querySelector('.post-card');
@@ -529,7 +535,16 @@ function init() {
       }
     }
     displayNewPostButton({ displayButton: true });
+    
+  } else { // single post mode
+    
+    
   }
+
+  // add event listener for uncollapsing sections (required for both single and multipost views)
+  document.addEventListener('show.bs.collapse', function (event) {
+    handlePostCollapseEvent({ isHide: false, event })
+  });  
 }
 
 window.onload = function () {

@@ -4,7 +4,12 @@
  //
 // function to show/hide dashboard buttons
 function showButtons(showState, buttonGroupId = '', buttons = []) {
-
+  console.log('showState');
+  console.log(showState);
+  console.log('buttonGroupId');
+  console.log(buttonGroupId);
+  console.log('buttons');
+  console.log(buttons);
   // do nothing if no button group ID or buttons array is empty
   if (buttonGroupId === '' || buttons.length === 0) {
     return;
