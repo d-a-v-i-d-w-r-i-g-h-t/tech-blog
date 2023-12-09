@@ -30,7 +30,7 @@ const sess = {
 app.use(session(sess));
 
 // Create the Handlebars.js engine object with custom helper functions
-const hbs = exphbs.create({ helpers }); // DELETE IF NOT NECESSARY
+const hbs = exphbs.create({ helpers });
 
 // Inform Express.js which template engine we're using
 app.engine("handlebars", hbs.engine);

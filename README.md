@@ -17,6 +17,11 @@ If you're new to Markdown, read the GitHub guide on [Mastering Markdown](https:/
 If you need an example of a good README, check out [the VSCode repository](https://github.com/microsoft/vscode).
 
 
+## Features
+
+If your project has a lot of features, consider adding a heading called "Features" and listing them there.
+
+
 ## Installation
 
 What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
@@ -35,11 +40,18 @@ To add a screenshot, create an `assets/images` folder in your repository and upl
 
 ## Credits
 
-List your collaborators, if any, with links to their GitHub profiles.
+I used the following software packages in this project:
+- [Express](https://www.npmjs.com/package/express) to manage routing
+- [express-session](https://www.npmjs.com/package/express-session) for session management
+- [bcrypt](https://www.npmjs.com/package/bcrypt) for password hashing
+- [MySQL2](https://www.npmjs.com/package/mysql2) to create a relational database for application data
+- [Sequelize](https://www.npmjs.com/package/sequelize) to interact with and manage a MySQL database
+- [connect-session-sequelize](https://www.npmjs.com/package/connect-session-sequelize) for session management using Sequelize as the session store
+- [Dotenv](https://www.npmjs.com/package/dotenv) to load environment variables from a ```.env``` file into ```process.env```
+- [Handlebars](https://handlebarsjs.com/) with [Express Handlebars](https://www.npmjs.com/package/express-handlebars) as a templating engine to generate dynamic HTML
+- [Bootstrap](https://www.npmjs.com/package/bootstrap) for styling and page components including modals
+- [Nodemon](https://www.npmjs.com/package/nodemon) for automatic application restart on file change during development
 
-If you used any third-party assets that require attribution, list the creators with links to their primary web presence in this section.
-
-If you followed tutorials, include links to those here as well.
 
 
 ## License
@@ -48,11 +60,6 @@ Please refer to the LICENSE in the repo.
 
 
 ---
-
-
-## Features
-
-If your project has a lot of features, consider adding a heading called "Features" and listing them there.
 
 
 ## Pseudocode
