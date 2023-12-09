@@ -28,7 +28,7 @@ async function handleEditCommentButtonClick(event) {
  //
 // function for delete button click
 async function handleDeleteCommentButtonClick(event) {
-  console.log('delete button clicked');
+  // console.log('delete button clicked');
   const commentCard = event.target.closest('.comment-card');
   const commentId = commentCard.dataset.commentId;
   
@@ -37,7 +37,7 @@ async function handleDeleteCommentButtonClick(event) {
 
   confirmDeleteCommentModal.show();
   
-  console.log(`ok to delete comment ${commentId}`);
+  // console.log(`ok to delete comment ${commentId}`);
 
   if (!isConfirmDeleteCommentEventListenerAdded) {
     
@@ -48,7 +48,7 @@ async function handleDeleteCommentButtonClick(event) {
       
       if (event.target.id === 'ok-delete') {
         
-        console.log(`confirm: ok to delete comment ${commentId}`);
+        // console.log(`confirm: ok to delete comment ${commentId}`);
 
         deleteComment(commentId)
       }
@@ -64,7 +64,7 @@ async function handleDeleteCommentButtonClick(event) {
  //
 // delete comment from the database
 async function deleteComment(commentId) {
-  console.log('delete comment ', commentId);
+  // console.log('delete comment ', commentId);
   try {
     const response = await fetch(`/api/comments/${commentId}`, {
       method: 'DELETE',
@@ -149,15 +149,11 @@ async function handleSaveCommentEditButtonClick(event) {
  //
 // function for cancel button click
 async function handleCancelCommentEditButtonClick(event) {
-  console.log('cancel button clicked');
+  // console.log('cancel button clicked');
 
   const commentCard = event.target.closest('.comment-card');
   const commentId = commentCard.dataset.commentId;
   const isNewComment = commentCard.dataset.newComment === 'true'; // convert string to boolean
-  console.log('commentId');
-  console.log(commentId);
-  console.log('isNewComment');
-  console.log(isNewComment);
 
   if (isNewComment === true) {
     postCard = commentCard.closest('.post-card');
@@ -332,7 +328,7 @@ function handleCommentPostCollapseEvent({ isHide, event }) {
     const isNewComment = commentCard.dataset.newComment === 'true' // convert string to boolean
     
     if (!isNewComment) {
-      console.log('display comment button group');
+      // console.log('display comment button group');
       displayCommentButtonGroup({ displayButtonGroup: showCommentButtonGroup, commentId });
     }
   }

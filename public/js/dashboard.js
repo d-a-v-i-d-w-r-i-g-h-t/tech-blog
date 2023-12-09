@@ -555,7 +555,7 @@ function initDashboard() {
   const isSinglePost = navEl.dataset.singlePost === 'true'; // convert string to boolean
 
   if (allPostsContainer) { // multiple post mode
-    console.log('multi post mode');
+    // console.log('multi post mode');
     // add event listener for NEW POST BUTTON click
     document.querySelector('.new-post-button')
       .addEventListener('click', handleNewPostButtonClick);  
