@@ -1,10 +1,43 @@
+// global constants
+const usernameInputField = document.getElementById('username-signup');
+const emailInputField = document.getElementById('email-signup');
+const usernameWarning = document.getElementById('usernameWarning');
+const signUpButton = document.getElementById('sign-up-button');
+const passwordInputField = document.getElementById('password-signup');
+
+// set up Password Mismatch modal
+const passwordMismatchModalEl = document.getElementById('passwordMismatchModal');
+const passwordMismatchModal = new bootstrap.Modal(passwordMismatchModalEl, {
+  keyboard: true
+});
+
+// set up Missing Data modal
+const missingDataModalEl = document.getElementById('missingDataModal');
+const missingDataModal = new bootstrap.Modal(missingDataModalEl, {
+  keyboard: true
+});
+
+
+// set up Invalid Email modal
+const invalidEmailModalEl = document.getElementById('invalidEmailModal');
+const invalidEmailModal = new bootstrap.Modal(invalidEmailModalEl, {
+  keyboard: true
+});
+
+
+
+    //////////////////////////
+   //  IS USERNAME UNIQUE  // 
+  //////////////////////////
+ //
+// function to continuously check if username is unique as it is entered 
 async function isUsernameUnique(username) {
   try {
     // fetch request to check if a username is unique
     const response = await fetch(`/api/users/check-username/${username}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-    });
+    });  
     
     if (response.ok) {
       // fetch was successful
@@ -14,30 +47,31 @@ async function isUsernameUnique(username) {
       // fetch was unsuccessful
       console.error('Error: unable to confirm unique username.');
       return false;
-    }
+    }  
   } catch (err) {
     console.error('Error: unable to confirm unique username.');
     return false;
-  }
-}
-
-const usernameInputField = document.getElementById('username-signup');
-const emailInputField = document.getElementById('email-signup');
-const usernameWarning = document.getElementById('usernameWarning');
-const signUpButton = document.getElementById('sign-up-button');
-const passwordInputField = document.getElementById('password-signup');
-
-const passwordMismatchModalEl = document.getElementById('passwordMismatchModal');
-const passwordMismatchModal = new bootstrap.Modal(passwordMismatchModalEl, {
-  keyboard: true
-});
-
-const missingDataModalEl = document.getElementById('missingDataModal');
-const missingDataModal = new bootstrap.Modal(missingDataModalEl, {
-  keyboard: true
-});
+  }  
+}  
 
 
+
+    //////////////////////////////
+   //  IS EMAIL ADDRESS VALID  //
+  //////////////////////////////
+ //
+// function to check if email address has valid format
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}  
+
+
+
+    //////////////////////////////////////
+   //  EVENT LISTENER: USERNAME INPUT  //
+  //////////////////////////////////////
+ //
 // event listener on the username input field
 usernameInputField.addEventListener('input', async () => {
   const proposedUsername = usernameInputField.value.trim();
@@ -67,6 +101,33 @@ usernameInputField.addEventListener('input', async () => {
 
 
 
+    ///////////////////////////////////
+   //  EVENT LISTENER: EMAIL INPUT  //
+  ///////////////////////////////////
+ //
+// event listener on the email input field
+emailInputField.addEventListener('blur', () => {
+  const email = emailInputField.value.trim();
+  if (email) {
+    
+    // Check if the email is invalid
+    if (!isValidEmail(email)) {
+      // Display the modal to inform the user
+      // You can customize this modal as needed
+  
+      // display modal to warn user
+      invalidEmailModal.show();
+    }
+  }
+});
+
+
+
+    ////////////////////////////
+   //  SIGN UP FORM HANDLER  //
+  ////////////////////////////
+ //
+// handle form submit with various checks
 const signupFormHandler = async (event) => {
   event.preventDefault();
   
@@ -117,12 +178,24 @@ const signupFormHandler = async (event) => {
   }
 };
 
+
+
+    //////////////////////
+   //  LOGIN REDIRECT  //
+  //////////////////////
+ //
 // redirect to the login page
 const redirectToLogin = async (event) => {
   event.preventDefault();
 
   window.location.href = '/login';
 }
+
+
+
+    ////////////////////////////
+   //  MISC EVENT LISTENERS  //
+  ////////////////////////////
 
 // event listener for when password mismatch modal is fully hidden
 passwordMismatchModalEl.addEventListener('hidden.bs.modal', () => {
@@ -133,9 +206,17 @@ passwordMismatchModalEl.addEventListener('hidden.bs.modal', () => {
 // event listener for when missing data modal is fully hidden
 missingDataModalEl.addEventListener('hidden.bs.modal', () => {
   // reset focus on empty field if any
-  if (emailInputField.value === '') {
+  if (usernameInputField.value === '') {
+    usernameInputField.focus();
+  } else if (emailInputField.value === '') {
     emailInputField.focus();
   }
+});
+
+// event listener for when invalid email modal is fully hidden
+invalidEmailModalEl.addEventListener('hidden.bs.modal', () => {
+  // reset focus on email input field
+    emailInputField.focus();
 });
 
 // event listener on the signup form submit button

@@ -1,6 +1,6 @@
 {{!-- Password Mismatch Modal --}}
 <div class="modal fade" id="passwordMismatchModal" tabindex="-1" aria-labelledby="passwordMismatchModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="passwordMismatchModalLabel">Warning</h1>
@@ -18,7 +18,7 @@
 
 {{!-- Missing Data Modal --}}
 <div class="modal fade" id="missingDataModal" tabindex="-1" aria-labelledby="missingDataModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="missingDataModalLabel">Warning</h1>
@@ -26,6 +26,24 @@
       </div>
       <div class="modal-body">
         Sign up information is incomplete. Please provide missing input.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Invalid Email Modal --}}
+<div class="modal fade" id="invalidEmailModal" tabindex="-1" aria-labelledby="invalidEmailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="invalidEmailModalLabel">Warning</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Invalid email address. Please enter a valid email.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
