@@ -98,7 +98,9 @@ function handleCommentCollapseEvent({ isHide, event }) {
     // don't display new comment button if still in global edit mode or comment edit mode
     const commentCard = collapseSection.querySelector('.comment-card');
   
-    const isCommentEditMode = commentCard.dataset.editMode === 'true'; // convert string to boolean
+    const isCommentEditMode = commentCard
+      ? commentCard.dataset.editMode === 'true' // convert string to boolean
+      : false;
     const isGlobalEditMode = document.querySelector('.navbar').dataset.globalEditMode === 'true'; // convert string to boolean
     
     if ( ( isCommentEditMode || isGlobalEditMode ) && !isHide ) {
