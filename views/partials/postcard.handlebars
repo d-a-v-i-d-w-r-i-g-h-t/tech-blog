@@ -1,12 +1,7 @@
-{{#if dashboard}}
-{{>dashboard-modals}}
-{{/if}}
-
 <div
   id="post{{post.id}}-card"
   class="post-card card pt-3 border-secondary-subtle border-top-0 border-start-0 border-end-0 rounded-0"
   data-post-id="{{post.id}}"
-  data-logged-in="{{loggedIn}}"
   data-edit-mode="false"
   data-new-post="false"
   data-current-title=""
@@ -17,22 +12,23 @@
     <div class="card-header-section">
       <div>
         {{!-- POST TITLE --}}
-        <h4 class="card-title">
+        <h4 class="post-title card-title mb-2">
           {{#if singlePost}}
             {{post.title}}
           {{else}}
             {{!-- clicking this link will not collapse the post --}}
             <a
               class="bg-link"
-              href="/post/{{post.id}}" data-no-collapse="true"
+              href="/post/{{post.id}}"
+              data-no-collapse="true"
             >{{post.title}}</a>
           {{/if}}
         </h4>
+        {{!-- POST PUBLICATION DATE --}}
         <h6
           id="post{{post.id}}-publication-date"
           class="publication-date card-subtitle mb-2 text-body-tertiary"
         >
-        {{!-- POST PUBLICATION DATE --}}
         {{#if post.published}}
           {{formatDate post.date_published}}
         {{else}}
@@ -41,6 +37,7 @@
         </h6>
       </div>
 
+      {{!-- INSERT DASHBOARD BUTTONS HERE --}}
       {{#if dashboard}}
         {{> dashboard-post-buttons post=post}}
       {{/if}}
@@ -48,7 +45,7 @@
     </div>
     <div class="collapse" data-collapse-type="post" id="collapsePost{{post.id}}">
       {{!-- POST CONTENT --}}
-      <p class="card-content ps-3">{{post.content}}</p>
+      <p class="post-content card-content ps-3">{{post.content}}</p>
     </div>
     {{#if dashboard}}
       {{!-- no author, user's own posts --}}
@@ -56,7 +53,7 @@
       {{!-- no author, author already displayed at top of page --}}
     {{else}}
       {{!-- POST AUTHOR --}}
-      <p class="card-content text-end pb-3">
+      <p class="post-author card-content text-end pb-3">
         {{!-- clicking this link will not collapse the post --}}
         <a
           class="bg-link"
@@ -65,10 +62,10 @@
         >&#8212; {{post.author.username}}</a>
       </p>
     {{/if}}
-    <div class="collapse" data-collapse-type="" id="collapse2Post{{post.id}}">
+    <div class="collapse" data-collapse-type="2post" id="collapse2Post{{post.id}}">
 
       {{!-- COMMENT HEADER --}}
-      <div class="comments-header my-3">
+      <div class="comments-header m-3">
         <h5>
           {{!-- clicking this link will not collapse the post --}}
           <a 
@@ -80,6 +77,7 @@
           >Comments</a>
         </h5>
 
+        {{#if loggedIn}}
         {{!-- NEW COMMENT BUTTON --}}
         <div id="post{{post.id}}-new-comment-button" class="fade-in-out display-none">
           <button
@@ -88,32 +86,50 @@
             disabled="true"
           >New Comment</button>
         </div>
+        {{/if}}
 
       </div>
       <div class="collapse" data-collapse-type="comments" id="collapseComments-post{{post.id}}">
-        <div class="mb-3">
+        <div id="all-comments-post{{post.id}}" class="all-comments">
           {{#if post.comments.length}}
             {{#each post.comments as |comment|}}
-              <div class="card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body">
-                <div class=" ps-3 py-2 pe-3 rounded-0 bg-body-tertiary">
-                  {{!-- COMMENT TEXT --}}
-                  <p class="card-content">{{text}}</p>
-                  {{!-- COMMENT DATE --}}
-                  <p class="subtitle text-body-tertiary">{{formatDate date_created}}</p>
-                  {{!-- COMMENT AUTHOR --}}
-                  <p class="card-content mb-0 text-end">
-                    {{!-- clicking this link will not collapse the post --}}
-                    <a 
-                      class="bg-link"
-                      href="/posts/{{author.username}}"
-                      data-no-collapse="true"
-                    >&#8212; {{author.username}}</a>
-                  </p>
+              <div
+                id="comment{{comment.id}}-card"
+                class="comment-card card border-light-subtle border-bottom-0 border-start-0 border-end-0 rounded-0 card-body"
+                data-comment-id="{{comment.id}}"
+                data-edit-mode="false"
+                data-new-comment="false"
+                data-current-text=""
+              >
+                <div class="card-header-section">
+
+                  <div class="p-3 rounded-0 bg-body-tertiary" style="width: 100%;">
+                    {{!-- COMMENT TEXT --}}
+                    <p class="comment-text card-content pb-1">{{comment.text}}</p>
+                    {{!-- COMMENT DATE --}}
+                    <p class="subtitle text-body-tertiary mb-2">{{formatDate comment.date_created}}</p>
+                    {{!-- COMMENT AUTHOR --}}
+                    <p class="card-content comment-author mb-0 text-end" data-comment-author="{{comment.author.username}}">
+                      {{!-- clicking this link will not collapse the post --}}
+                      <a 
+                        class="bg-link"
+                        href="/posts/{{comment.author.username}}"
+                        data-no-collapse="true"
+                      >&#8212; {{comment.author.username}}</a>
+                    </p>
+                  </div>
+
+                  {{#if ../loggedIn}}
+                    {{#if ../singlePost}}
+                      {{> dashboard-comment-buttons comment=comment}}
+                    {{/if}}
+                  {{/if}}
+
                 </div>
               </div>
             {{/each}}
           {{else}}
-            <p>No comments yet</p>
+            No comments yet...
           {{/if}}
         </div>
       </div>

@@ -1,26 +1,3 @@
-{{!-- EDIT POST BUTTON GROUP --}}
-<div id="post{{post.id}}-edit-post-button-group" class="btn-group fade-in-out display-none" role="group">
-
-  {{!-- SAVE EDIT BUTTON --}}
-  <button
-    type="button"
-    class="save-post-edit-button post-button btn btn-success"
-    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
-    disabled="true"
-  >Save
-  </button>
-  
-  {{!-- CANCEL EDIT BUTTON --}}
-  <button
-    type="button"
-    class="cancel-post-edit-button post-button btn btn-outline-secondary"
-    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
-    disabled="true"
-  >Cancel
-  </button>
-  
-</div>
-
 {{!-- MAIN BUTTON GROUP --}}
 <div id="post{{post.id}}-button-group" class="btn-group fade-in-out" role="group">
   
@@ -46,7 +23,7 @@
   <button
     type="button"
     class=
-    
+      {{!-- conditional format classes for publish / unpublish --}}
       {{#if post.published}}
         "publish-post-button post-button btn btn-success"
       {{else}}
@@ -62,6 +39,7 @@
       {{/if}}
     disabled="true"
   >
+    {{!-- conditional button text for publish / unpublish --}}
     {{#if post.published}}
       Unpublish
     {{else}}
@@ -69,4 +47,27 @@
     {{/if}}
   </button>
 
+</div>
+
+{{!-- EDIT POST BUTTON GROUP --}}
+<div id="post{{post.id}}-edit-post-button-group" class="btn-group fade-in-out display-none" role="group">
+
+  {{!-- SAVE EDIT BUTTON --}}
+  <button
+    type="button"
+    class="save-post-edit-button post-button btn btn-success"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Save
+  </button>
+  
+  {{!-- CANCEL EDIT BUTTON --}}
+  <button
+    type="button"
+    class="cancel-post-edit-button post-button btn btn-outline-secondary"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Cancel
+  </button>
+  
 </div>

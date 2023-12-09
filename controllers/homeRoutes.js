@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/authorize');
-const sequelize = require("../config/connection");
+const sequelize = require('../config/connection');
 
 
     /////////////////////
@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
     const postData = await Post.findAll({
       where: { published: true },
       attributes: { exclude: ['user_id', 'date_created'] },
-      order: [['date_published', 'DESC']], // sorting posts by date published, newest first
       include: [
         {
           model: User,
@@ -24,7 +23,6 @@ router.get('/', async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
-          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -34,16 +32,20 @@ router.get('/', async (req, res) => {
           ],
         },
       ],
+      order: [
+        ['date_published', 'DESC'], // sort posts by date_published, newest first
+        [Comment, 'date_created', 'DESC'], // sort comments by date_created, newest first
+      ], 
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.dir(posts);
+    // console.dir(posts);
 
     const loggedIn = req.session.logged_in;
     const homepage = true;
-    
+    const userId = loggedIn ? req.session.user_id : '';
     // res.status(200).json(posts);
-    res.status(200).render('homepage', { posts, loggedIn, homepage });
+    res.status(200).render('homepage', { posts, loggedIn, userId, homepage });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -60,11 +62,6 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const postData = await Post.findAll({
       where: { user_id: req.session.user_id },
       attributes: { exclude: ['user_id'] },
-      order: [
-        ['published', 'ASC'], // Sort by 'published' in ascending order (false first)
-        ['date_created', 'DESC'], // Sort by 'date_created' in descending order for unpublished posts
-        ['date_published', 'DESC'], // Sort by 'date_published' in descending order for published posts
-      ],
       include: [
         {
           model: User,
@@ -74,7 +71,6 @@ router.get('/dashboard', withAuth, async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
-          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -84,15 +80,21 @@ router.get('/dashboard', withAuth, async (req, res) => {
           ],
         },
       ],
+      order: [
+        ['published', 'ASC'], // Sort posts by 'published' in ascending order (false first), so unpublished posts come first
+        ['date_published', 'DESC'], // Sort posts by 'date_published' in descending order for published posts
+        [Comment, 'date_created', 'DESC'], // sort comments by date_created, newest first
+      ], 
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.dir(posts);
+    // console.dir(posts);
 
     const loggedIn = req.session.logged_in;
+    const userId = loggedIn ? req.session.user_id : '';
     const dashboard = true;
 
-    res.status(200).render('dashboard', { posts, loggedIn, dashboard });
+    res.status(200).render('dashboard', { posts, loggedIn, userId, dashboard });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -130,7 +132,6 @@ router.get('/posts/:username', async (req, res) => {
         published: true,
        },
       attributes: { exclude: ['user_id', 'date_created'] },
-      order: [['date_published', 'DESC']], // sorting posts by date published, newest first
       include: [
         {
           model: User,
@@ -140,7 +141,6 @@ router.get('/posts/:username', async (req, res) => {
         {
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
-          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -150,16 +150,21 @@ router.get('/posts/:username', async (req, res) => {
           ],
         },
       ],
+      order: [
+        ['date_published', 'DESC'], // Sort posts by 'date_published' in descending order for published posts
+        [Comment, 'date_created', 'DESC'], // sort comments by date_created, newest first
+      ], 
     });
 
     const posts = postData.map((post) => post.get({ plain: true }));
-    console.dir(posts);
+    // console.dir(posts);
 
     const loggedIn = req.session.logged_in;
     const username = req.params.username;
+    const userId = loggedIn ? req.session.user_id : '';
 
     // res.status(200).json(posts);
-    res.status(200).render('posts', { posts, username, loggedIn });
+    res.status(200).render('posts', { posts, loggedIn, userId, username  });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -186,7 +191,6 @@ router.get('/post/:id', async (req, res) => {
         { 
           model: Comment,
           attributes: ['id', 'text', 'date_created'],
-          order: [['date_created', 'DESC']], // sorting comments by date created, newest first
           include: [
             {
               model: User,
@@ -196,6 +200,7 @@ router.get('/post/:id', async (req, res) => {
           ]
         }
       ],
+      order: [[Comment, 'date_created', 'DESC']], // Order comments by date_created, newest first
     });
 
     if(!postData) {
@@ -204,13 +209,21 @@ router.get('/post/:id', async (req, res) => {
     }
     
     const post = postData.get({ plain: true });
-    
+    console.dir(post.comments[0]);
+
     const post_id = req.params.id;
     const loggedIn = req.session.logged_in;
-    const dashboard = post.author.username === req.session.username ? true : false;
+
+    const dashboard = post.comments[0]
+      ? post.comments[0].author.username === req.session.username
+      : false;
+      const userId = loggedIn ? req.session.user_id : '';
+      const username = loggedIn ? req.session.username : '';
     const singlePost = true;
     
-    res.status(200).render('post', { post, post_id, loggedIn, singlePost, dashboard  });
+    res.status(200).render('post', {
+      post, post_id, loggedIn, userId, username, singlePost, dashboard
+    });
   } catch (err) {
       res.status(500).json({ success: false, error: err.message });
   };     
@@ -252,14 +265,15 @@ router.get('/dashboard/comments', withAuth, async (req, res) => {
     });
 
     const comments = commentData.map((comment) => comment.get({ plain: true }));
-    console.dir(comments);
+    // console.dir(comments);
 
     const loggedIn = req.session.logged_in;
+    const userId = loggedIn ? req.session.user_id : '';
     const commentsPage = true;
     const dashboardComments = true;
 
     res.status(200).render('comments', 
-      {comments, loggedIn, commentsPage, dashboardComments }
+      {comments, loggedIn, userId, dashboardComments }
     );
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -311,14 +325,15 @@ router.get('/comments/:username', async (req, res) => {
     });
 
     const comments = commentsData.map((comment) => comment.get({ plain: true }));
-    console.dir(comments);
+    // console.dir(comments);
 
     const loggedIn = req.session.logged_in;
+    const userId = loggedIn ? req.session.user_id : '';
     const username = req.params.username;
     const commentsPage = true;
 
     res.status(200).render('comments', 
-      { comments, username, loggedIn, commentsPage }
+      { comments, loggedIn, userId, username, commentsPage }
     );
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -326,53 +341,52 @@ router.get('/comments/:username', async (req, res) => {
 });
 
 
-    ///////////////////////////////////// /////////////// DO WE NEED THIS? ///////////////
+    /////////////////////////////////////
    //  GET ONE COMMENT BY COMMENT ID  //
   /////////////////////////////////////
  //
 // 
-////////////////////////////////////////////////////
-router.get('/comment/:id', async (req, res) => {
-  try{ 
-    const commentData = await Comment.findByPk(req.params.id, {
-      attributes: { exclude: ['id', 'user_id', 'post_id'] },
-      include: [ 
-        {
-          model: User,
-          attributes: ['username'],
-          as: 'author',
-        },
-        { 
-          model: Post,
-          attributes: ['id', 'title', 'content'],
-          include: [
-            {
-              model: User,
-              attributes: ['username'],
-              as: 'author'
-            }
-          ]
-        },
-      ],
-    });
-
-    if(!commentData) {
-        res.status(404).json({message: 'No comment with this id!'});
-        return;
-    }
-
-    const comment = commentData.get({ plain: true });
-    console.log(comment);
-
-    const comment_id = req.params.id;
-    const loggedIn = req.session.logged_in;
-
-    // res.status(200).json(comment);
-    res.status(200).render('comment', {comment, comment_id, loggedIn });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  };     
-});
+// router.get('/comment/:id', async (req, res) => {
+//   try{ 
+//     const commentData = await Comment.findByPk(req.params.id, {
+//       attributes: { exclude: ['id', 'user_id', 'post_id'] },
+//       include: [ 
+//         {
+//           model: User,
+//           attributes: ['username'],
+//           as: 'author',
+//         },
+//         { 
+//           model: Post,
+//           attributes: ['id', 'title', 'content'],
+//           include: [
+//             {
+//               model: User,
+//               attributes: ['username'],
+//               as: 'author'
+//             }
+//           ]
+//         },
+//       ],
+//     });
+//
+//     if(!commentData) {
+//         res.status(404).json({message: 'No comment with this id!'});
+//         return;
+//     }
+//
+//     const comment = commentData.get({ plain: true });
+//     console.log(comment);
+//
+//     const comment_id = req.params.id;
+//     const loggedIn = req.session.logged_in;
+//
+//     res.status(200).json(comment);
+//     // res.status(200).render('comment', {comment, comment_id, loggedIn });
+//   } catch (err) {
+//     res.status(500).json({ success: false, error: err.message });
+//   };     
+// });
 
 
     ///////////////////
@@ -386,9 +400,7 @@ router.get('/login', (req, res) => {
     res.redirect('/');
     return;
   }
-
   const loginPage = true;
-
   res.render('login', { loginPage });
 });
 
@@ -404,9 +416,7 @@ router.get('/signup', (req, res) => {
     res.redirect('/');
     return;
   }
-
   const signupPage = true;
-
   res.render('signup', { signupPage });
 });
 

@@ -1,6 +1,6 @@
-<div id="comments-header">
+<div id="comments-header" class="mb-2">
 
-  <h3>
+  <h3 class="mb-0">
     {{#if dashboardComments}}
       My Comments
     {{else}}
@@ -17,14 +17,14 @@
 <div id="all-comments">
   {{#if comments.length}}
     {{#each comments as |comment|}}
-      {{>commentcard comment=comment dashboardComments=../dashboardComments loggedIn=../loggedIn}}
+      {{> commentcard comment=comment dashboardComments=../dashboardComments loggedIn=../loggedIn}}
     {{/each}}
   {{else}}
     No comments yet...
   {{/if}}
 </div>
 
-<div class="pt-2">
+<div class="pt-4">
     {{#if dashboardComments}}
       <p><a class="bg-link" href="/dashboard">See all my posts</a></p>
     {{else}}

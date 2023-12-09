@@ -1,20 +1,7 @@
-// define new confirm delete comment modal
-const confirmDeleteCommentModalEl = document.getElementById('confirmDeleteCommentModal');
-const confirmDeleteCommentModal = new bootstrap.Modal(confirmDeleteCommentModalEl, {
-  keyboard: false
-});
-
-// define new unable to delete comment modal
-const unableToDeleteCommentModalEl = document.getElementById('unableToDeleteCommentModal');
-const unableToDeleteCommentModal = new bootstrap.Modal(unableToDeleteCommentModalEl, {
-  keyboard: false
-});
-
-// define new unable to save comment modal
-const unableToSaveCommentModalEl = document.getElementById('unableToSaveCommentModal');
-const unableToSaveCommentModal = new bootstrap.Modal(unableToSaveCommentModalEl, {
-  keyboard: false
-});
+// scope modal variables to global
+let confirmDeleteCommentModal;
+let unableToDeleteCommentModal;
+let unableToSaveCommentModal;
 
 // set global variable to prevent adding multiple confirm delete comment event listeners
 let isConfirmDeleteCommentEventListenerAdded = false;
@@ -27,11 +14,10 @@ let isConfirmDeleteCommentEventListenerAdded = false;
  //
 // function for edit button click
 async function handleEditCommentButtonClick(event) {
-  console.log('edit button clicked');
-  
+  // console.log('edit button clicked');
+
   const commentCard = event.target.closest('.comment-card');
-  
-  enableEditMode(commentCard);
+  enableCommentEditMode(commentCard);
 }
 
 
@@ -44,10 +30,7 @@ async function handleEditCommentButtonClick(event) {
 async function handleDeleteCommentButtonClick(event) {
   console.log('delete button clicked');
   const commentCard = event.target.closest('.comment-card');
-  
   const commentId = commentCard.dataset.commentId;
-  console.log('commentId');
-  console.log(commentId);
   
   // store the commentId in the modal for later retrieval
   confirmDeleteCommentModalEl.dataset.commentId = commentId;
@@ -75,7 +58,13 @@ async function handleDeleteCommentButtonClick(event) {
 }
 
 
+    //////////////////////
+   //  DELETE COMMENT  //
+  //////////////////////
+ //
+// delete comment from the database
 async function deleteComment(commentId) {
+  console.log('delete comment ', commentId);
   try {
     const response = await fetch(`/api/comments/${commentId}`, {
       method: 'DELETE',
@@ -99,8 +88,8 @@ async function deleteComment(commentId) {
   } catch (err) {
     console.error('An unexpected error occurred:', err);
   }
-
 }
+
 
 
     ///////////////////
@@ -109,10 +98,7 @@ async function deleteComment(commentId) {
  //
 // function for save button click
 async function handleSaveCommentEditButtonClick(event) {
-  console.log('save button clicked');
-
   const commentCard = event.target.closest('.comment-card');
-
   const commentId = commentCard.dataset.commentId;
 
   // retrieve updated text from input fields
@@ -121,7 +107,7 @@ async function handleSaveCommentEditButtonClick(event) {
   const savedText = textInputEl.value.trim();
 
   if (savedText === commentCard.dataset.currentText) {
-    disableEditMode(commentCard);
+    disableCommentEditMode(commentCard);
     return;
   }
 
@@ -130,19 +116,19 @@ async function handleSaveCommentEditButtonClick(event) {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        published: false,
-        title: savedText,
+        text: savedText,
       }),
     });
-    console.log('save response');
-    console.log(response);
+    // console.log('save response');
+    // console.log(response);
     
     if (response.ok) {
       
       // save updated title and content in data attributes
       commentCard.dataset.currentText = savedText;
 
-      disableEditMode(commentCard);
+      commentCard.dataset.newComment = "false";
+      disableCommentEditMode(commentCard);
 
     } else {
       const errorMessage = await response.text();
@@ -164,31 +150,37 @@ async function handleSaveCommentEditButtonClick(event) {
 // function for cancel button click
 async function handleCancelCommentEditButtonClick(event) {
   console.log('cancel button clicked');
-  
+
   const commentCard = event.target.closest('.comment-card');
   const commentId = commentCard.dataset.commentId;
+  const isNewComment = commentCard.dataset.newComment === 'true'; // convert string to boolean
+  console.log('commentId');
+  console.log(commentId);
+  console.log('isNewComment');
+  console.log(isNewComment);
 
-  const savedText = commentCard.dataset.currentText;
-
-  if (savedText === '') {
+  if (isNewComment === true) {
+    postCard = commentCard.closest('.post-card');
+    postId = postCard.dataset.postId;
 
     deleteComment(commentId);
+    displayNewCommentButton({ displayButton: true, postId });
 
   } else {
     
-    disableEditMode(commentCard);
+    disableCommentEditMode(commentCard);
   }
 }
 
 
 
-    ////////////////////////
-   //  Enable Edit Mode  //
-  ////////////////////////
+    ////////////////////////////////
+   //  ENABLE COMMENT EDIT MODE  //
+  ////////////////////////////////
  //
-// function to enable edit mode
-function enableEditMode(commentCard) {
-console.log('Enable Edit Mode');
+// function to enable comment edit mode
+function enableCommentEditMode(commentCard) {
+  // console.log('Enable Comment Edit Mode');
 
   commentCard.dataset.editMode = 'true';
 
@@ -203,51 +195,45 @@ console.log('Enable Edit Mode');
   
   // replace comment text element with text input element
   
-  const textInputEl = document.createElement('input');
+  const textInputEl = document.createElement('textarea');
   textInputEl.type = 'text';
-  textInputEl.classList.add('text-input', 'mb-3');
+  textInputEl.classList.add('text-input');
   textInputEl.value = currentText;
 
-  const inputFieldLength = currentText.length + 10;
-  textInputEl.setAttribute('size', inputFieldLength.toString());
+  textInputEl.style.width = '100%';
+  textInputEl.rows = 2;
+
+  // const inputFieldLength = currentText.length + 10;
+  // textInputEl.setAttribute('size', inputFieldLength.toString());
 
   commentTextEl.parentNode.replaceChild(textInputEl, commentTextEl);
-
+textInputEl.focus();
 
   // update button configuration:
   // hide main button group, show edit button group
-  const showCommentButtonGroup = false;
-  const showCommentEditButtonGroup = true;
-  
   const commentId = commentCard.dataset.commentId;
+  const postCard = commentCard.closest('.post-card');
+
+  if (postCard) {
+    const postId = postCard.dataset.postId;
+    displayNewCommentButton({ displayButton: false, postId });
+  }
   
-  const commentButtonGroupId = `comment${commentId}-button-group`;
-  const commentButtons = [
-    'edit-comment-button',
-    'delete-comment-button',
-  ];
-
-  const commentEditButtonGroupId = `comment${commentId}-edit-comment-button-group`;
-  const editCommentButtons = [
-    'save-comment-edit-button',
-    'cancel-comment-edit-button',
-  ];
-
-  showButtons(showCommentButtonGroup, commentButtonGroupId, commentButtons);
+  displayCommentButtonGroup({ displayButtonGroup: false, commentId });
   setTimeout(() => {
-    showButtons(showCommentEditButtonGroup, commentEditButtonGroupId, editCommentButtons);
+    displayEditCommentButtonGroup({ displayButtonGroup: true, commentId });
   }, 500);
 }
 
 
 
-    /////////////////////////
-   //  Disable Edit Mode  //
-  /////////////////////////
+    /////////////////////////////////
+   //  DISABLE COMMENT EDIT MODE  //
+  /////////////////////////////////
  //
-// function to disable edit mode
-function disableEditMode(commentCard) {
-  console.log('Disable Edit Mode');
+// function to disable comment edit mode
+function disableCommentEditMode(commentCard) {
+  // console.log('Disable Comment Edit Mode');
 
   commentCard.dataset.editMode = 'false';
 
@@ -271,71 +257,154 @@ function disableEditMode(commentCard) {
 
   // update button configuration:
   // show main button group, hide edit button group
-  const showCommentButtonGroup = true;
-  const showCommentEditButtonGroup = false;
-  
   const commentId = commentCard.dataset.commentId;
+  const postCard = commentCard.closest('.post-card');
+  
+  const navEl = document.querySelector('.navbar');
+  const isSinglePost = navEl.dataset.singlePost === 'true'; // convert string to boolean
 
-  const commentButtonGroupId = `comment${commentId}-button-group`;
-  const commentButtons = [
-    'edit-comment-button',
-    'delete-comment-button',
-  ];
-  
-  const commentEditButtonGroupId = `comment${commentId}-edit-comment-button-group`;
-  const editCommentButtons = [
-    'save-comment-edit-button',
-    'cancel-comment-edit-button',
-  ];
-  
-  showButtons(showCommentEditButtonGroup, commentEditButtonGroupId, editCommentButtons);
+  displayEditCommentButtonGroup({ displayButtonGroup: false, commentId });
   setTimeout(() => {
-    showButtons(showCommentButtonGroup, commentButtonGroupId, commentButtons);
+    if (!isSinglePost) {
+      displayCommentButtonGroup({ displayButtonGroup: true, commentId });
+    }
+    if (postCard) {
+      const postId = postCard.dataset.postId;
+      displayNewCommentButton({ displayButton: true, postId });
+    }
   }, 500);
 }
 
 
 
 
-// event listener for comment buttons
-document.getElementById('all-comments').addEventListener('click', async function (event) {
 
-  const editCommentButton = event.target.closest('.edit-comment-button');
-  const deleteCommentButton = event.target.closest('.delete-comment-button');
-  const saveCommentEditButton = event.target.closest('.save-comment-edit-button');
-  const cancelCommentEditButton = event.target.closest('.cancel-comment-edit-button');
-
-  if (editCommentButton) {
-    handleEditCommentButtonClick(event);
-
-  } else if (deleteCommentButton) {
-    handleDeleteCommentButtonClick(event);
-
-  } else if (saveCommentEditButton) {
-    handleSaveCommentEditButtonClick(event);
-    
-  } else if (cancelCommentEditButton) {
-    handleCancelCommentEditButtonClick(event);
-  }
-});
-
-
-// event listener for custom event commentPostCollapse
-document.addEventListener('commentPostCollapse', async function (event) {
-  const commentId = event.detail.commentId;
-  const isCollapsed = event.detail.isCollapsed;
-  // if collapse state is true then need to un-collapse,
-  // need to show the comment button group
-  const showCommentButtonGroup = isCollapsed; 
-
-  const buttonGroupId = `comment${commentId}-button-group`;
-  const buttons = [
+    /////////////////////////////////////
+   //  SHOW/HIDE COMMENT BUTTON GROUP //
+  /////////////////////////////////////
+ //
+// function to show or hide comment button group
+function displayCommentButtonGroup({ displayButtonGroup, commentId }) {
+  // console.log('show comment button group: ', displayButtonGroup);
+  const commentButtonGroupId = `comment${commentId}-button-group`;
+  const commentButtons = [
     'edit-comment-button',
     'delete-comment-button',
   ];
-  console.log('buttons');
-  console.log(buttons);
+  showButtons(displayButtonGroup, commentButtonGroupId, commentButtons);
+}
 
-  showButtons(showCommentButtonGroup, buttonGroupId, buttons);
-});
 
+
+    //////////////////////////////////////////
+   //  SHOW/HIDE EDIT COMMENT BUTTON GROUP //
+  //////////////////////////////////////////
+ //
+// function to show or hide comment button group
+function displayEditCommentButtonGroup({ displayButtonGroup, commentId }) {
+  // console.log('show edit comment button group: ', displayButtonGroup);
+  const editCommentButtonGroupId = `comment${commentId}-edit-comment-button-group`;
+  const editCommentButtons = [
+    'save-comment-edit-button',
+    'cancel-comment-edit-button',
+  ];
+  showButtons(displayButtonGroup, editCommentButtonGroupId, editCommentButtons);
+}
+
+
+
+    //////////////////////////////////////////
+   //  HANDLE COMMENT POST COLLAPSE EVENT  //
+  //////////////////////////////////////////
+ //
+// function to handle comment post collapse events
+function handleCommentPostCollapseEvent({ isHide, event }) {
+  
+  const collapseSection = event.target;
+  const collapseType = collapseSection.dataset.collapseType;
+  
+  if (collapseType === 'commentPost') {
+    // console.log('handle comment post collapse event');
+    const showCommentButtonGroup = !isHide; 
+    const commentCard = collapseSection.closest('.comment-card');
+    const commentId = commentCard.dataset.commentId;
+    
+    const isNewComment = commentCard.dataset.newComment === 'true' // convert string to boolean
+    
+    if (!isNewComment) {
+      console.log('display comment button group');
+      displayCommentButtonGroup({ displayButtonGroup: showCommentButtonGroup, commentId });
+    }
+  }
+}
+
+
+
+    ////////////////////////////////////
+   //  INITIALIZE COMMENT DASHBOARD  //
+  ////////////////////////////////////
+ //
+// initialize page:
+//   - add collapse & uncollapse event listeners
+//   - add comment edit buttons event listener
+//   - deal with new comment if there is one
+function initCommentDashboard() {
+
+  // add event listener for collapsing sections
+  document.addEventListener('hide.bs.collapse', event =>
+    handleCommentPostCollapseEvent({ isHide: true, event }));
+  
+  // add event listener for uncollapsing sections 
+  document.addEventListener('show.bs.collapse', event =>
+  handleCommentPostCollapseEvent({ isHide: false, event }));  
+
+  // event listener for COMMENT EDIT BUTTONS (event delegation)
+  document.querySelector('main').addEventListener('click', async function (event) {
+
+    const editCommentButton = event.target.closest('.edit-comment-button');
+    const deleteCommentButton = event.target.closest('.delete-comment-button');
+    const saveCommentEditButton = event.target.closest('.save-comment-edit-button');
+    const cancelCommentEditButton = event.target.closest('.cancel-comment-edit-button');
+
+    if (editCommentButton) {
+      handleEditCommentButtonClick(event);
+
+    } else if (deleteCommentButton) {
+      handleDeleteCommentButtonClick(event);
+
+    } else if (saveCommentEditButton) {
+      handleSaveCommentEditButtonClick(event);
+      
+    } else if (cancelCommentEditButton) {
+      handleCancelCommentEditButtonClick(event);
+    }
+  });
+
+  const navEl = document.querySelector('.navbar');
+  const isSinglePost = navEl.dataset.singlePost === 'true'; // convert string to boolean
+
+  if (!isSinglePost) { // dashboard comments mode
+
+    // // define new confirm delete comment modal
+    // const confirmDeleteCommentModalEl = document.getElementById('confirmDeleteCommentModal');
+    // confirmDeleteCommentModal = new bootstrap.Modal(confirmDeleteCommentModalEl, {
+    //   keyboard: false
+    // });
+    
+    // // define new unable to delete comment modal
+    // const unableToDeleteCommentModalEl = document.getElementById('unableToDeleteCommentModal');
+    // unableToDeleteCommentModal = new bootstrap.Modal(unableToDeleteCommentModalEl, {
+    //   keyboard: false
+    // });
+    
+    // // define new unable to save comment modal
+    // const unableToSaveCommentModalEl = document.getElementById('unableToSaveCommentModal');
+    // unableToSaveCommentModal = new bootstrap.Modal(unableToSaveCommentModalEl, {
+    //   keyboard: false
+    // });
+  }
+}
+
+// window.onload = function () {
+  initCommentDashboard();
+// };

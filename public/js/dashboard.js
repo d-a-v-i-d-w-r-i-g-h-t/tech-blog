@@ -1,22 +1,8 @@
-// set up modals
+// scope modal variables to global
+let confirmDeletePostModal;
+let unableToDeletePostModal;
+let unableToSavePostModal;
 
-// define new confirm delete post modal
-const confirmDeletePostModalEl = document.getElementById('confirmDeletePostModal');
-const confirmDeletePostModal = new bootstrap.Modal(confirmDeletePostModalEl, {
-  keyboard: false
-});
-
-// define new unable to delete post modal
-const unableToDeletePostModalEl = document.getElementById('unableToDeletePostModal');
-const unableToDeletePostModal = new bootstrap.Modal(unableToDeletePostModalEl, {
-  keyboard: false
-});
-
-// define new unable to save post modal
-const unableToSavePostModalEl = document.getElementById('unableToSavePostModal');
-const unableToSavePostModal = new bootstrap.Modal(unableToSavePostModalEl, {
-  keyboard: false
-});
 
 // set global variable to prevent adding multiple confirm delete post event listeners
 let isConfirmDeletePostEventListenerAdded = false;
@@ -61,7 +47,7 @@ async function handleNewPostButtonClick(event) {
 // function for edit button click
 async function handleEditPostButtonClick(event) {  
   const postCard = event.target.closest('.post-card');
-  enableEditMode(postCard);
+  enablePostEditMode(postCard);
 }
 
 
@@ -201,7 +187,7 @@ async function handleSavePostEditButtonClick(event) {
   if (savedTitle === postCard.dataset.currentTitle &&
     savedContent === postCard.dataset.currentContent)
   {
-    disableEditMode(postCard);
+    disablePostEditMode(postCard);
     return;
   }
   // if something has changed:
@@ -232,7 +218,7 @@ async function handleSavePostEditButtonClick(event) {
       publishButtonEl.textContent='Publish';
       
       postCard.dataset.newPost = "false";
-      disableEditMode(postCard);
+      disablePostEditMode(postCard);
 
     } else {
       const errorMessage = await response.text();
@@ -269,20 +255,21 @@ async function handleCancelPostEditButtonClick(event) {
 
   } else {
     
-    disableEditMode(postCard);
+    disablePostEditMode(postCard);
   }
 }
 
 
 
-    ////////////////////////
-   //  ENABLE EDIT MODE  //
-  ////////////////////////
+    /////////////////////////////
+   //  ENABLE POST EDIT MODE  //
+  /////////////////////////////
  //
-// function to enable edit mode
-function enableEditMode(postCard) {
+// function to enable post edit mode
+function enablePostEditMode(postCard) {
 
   postCard.dataset.editMode = 'true';
+  document.querySelector('.navbar').dataset.globalEditMode = 'true';
 
   // convert title and content elements into input field and textarea
   
@@ -325,10 +312,12 @@ function enableEditMode(postCard) {
   cardContentEl.parentNode.replaceChild(contentInputEl, cardContentEl);
 
   // update button configuration:
-  // hide new post button and main button group, show edit button group
+  //   hide new post button, new comment buttons, and main button group
+  //   show edit button group
   const postId = postCard.dataset.postId;
   
   displayNewPostButton({ displayButton: false });
+  displayAllNewCommentButtons()
   displayPostButtonGroup({ displayButtonGroup: false, postId });
   setTimeout(() => {
     displayEditPostButtonGroup({ displayButtonGroup: true, postId });
@@ -337,14 +326,21 @@ function enableEditMode(postCard) {
 
 
 
-    /////////////////////////
-   //  DISABLE EDIT MODE  //
-  /////////////////////////
+    //////////////////////////////
+   //  DISABLE POST EDIT MODE  //
+  //////////////////////////////
  //
-// function to disable edit mode
-function disableEditMode(postCard) {
-  postCard.dataset.editMode = 'false';
+// function to disable post edit mode
+function disablePostEditMode(postCard) {
 
+  postCard.dataset.editMode = 'false';
+  
+  // check if any posts are still in edit mode
+  const attributeName = 'data-edit-mode';
+  const attributeValue = 'true';
+  const atLeastOneStillInEditMode =
+  document.querySelector(`[${attributeName}="${attributeValue}"]`) !== null;
+  
   // change input field & textarea back to read-only elements
 
   const titleInputEl = postCard.querySelector('.title-input');
@@ -362,10 +358,22 @@ function disableEditMode(postCard) {
   postCard.dataset.currentContent = '';
 
   // replace title input element with title element
+  // create a new h4 element
   const cardTitleEl = document.createElement('h4');
   cardTitleEl.classList.add('card-title');
-  cardTitleEl.textContent = savedTitle;
+
+  // create a new anchor element
+  const postId = postCard.dataset.postId;
+  const linkEl = document.createElement('a');
+  linkEl.classList.add('bg-link');
+  linkEl.href = `/post/${postId}`;
+  linkEl.setAttribute('data-no-collapse', 'true');
+  linkEl.textContent = savedTitle;
   
+  // append the anchor element to the h4 element
+  cardTitleEl.appendChild(linkEl);
+  
+  // replace the input field with the new h4 element
   titleInputEl.parentNode.replaceChild(cardTitleEl, titleInputEl);
 
   // replace publication date
@@ -376,20 +384,53 @@ function disableEditMode(postCard) {
   cardContentEl.classList.add('card-content', 'mb-2');
   cardContentEl.textContent = savedContent;
   
+  // replace the input field with the new p element
   contentInputEl.parentNode.replaceChild(cardContentEl, contentInputEl);  
   
-
   // update button configuration:
   // show new post button and main button group, hide edit button group
-  const postId = postCard.dataset.postId;
 
   displayEditPostButtonGroup({ displayButtonGroup: false, postId });
   setTimeout(() => {
-    displayNewPostButton({ displayButton: true });
+    // only restore new post button if no posts are in edit mode
+    if (!atLeastOneStillInEditMode) {
+      displayNewPostButton({ displayButton: true });
+      // set global edit mode back to false
+      document.querySelector('.navbar').dataset.globalEditMode = 'false';
+      displayAllNewCommentButtons();
+    }
     displayPostButtonGroup({ displayButtonGroup: true, postId });
   }, 500);
 }
 
+
+
+    /////////////////////////////////////////////////////
+   //  SHOW/HIDE ALL UNCOLLAPSED NEW COMMENT BUTTONS  //
+  /////////////////////////////////////////////////////
+ //
+// function to show or hide New Comment buttons on any uncollapsed sections
+// when leaving or entering global edit mode
+// (don't want to display any New Comment buttons or the New Post button
+// if there's any post editing going on in the dashboard)
+function displayAllNewCommentButtons() {
+  // console.log('show hide all uncollapsed new comment buttons');
+  const isGlobalEditMode = document.querySelector('.navbar').dataset.globalEditMode === 'true'; // convert string to boolean
+  
+  newCommentButtons = document.querySelectorAll('.new-comment-button');
+
+  newCommentButtons.forEach(button => {
+    const commentsHeader = button.closest('.comments-header');
+    const collapseElement = commentsHeader.nextElementSibling;
+    const postCard = commentsHeader.closest('.post-card');
+    const postId = postCard.dataset.postId;
+
+    if (collapseElement.classList.contains('show')) {
+
+      displayNewCommentButton({ displayButton: !isGlobalEditMode, postId });
+    }
+  });
+}
 
 
     /////////////////////////////////
@@ -448,12 +489,12 @@ function handlePostCollapseEvent({ isHide, event }){
   const collapseSection = event.target;
   const collapseType = collapseSection.dataset.collapseType;
   
-  if (collapseType === "post") {
+  if (collapseType === 'post') {
     const showPostButtonGroup = !isHide; 
     const postCard = collapseSection.closest('.post-card');
     const postId = postCard.dataset.postId;
     
-    const isNewPost = postCard.dataset.newPost === "true"; // convert string to boolean
+    const isNewPost = postCard.dataset.newPost === 'true'; // convert string to boolean
 
     if (!isNewPost) {
       displayPostButtonGroup({ displayButtonGroup: showPostButtonGroup, postId });
@@ -467,33 +508,36 @@ function handlePostCollapseEvent({ isHide, event }){
    //  INITIALIZE DASHBOARD  //
   ////////////////////////////
  //
-// initialize page: add new post event listener, deal with new post if there is one
-function init() {
+// initialize page:
+//   - add collapse & uncollapse event listeners
+//   - add post edit buttons event listener
+//   - add new post button event listener
+//   - deal with new post if there is one
+function initDashboard() {
+  // console.log('initDashboard');
+  // add event listener for collapsing sections (only necessary for multipost views)
+  document.addEventListener('hide.bs.collapse', event =>
+    handlePostCollapseEvent({ isHide: true, event }));
+  
+  // add event listener for uncollapsing sections (required for both single and multipost views)
+  document.addEventListener('show.bs.collapse', event =>
+    handlePostCollapseEvent({ isHide: false, event }));  
 
-  // add event listener for post buttons
-  const allPostsContainer = document.getElementById('all-posts');
-  const postCardContainers = document.querySelectorAll('.post-card');
-
-  const listenerTarget = allPostsContainer
-    ? allPostsContainer
-    : postCardContainers.length >= 1
-      ? postCardContainers[0]
-      : null;
-
-  listenerTarget.addEventListener('click', async function (event) {
-
+  // add event listener for POST EDIT BUTTONS (event delegation)
+  document.querySelector('main').addEventListener('click', async function (event) {
+    
     const editPostButton = event.target.closest('.edit-post-button');
     const deletePostButton = event.target.closest('.delete-post-button');
     const publishPostButton = event.target.closest('.publish-post-button');
     const savePostEditButton = event.target.closest('.save-post-edit-button');
     const cancelPostEditButton = event.target.closest('.cancel-post-edit-button');
-
+    
     if (editPostButton) {
       handleEditPostButtonClick(event);
-
+      
     } else if (deletePostButton) {
       handleDeletePostButtonClick(event);
-
+      
     } else if (publishPostButton) {
       handlePublishPostButtonClick(event);
       
@@ -504,31 +548,30 @@ function init() {
       handleCancelPostEditButtonClick(event);
     }
   });
+  
+  const allPostsContainer = document.getElementById('all-posts');
+
+  const navEl = document.querySelector('.navbar');
+  const isSinglePost = navEl.dataset.singlePost === 'true'; // convert string to boolean
 
   if (allPostsContainer) { // multiple post mode
-    
-    // add event listener for new post button click
-    document.querySelector('.new-post-button').addEventListener(
-      'click', event => handleNewPostButtonClick(event)
-    );  
-    
-    // add event listener for collapsing sections
-    document.addEventListener('hide.bs.collapse', function (event) {
-      handlePostCollapseEvent({ isHide: true, event })
-    });  
-    
-    // if unchanged new post, go straight to edit mode on dashboard load
+    console.log('multi post mode');
+    // add event listener for NEW POST BUTTON click
+    document.querySelector('.new-post-button')
+      .addEventListener('click', handleNewPostButtonClick);  
+      
+    // if empty new POST, go straight to edit mode on dashboard load
     if (allPostsContainer.hasChildNodes()) {
       const firstPost = allPostsContainer.querySelector('.post-card');
-      const firstPostTitleEl = firstPost.querySelector('.card-title');
-      const firstPostContentEl = firstPost.querySelector('.card-content');
+      const firstPostTitleEl = firstPost.querySelector('.post-title');
+      const firstPostContentEl = firstPost.querySelector('.post-content');
       
       if (firstPostTitleEl && firstPostContentEl) {
         if (firstPostTitleEl.textContent.trim() === '' &&
         firstPostContentEl.textContent.trim() === '') {
           
-          firstPost.dataset.newPost = "true";
-          enableEditMode(firstPost);
+          firstPost.dataset.newPost = 'true';
+          enablePostEditMode(firstPost);
           toggleCollapsePost(firstPost);
           return;
         } 
@@ -536,17 +579,35 @@ function init() {
     }
     displayNewPostButton({ displayButton: true });
     
-  } else { // single post mode
+  } else if (isSinglePost) { // single post mode
     
-    
-  }
+    // if empty new COMMENT, go straight to edit mode on dashboard load
+    const postCard = document.querySelector('.post-card');
+    const allCommentsContainer = postCard.querySelector('.all-comments');
 
-  // add event listener for uncollapsing sections (required for both single and multipost views)
-  document.addEventListener('show.bs.collapse', function (event) {
-    handlePostCollapseEvent({ isHide: false, event })
-  });  
+    if (allCommentsContainer.hasChildNodes()) {
+      const firstComment = postCard.querySelector('.comment-card');
+      const firstCommentTextEl = firstComment.querySelector('.comment-text');
+      const firstCommentAuthorEl = firstComment.querySelector('.comment-author');
+      const firstCommentAuthor = firstCommentAuthorEl.dataset.commentAuthor;
+      
+      const navEl = document.querySelector('.navbar');
+      const currentUsername = navEl.dataset.username;
+    
+      if (firstCommentTextEl) {
+        if (firstCommentTextEl.textContent.trim() === '' &&
+            firstCommentAuthor === currentUsername) {
+
+          firstComment.dataset.newComment = 'true';
+          enableCommentEditMode(firstComment);
+          return;
+        }
+      }
+    }
+  }
 }
 
 window.onload = function () {
-  init();
+  // console.log('window.onload');
+  initDashboard();
 };

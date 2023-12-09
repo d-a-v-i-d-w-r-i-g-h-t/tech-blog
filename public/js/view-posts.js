@@ -20,6 +20,9 @@ async function handlePostCardClick(event) {
  //
 // function to collapse and uncollapse posts
 function toggleCollapsePost(postCardElement) {
+  if (!postCardElement) {
+    return;
+  }
   const postId = postCardElement.dataset.postId;
   // post collapse is made up of two collapse elements
   const collapseElementId = `collapsePost${postId}`;
@@ -56,10 +59,11 @@ function toggleCollapsePost(postCardElement) {
  //
 // function to collapse and uncollapse comments
 function toggleCollapseComments(postCardElement) {
+  if (!postCardElement) {
+    return;
+  }
   const postId = postCardElement.dataset.postId;
-
   const collapseElementId = `collapseComments-post${postId}`;
-
   const collapseElement = document.getElementById(collapseElementId);
 
   const bsPostCommentsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
@@ -87,11 +91,19 @@ function toggleCollapseComments(postCardElement) {
 function handleCommentCollapseEvent({ isHide, event }) {
   const collapseSection = event.target;
   const collapseType = collapseSection.dataset.collapseType;
-
   if (collapseType === "comments") {
     const postCard = collapseSection.closest('.post-card');
     const postId = postCard.dataset.postId;
 
+    // don't display new comment button if still in global edit mode or comment edit mode
+    const commentCard = collapseSection.querySelector('.comment-card');
+  
+    const isCommentEditMode = commentCard.dataset.editMode === 'true'; // convert string to boolean
+    const isGlobalEditMode = document.querySelector('.navbar').dataset.globalEditMode === 'true'; // convert string to boolean
+    
+    if ( ( isCommentEditMode || isGlobalEditMode ) && !isHide ) {
+      return;
+    }
     displayNewCommentButton({ displayButton: !isHide, postId })
   }
 }
@@ -107,18 +119,8 @@ function displayNewCommentButton({ displayButton, postId }) {
   const newCommentButton = [ 'new-comment-button' ];
     
   showButtons(displayButton, newCommentButtonId, newCommentButton);
-}  
-
-
-    //////////////////////////
-   //  NEW COMMENT BUTTON  //
-  //////////////////////////
- //
-// function for new comment button click
-function handleNewCommentButtonClick(event) {
-  console.log('new comment button click');
-  // const 
 }
+
 
 
     /////////////////////////////
@@ -132,44 +134,28 @@ function viewPostsInit() {
   if (allPostsEl) { // multiple posts mode
 
     // add event listener for clicks on posts
-    allPostsEl.addEventListener('click', async function (event) {
-      const newCommentButton = event.target.closest('.new-comment-button');
-      const postCard = event.target.closest('.post-card');
-
-      if (newCommentButton) {
-        handleNewCommentButtonClick(event);
-
-      } else if (postCard) {
-        handlePostCardClick(event);
-      }
-    });
+    allPostsEl.addEventListener('click', async event => handlePostCardClick(event));
     
   } else { // single post mode: there is only one post, and it needs to be uncollapsed
 
-    console.log('single post');
     const postCard = document.querySelector('.post-card');
     
     setTimeout(() => {
       toggleCollapsePost(postCard);
-    }, 500);
-    
+    }, 0);
+
     setTimeout(() => {
       toggleCollapseComments(postCard);
-    }, 1400);
-    
+    }, 0);
   }
 
   // event listener for uncollapsing sections
-  document.addEventListener('show.bs.collapse', function (event) {
-    handleCommentCollapseEvent({ isHide: false, event })
-    // alert(`uncollapse: ${event.target}`);
-  });
+  document.addEventListener('show.bs.collapse', event =>
+    handleCommentCollapseEvent({ isHide: false, event }));
   
   // event listener for collapsing sections
-  document.addEventListener('hide.bs.collapse', function (event) {
-    handleCommentCollapseEvent({ isHide: true, event })
-    // alert(`collapse: ${event.target}`);
-  }); 
+  document.addEventListener('hide.bs.collapse', event =>
+    handleCommentCollapseEvent({ isHide: true, event })); 
 }  
   
 viewPostsInit();

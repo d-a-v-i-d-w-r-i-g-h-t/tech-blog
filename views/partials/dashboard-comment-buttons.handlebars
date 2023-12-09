@@ -1,0 +1,45 @@
+{{!-- COMMENT MAIN BUTTON GROUP --}}
+<div id="comment{{comment.id}}-button-group" class="pt-3 ps-3 btn-group fade-in-out display-none" role="group">
+  
+  {{!-- EDIT COMMENT BUTTON --}}
+  <button
+    type="button"
+    class="edit-comment-button comment-button btn btn-warning"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Edit
+  </button>
+  
+  {{!-- DELETE COMMENT BUTTON --}}
+  <button
+    type="button"
+    class="delete-comment-button comment-button btn btn-danger"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Delete
+  </button>
+  
+</div>
+
+{{!-- COMMENT EDIT BUTTON GROUP --}}
+<div id="comment{{comment.id}}-edit-comment-button-group" class="pt-3 ps-3 btn-group fade-in-out display-none" role="group">
+
+  {{!-- SAVE COMMENT EDIT BUTTON --}}
+  <button
+    type="button"
+    class="save-comment-edit-button comment-button btn btn-success"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Save
+  </button>
+  
+  {{!-- CANCEL COMMENT EDIT BUTTON --}}
+  <button
+    type="button"
+    class="cancel-comment-edit-button comment-button btn btn-outline-secondary"
+    data-no-collapse="true" {{!-- clicking this button will not collapse the post --}}
+    disabled="true"
+  >Cancel
+  </button>
+  
+</div>

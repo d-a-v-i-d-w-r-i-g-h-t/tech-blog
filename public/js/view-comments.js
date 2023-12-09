@@ -1,70 +1,56 @@
+    //////////////////////////////////
+   //  HANDLE COMMENT CLICK EVENT  //
+  //////////////////////////////////
+ //
 // function to handle clicks on comments, to collapse and uncollapse post sections
-async function handleCommentCardClick(event, commentCard) {
-  
-  console.log('event.target');
-  console.log(event.target);
-  
+async function handleCommentCardClick(event) {
+  const commentCard = event.target.closest('.comment-card');
+
   // ignore the click if user is trying to click on the post, post author, comment author, or the dashboard buttons
   if (event.target.dataset.noCollapse === 'true' || commentCard.dataset.editMode === 'true') {
     return;
-
-  } else {
-    event.preventDefault();
   }
+  toggleCollapseCommentPost(commentCard);
+}
 
-  const commentId = commentCard.dataset.commentId;
-  const loggedIn = commentCard.dataset.loggedIn;
+
+
+    ////////////////////////////////////
+   //  TOGGLE COLLAPSE COMMENT POST  //
+  ////////////////////////////////////
+ //
+// function to collapse and uncollapse comment post
+function toggleCollapseCommentPost(commentCardEl) {
+
+  const commentId = commentCardEl.dataset.commentId;
+  const loggedIn = commentCardEl.dataset.loggedIn;
   const collapseElementId = `collapsePostComment${commentId}`;
-  console.log('collapseElementId');
-  console.log(collapseElementId);
 
   const collapseElement = document.getElementById(collapseElementId);
-  console.log('collapseElement');
-  console.log(collapseElement);
 
   const bsCommentPostCollapse = bootstrap.Collapse.getOrCreateInstance(collapseElement, {
     toggle: false
   });
   
-  const isCollapsed = commentCard.dataset.collapseState === 'true';
-  
-  if (loggedIn) {
-    
-    // Create a custom event to communicate with dashboard-comments.js if it is active
-    var event = new CustomEvent('commentPostCollapse', {
-      detail: { 
-        commentId: commentId,
-        isCollapsed: isCollapsed,
-      }
-    });
-    
-    // dispatch the event
-    document.dispatchEvent(event);
-  }
+  const isCollapsed = !collapseElement.classList.contains('show');
   
   // if collapse state is true then uncollapse post
   if (isCollapsed === true) {
     bsCommentPostCollapse.show();
-    commentCard.dataset.collapseState = 'false'
-    
-    console.log('shown');
     
   // otherwise collapse post
   } else {
     bsCommentPostCollapse.hide();
-    commentCard.dataset.collapseState = 'true'
-    
-    console.log('hidden');
   }
 }
 
 
 // event listener for clicks on comments
-document.getElementById('all-comments').addEventListener('click', async function (event) {
+const allCommentsEl = document.getElementById('all-comments');
 
-  const commentCard = event.target.closest('.comment-card');
+if (allCommentsEl) {
 
-  if (commentCard) {
-    handleCommentCardClick(event, commentCard);
-  }
-});
+  allCommentsEl.addEventListener('click', async event => handleCommentCardClick(event));
+
+}
+

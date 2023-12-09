@@ -14,7 +14,15 @@
 </head>
 
 <body>
-<nav class="navbar fixed-top bg-dark border-bottom border-body" data-bs-theme="dark">
+<nav
+  class="navbar fixed-top bg-dark border-bottom border-body"
+  data-bs-theme="dark"
+  data-logged-in="{{loggedIn}}"
+  data-user-id="{{userId}}"
+  data-username="{{username}}"
+  data-single-post="{{singlePost}}"
+  data-global-edit-mode="false"
+>
     <div class="container-fluid">
       <a class="navbar-brand" href="#">THE TECH BLOG</a>
       <div class="navbar-expand">
@@ -45,6 +53,12 @@
     </div>
   </nav>
   <main>
+    {{#if dashboard}}
+      {{> dashboard-modals}}
+    {{/if}}
+    {{#if dashboardComments}}
+      {{> commentcard-modals}}
+    {{/if}}
     {{{body}}}
   </main>
   
@@ -56,19 +70,12 @@
   <!-- Other JavaScript files -->
   {{#if loggedIn}}
     <script src="/js/logout.js"></script>
+    <script src="/js/new-comment.js"></script>
+    {{!-- {{#if singlePost}}
+      <script src="/js/dashboard-comments.js"></script>
+    {{/if}} --}}
   {{/if}}
-
-  {{#if dashboard}}
-    <script src="/js/format-date.js"></script>
-    <script src="/js/show-buttons.js"></script>
-    <script src="/js/dashboard.js"></script>
-  {{/if}}
-
-  {{#if dashboardComments}}
-    <script src="/js/format-date.js"></script>
-    <script src="/js/view-comments.js"></script>
-    <script src="/js/dashboard-comments.js"></script>
-  {{/if}}
+  
 
   {{#if loginPage}}
     <script src="/js/login.js"></script>
@@ -77,11 +84,31 @@
     <script src="/js/signup.js"></script>
   
   {{else if dashboard}}
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/dashboard-modals.js"></script>
+    <script src="/js/dashboard-comments.js"></script>
     <script src="/js/view-posts.js"></script>
+    <script src="/js/show-buttons.js"></script>
+    <script src="/js/format-date.js"></script>
+
+  {{else if dashboardComments}}
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/dashboard-comments.js"></script>
+    <script src="/js/dashboard-comments-modals.js"></script>
+    <script src="/js/view-comments.js"></script>
+    <script src="/js/show-buttons.js"></script>
+    <script src="/js/format-date.js"></script>
+
+  {{else if commentsPage}}
+    <script src="/js/view-comments.js"></script>
+    <script src="/js/show-buttons.js"></script>
+    <script src="/js/format-date.js"></script>
+
 
   {{else}}
     <script src="/js/view-posts.js"></script>
     <script src="/js/show-buttons.js"></script>
+    <script src="/js/format-date.js"></script>
 
   {{/if}}
 
