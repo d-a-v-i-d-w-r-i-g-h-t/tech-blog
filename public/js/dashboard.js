@@ -578,8 +578,10 @@ function initDashboard() {
     displayNewPostButton({ displayButton: true });
 
     // add event listener for NEW POST BUTTON click
-    document.querySelector('.new-post-button')
-      .addEventListener('click', handleNewPostButtonClick);  
+    const newPostButtonEl = document.querySelector('.new-post-button');
+    if (newPostButtonEl) {
+      newPostButtonEl.addEventListener('click', handleNewPostButtonClick);
+    }
     
   } else if (isSinglePost) { // single post mode
     

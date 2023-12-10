@@ -81,7 +81,8 @@ router.get('/dashboard', withAuth, async (req, res) => {
         },
       ],
       order: [
-        ['published', 'ASC'], // Sort posts by 'published' in ascending order (false first), so unpublished posts come first
+        // ['published', 'ASC'], // Sort posts by 'published' in ascending order (false first), so unpublished posts come first
+        ['date_created', 'DESC'], // Sort posts by 'published' in ascending order (false first), so unpublished posts come first
         ['date_published', 'DESC'], // Sort posts by 'date_published' in descending order for published posts
         [Comment, 'date_created', 'DESC'], // sort comments by date_created, newest first
       ], 

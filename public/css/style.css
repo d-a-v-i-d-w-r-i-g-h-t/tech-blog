@@ -50,12 +50,6 @@ p {
   justify-content: space-between;
 }
 
-.post-button,
-.comment-button {
-  width: 100px;
-  height: 35px;
-  font-size: 0.8em;
-}
 
 .fade-in-out {
   opacity: 0;
@@ -78,4 +72,21 @@ p {
 
 .content-input {
   width: 100%;
+}
+
+.post-button,
+.comment-button {
+  width: 100px;
+  height: 35px;
+  font-size: 0.8em;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 600px) {
+  .post-button,
+  .comment-button {
+    width: 80px;  /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    font-size: 0.7em;  /* Adjust the font size as needed */
+  }
 }
