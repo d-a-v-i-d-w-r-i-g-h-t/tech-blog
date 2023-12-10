@@ -87,7 +87,42 @@ On successful login or sign up, the authenticated user will be returned to the h
 
 ![alt text](assets/images/screenshot.png)
 
-On clicking the **New Comment** button, the user is brought to the single-post page again, this time with a comment input field available for text entry, with **Save** and **Cancel** buttons. If the user clicks **Save**, the new comment is added to the database and displayed under the post. If the user clicks **Cancel**, the new comment is discarded.
+On clicking the **New Comment** button, the authenticated user is brought to the single-post page again, this time with a comment input field available for text entry, with **Save** and **Cancel** buttons. If the user clicks **Save**, the new comment is added to the database and displayed under the post. If the user clicks **Cancel**, the new comment is discarded.
+
+![alt text](assets/images/screenshot.png)
+
+
+![alt text](assets/images/screenshot.png)
+
+On clicking the **Dashboard** navigation link, the authenticated user is brought to the **Dashboard My Posts page**. The user's posts, if any will be listed by title and publication date. A **New Post** button is also displayed.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks on a post, it "un-collapses" and three additional buttons are displayed: **Edit**, **Delete**, and **Unpublish**. If the revealed **Comments** header is clicked, the comments are expanded and a **New Comment** button is also displayed, if the user wants to comment on their own post.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks the **Edit** button, the post title and content are changed to text entry fields and can be modified. **Save** and **Cancel** buttons are also displayed.
+
+If the user clicks the **Cancel** button, any changes are discarded and the unchanged post is restored. If the user clicks the **Save** button, any changes are updated to the database.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks the **Delete** button, a warning and request for confirmation is displayed. Clicking **OK** will delete the post from the database. Clicking **Cancel** will cancel the delete request.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks the **Unpublish** button, the publication data is changed to ```DRAFT``` and the post will not be displayed to other users on any page. The button becomes a **Publish** button, and if clicked will restore published status with the current date.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks the **New Post** button, title and post body text entry fields for a new post will be displayed along with **Save** and **Cancel** buttons. 
+
+If the user clicks the **Cancel** button, the new post with any input is discarded. If the user clicks the **Save** button, the post is saved to the database with DRAFT status. The **Save** and **Cancel** buttons are replaced with **Edit**, **Delete**, and **Publish** buttons. Once the user clicks the **Publish** button, the new post is given a publication data and will be visible to other users.
+
+![alt text](assets/images/screenshot.png)
+
+If the user clicks the **Logout** navigation link, their session will be ended and they will be returned to the login page. Additionally, if the session cookie expires, they will also be logged out. Any page requests or attempts to perform actions requiring authentication, such as creating a post or adding a comment, will be redirected to the login page.
 
 
 ## Credits
