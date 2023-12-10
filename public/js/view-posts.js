@@ -120,7 +120,10 @@ function displayNewCommentButton({ displayButton, postId }) {
   const newCommentButtonId = `post${postId}-new-comment-button`;
   const newCommentButton = [ 'new-comment-button' ];
     
-  showButtons(displayButton, newCommentButtonId, newCommentButton);
+  setTimeout(() => {
+    showButtons(displayButton, newCommentButtonId, newCommentButton);
+  }, 50);
+
 }
 
 
