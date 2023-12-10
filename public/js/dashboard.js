@@ -556,16 +556,14 @@ function initDashboard() {
 
   if (allPostsContainer) { // multiple post mode
     // console.log('multi post mode');
-    // add event listener for NEW POST BUTTON click
-    document.querySelector('.new-post-button')
-      .addEventListener('click', handleNewPostButtonClick);  
-      
-    // if empty new POST, go straight to edit mode on dashboard load
-    if (allPostsContainer.hasChildNodes()) {
-      const firstPost = allPostsContainer.querySelector('.post-card');
+    
+    // if at least one post exists, check if it's empty
+    const firstPost = allPostsContainer.querySelector('.post-card');
+    if (firstPost) {
       const firstPostTitleEl = firstPost.querySelector('.post-title');
       const firstPostContentEl = firstPost.querySelector('.post-content');
       
+      // if empty new POST, go straight to edit mode on dashboard load
       if (firstPostTitleEl && firstPostContentEl) {
         if (firstPostTitleEl.textContent.trim() === '' &&
         firstPostContentEl.textContent.trim() === '') {
@@ -578,6 +576,10 @@ function initDashboard() {
       }
     }
     displayNewPostButton({ displayButton: true });
+
+    // add event listener for NEW POST BUTTON click
+    document.querySelector('.new-post-button')
+      .addEventListener('click', handleNewPostButtonClick);  
     
   } else if (isSinglePost) { // single post mode
     
