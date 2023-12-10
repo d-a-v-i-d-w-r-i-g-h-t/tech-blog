@@ -47,7 +47,17 @@
       {{!-- POST CONTENT --}}
       <p class="post-content card-content ps-3">{{post.content}}</p>
     </div>
-    {{#if dashboard}}
+    {{#if singlePost}}
+      {{!-- POST AUTHOR --}}
+      <p class="post-author card-content text-end pb-3">
+        {{!-- clicking this link will not collapse the post --}}
+        <a
+          class="bg-link"
+          href="/posts/{{post.author.username}}"
+          data-no-collapse="true"
+        >&#8212; {{post.author.username}}</a>
+      </p>
+    {{else if dashboard}}
       {{!-- no author, user's own posts --}}
     {{else if username}}
       {{!-- no author, author already displayed at top of page --}}
