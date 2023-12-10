@@ -29,7 +29,9 @@ async function handleNewPostButtonClick(event) {
       // reload the page, init will handle shifting the new post to edit mode
       location.reload();
 
-    } else {
+    } else if (response.redirected) {
+        window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error('Failed to create post:', errorMessage);
     }
@@ -101,7 +103,9 @@ async function deletePost(postId) {
       } else {
         console.log('Element not found');
       }
-    } else {
+    } else if (response.redirected) {
+      window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error(`Failed to delete post. Server response: ${errorMessage}`);
 
@@ -154,7 +158,9 @@ async function handlePublishPostButtonClick(event) {
         publishButton.textContent = 'Unpublish'
         publishButton.dataset.published = 'true';
       }
-    } else {
+    } else if (response.redirected) {
+      window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error(`Failed to update 'Published' status. Server response: ${errorMessage}`);
     }
@@ -220,7 +226,9 @@ async function handleSavePostEditButtonClick(event) {
       postCard.dataset.newPost = "false";
       disablePostEditMode(postCard);
 
-    } else {
+    } else if (response.redirected) {
+      window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error(`Failed to update post. Server response: ${errorMessage}`);
 

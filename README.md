@@ -73,6 +73,22 @@ Clicking on the **Dashboard** or **Login** navigation links will take the user t
 
 On the **Sign Up page**, the user can create an account with a username, email and password. The username is checked against existing usernames as each character is entered; the input is changed to red text and a warning messaged is displayed if the user types a username that is already in use. The **Submit** is disabled if the username is not at least three characters.
 
+![alt text](assets/images/screenshot.png)
+
+When the email input field loses focus, the entered email address is validated against a standard format. If the entered email address does not match a valid format, the input field is cleared and the user is warned with a modal.
+
+![alt text](assets/images/screenshot.png)
+
+On clicking the **Submit** button, additional checks are performed. If any field is empty, the user is warned. If the two passwords don't match, the password input fields are cleared and the user is warned with a modal.
+
+![alt text](assets/images/screenshot.png)
+
+On successful login or sign up, the authenticated user will be returned to the home page. Now if the user expands a post and comments, a **New Comment** button will appear, and the user can create new comments on any post.
+
+![alt text](assets/images/screenshot.png)
+
+On clicking the **New Comment** button, the user is brought to the single-post page again, this time with a comment input field available for text entry, with **Save** and **Cancel** buttons. If the user clicks **Save**, the new comment is added to the database and displayed under the post. If the user clicks **Cancel**, the new comment is discarded.
+
 
 ## Credits
 

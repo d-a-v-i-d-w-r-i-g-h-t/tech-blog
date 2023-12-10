@@ -79,8 +79,10 @@ async function deleteComment(commentId) {
       } else {
         console.log('Element not found');
       }
-    } else {
-      const errorMessage = await response.text();
+    } else if (response.redirected) {
+      window.location.href = '/login';
+  } else {  
+    const errorMessage = await response.text();
       console.error(`Failed to delete comment. Server response: ${errorMessage}`);
       
       unableToDeleteCommentModal.show();
@@ -119,8 +121,6 @@ async function handleSaveCommentEditButtonClick(event) {
         text: savedText,
       }),
     });
-    // console.log('save response');
-    // console.log(response);
     
     if (response.ok) {
       
@@ -130,7 +130,9 @@ async function handleSaveCommentEditButtonClick(event) {
       commentCard.dataset.newComment = "false";
       disableCommentEditMode(commentCard);
 
-    } else {
+    } else if (response.redirected) {
+        window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error(`Failed to update comment. Server response: ${errorMessage}`);
       

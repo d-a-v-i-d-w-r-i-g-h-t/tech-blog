@@ -40,7 +40,9 @@ async function handleNewCommentButtonClick(event) {
       // reload the page, init will handle shifting the new comment to edit mode
       window.location.href = `/post/${postId}`;
 
-    } else {
+    } else if (response.redirected) {
+      window.location.href = '/login';
+    } else {  
       const errorMessage = await response.text();
       console.error('Failed to create comment:', errorMessage);
     }

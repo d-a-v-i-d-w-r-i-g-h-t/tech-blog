@@ -8,8 +8,10 @@ const logout = async () => {
   if (response.ok) {
     // If successfully logged out, redirect to the login page
     document.location.replace('/login');
-  } else {
-    alert(response.statusText);
+  } else if (response.redirected) {
+    window.location.href = '/login';
+  } else {  
+    console.log(response.statusText);
   }
 };
 
