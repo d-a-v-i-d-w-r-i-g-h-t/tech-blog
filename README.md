@@ -6,26 +6,72 @@ For this project I wanted to build a content management system (CMS) style blog 
 
 This project has been deployed to [Heroku](https://www.heroku.com/) and can be accessed [here](https://technology-blog-mvc-bc5dd727c749.herokuapp.com/).
 
-
 ## Features
 
-If your project has a lot of features, consider adding a heading called "Features" and listing them there.
+### Sliding Interface
+
+When posts are clicked on, 
 
 
 ## Installation
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+To install the application locally, copy the files and folders to the desired location. From the root directory, enter the command
+```
+npm install
+```
+to install dependencies.
 
+To seed the database with example data, enter the command
+```
+npm run seed
+```
 
 ## Usage 
 
-Provide instructions and examples for use. Include screenshots as needed. 
+The application can be run from its deployed location [here](https://technology-blog-mvc-bc5dd727c749.herokuapp.com/).
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
-
-```md
-![alt text](assets/images/screenshot.png)
+To run it locally, enter the command
 ```
+npm run start
+```
+from the root directory. Then open the following address in your web browser:
+```
+http://localhost:3001
+```
+
+When opened, the **Home page** is displayed, showing a navigation bar with **Home**, **Dashboard**, and **Login**, and a listing of published post titles with dates and author usernames.
+
+![alt text](assets/images/screenshot.png)
+
+Clicking on a post causes the content to "un-collapse" and reveal the post content and a **Comments** header.
+
+![alt text](assets/images/screenshot.png)
+
+"Clicking on the **Comments** header "un-collapses" the comments, if any.
+
+![alt text](assets/images/screenshot.png)
+
+If the post title is clicked, a single-post view will be displayed. Clicking on any post title on any page throughout the site will always bring the user to this single-post view.
+
+![alt text](assets/images/screenshot.png)
+
+If a username is clicked on any page throughout the site, whether a post or a comment author, an **All Posts by...** view will be displayed. These posts and their comments can be clicked on and expanded just like on the **Home page**.
+
+![alt text](assets/images/screenshot.png)
+
+If the **See all comments by...** link is clicked, an **All Comments by...** view will be displayed, showing all that user's comments and comment dates with their associated posts titles and post dates.
+
+![alt text](assets/images/screenshot.png)
+
+Clicking on the post-comment pair will cause the post to "un-collapse" and reveal the post's content and author. A **See all posts by...** link at the bottom of the page returns the user to the **All Posts by...** page.
+
+![alt text](assets/images/screenshot.png)
+
+Clicking on the **Dashboard** or **Login** navigation links will take the user to the **Login page**. The user can choose to login or alternatively click the **Sign Up** button.
+
+![alt text](assets/images/screenshot.png)
+
+On the **Sign Up page**, the user can create an account with a username, email and password. The username is checked against existing usernames as each character is entered; the input is changed to red text and a warning messaged is displayed if the user types a username that is already in use. The **Submit** is disabled if the username is not at least three characters.
 
 
 ## Credits

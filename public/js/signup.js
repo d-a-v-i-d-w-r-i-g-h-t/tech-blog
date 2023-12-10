@@ -112,9 +112,10 @@ emailInputField.addEventListener('blur', () => {
     
     // Check if the email is invalid
     if (!isValidEmail(email)) {
-      // Display the modal to inform the user
-      // You can customize this modal as needed
-  
+
+      // clear email input field
+      emailInputField.value = '';
+
       // display modal to warn user
       invalidEmailModal.show();
     }
